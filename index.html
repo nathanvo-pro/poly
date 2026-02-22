@@ -271,17 +271,11 @@
       flex-shrink: 0;
     }
 
-    .course-icon.math {
-      background: var(--gradient);
-    }
+    .course-icon.math {}
 
-    .course-icon.info {
-      background: var(--gradient);
-    }
+    .course-icon.info {}
 
-    .course-icon.phys {
-      background: var(--gradient);
-    }
+    .course-icon.phys {}
 
     .course-name {
       font-size: 13px;
@@ -1331,7 +1325,7 @@
     </main>
   </div>
 
-  <script src="courses_data.js"></script>
+  <script src="courses_data.js?v=2"></script>
   <script>
     // ─── State ───────────────────────────────────────────────────────────────────
     let currentCourse = null;
@@ -1383,7 +1377,7 @@
 
         card.innerHTML = `
       <div class="course-card-header">
-        <div class="course-icon ${course.type}">${course.icon}</div>
+        <div class="course-icon ${course.type}" style="background:transparent; padding:0;"><img src="${course.icon}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" alt="icon"/></div>
         <div>
           <div class="course-name">${course.name}</div>
           <div style="font-size:10px;color:var(--text-muted);margin-top:2px">${course.description}</div>
@@ -1467,7 +1461,7 @@
       view.innerHTML = `
       <div class="course-header">
         <div class="course-header-top">
-          <div class="course-header-icon course-icon ${course.type}" style="width:52px;height:52px;font-size:22px">${course.icon}</div>
+          <div class="course-header-icon course-icon ${course.type}" style="width:52px;height:52px;font-size:22px; background:transparent; padding:0;"><img src="${course.icon}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" alt="icon"/></div>
           <div>
             <div class="course-header-title">${course.name}</div>
             <div class="course-header-sub">${course.description}</div>
@@ -1609,7 +1603,7 @@
       }
     }
 
-    // ─── Markdown Rendering Helper ───────────────────────────────────────────────
+    // ─── Markdown Rendering Helper ──────────────────────────────────────────────
     function renderMarkdownProtected(content) {
       // 1. Fix markdown tables that have blank lines between rows
       // We only target double newlines specifically between pipe characters at the end/start of lines
@@ -1683,9 +1677,9 @@
       if (dashFile) {
         const content = await fetchFile(dashFile.path);
         if (content) {
-            // Render the dashboard markdown text
-            let htmlContent = renderMarkdownProtected(content);
-            markdownHtml = `
+          // Render the dashboard markdown text
+          let htmlContent = renderMarkdownProtected(content);
+          markdownHtml = `
             <div class="markdown-body" style="background:var(--surface); border:none; box-shadow:var(--shadow); border-radius:var(--radius); padding:28px; margin-top:24px;">
                 <div class="content-viewer-bar" style="border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:16px; margin-left:-8px; margin-right:-8px; display:flex; align-items:center;">
                     <span class="content-viewer-title" style="font-size:16px; font-weight:700; flex:1;">${dashFile.emoji} Contenu du Dashboard</span>
@@ -1971,7 +1965,8 @@
       // Filter sidebar course cards
       const q = query.toLowerCase();
       document.querySelectorAll('.course-card').forEach(card => {
-        const name = card.querySelector('.course-name')?.textContent?.toLowerCase() || '';
+        const nameElement = card.querySelector('.course-name');
+        const name = nameElement ? nameElement.textContent.toLowerCase() : '';
         card.style.display = (q === '' || name.includes(q)) ? '' : 'none';
       });
     }
