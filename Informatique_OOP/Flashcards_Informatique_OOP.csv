@@ -1,0 +1,47 @@
+Question;Réponse
+Qu'est-ce que #include en C++ ?;Une directive de préprocesseur qui insère le contenu d'un fichier header avant la compilation. Équivalent de import en Python. Ex: #include <iostream>
+À quoi sert main() ?;C'est la fonction principale et le point d'entrée obligatoire de tout programme C++. Le système d'exploitation commence l'exécution ici.
+Quelle est la différence entre cout et cin ?;cout (console output) affiche du texte à l'écran avec <<. cin (console input) lit des données au clavier avec >>. Les deux nécessitent #include <iostream>.
+Qu'est-ce que return 0 dans main() ?;Signal au système d'exploitation que le programme s'est terminé sans erreur. Convention: 0 = succès.
+Différence entre compilateur et interpréteur ?;Compilateur: traduit TOUT le code d'un coup en exécutable. Interpréteur: exécute instruction par instruction. C++ est compilé (rapide), Python est interprété.
+Quelles sont les deux étapes de la création d'un exécutable C++ ?;1) Compilation: chaque .cpp → fichier objet. 2) Linkage: le linker combine les fichiers objets + bibliothèques → exécutable.
+Commande pour compiler un fichier C++ avec g++ ?;g++ fichier.cpp -o nom_executable, puis ./nom_executable pour l'exécuter.
+Quels sont les types de base en C++ ?;int (entier), float (flottant 4 bytes), double (flottant 8 bytes), char (caractère 1 byte), bool (true/false), string (chaîne).
+Différence entre float et double ?;float = 4 bytes, ~6-7 chiffres significatifs. double = 8 bytes, ~15 chiffres significatifs. double est le format par défaut et recommandé.
+Qu'est-ce que le typage statique ?;Les types sont fixés à la compilation et ne peuvent pas changer. En C++: int x = 5; x ne peut jamais devenir une string. Erreurs détectées avant l'exécution.
+Piège classique du if en C++ : = vs == ?;= est l'affectation (copie une valeur). == est la comparaison (teste l'égalité). if(x=5) est toujours true car 5≠0! Utiliser if(x==5).
+Pourquoi break est nécessaire dans switch/case ?;Sans break, l'exécution "tombe" dans le case suivant (fall-through). Chaque case doit se terminer par break; pour éviter ce comportement.
+Différence entre while et do...while ?;while teste la condition AVANT → peut ne jamais s'exécuter. do...while teste APRÈS → s'exécute au moins une fois.
+Syntaxe de la boucle for en C++ ?;for(init; condition; incrément) { corps; } Exemple: for(int i=0; i<10; i++) — équivalent Python: for i in range(10)
+Qu'est-ce qu'une portée (scope) en C++ ?;Chaque bloc {} crée une portée. Les variables déclarées dedans sont détruites à la fin du bloc. Contrairement à Python, les blocs limitent la visibilité des variables.
+Que signifie \n, \t et \0 ?;\n = nouvelle ligne, \t = tabulation horizontale, \0 = caractère nul (marque la fin d'une C-string)
+Quelles classes pour la lecture/écriture de fichiers ?;ifstream (lecture), ofstream (écriture), fstream (les deux). Toutes dans #include <fstream>.
+Différence entre getline et >> pour la lecture ?;>> s'arrête au premier espace. getline lit toute la ligne (espaces compris). getline(flux, variable) est préférable pour les lignes complètes.
+Pourquoi toujours appeler close() sur un fichier ?;1) Vide les tampons (données écrites sur disque). 2) Libère le fichier (autres programmes peuvent y accéder). 3) Évite les conflits de verrouillage.
+Différence entre mode texte et mode binaire ?;Texte: données en caractères/lignes, conversions automatiques (\n→\r\n sur Windows). Binaire: octets bruts copiés tels quels, pas de conversion.
+Qu'est-ce qu'une C-string vs std::string ?;C-string = char[] terminé par \0, gestion manuelle, risque de buffer overflow. std::string = objet C++ avec gestion automatique, longueur stockée, plus sûr.
+Qu'est-ce qu'un istringstream ?;Un flux (#include <sstream>) qui lit depuis une string en mémoire avec >>, comme cin mais depuis une string. Idéal pour le parsing.
+Qu'est-ce qu'une struct ?;Un type composite qui regroupe des variables de types différents (int, string, etc.) dans une seule unité nommée. Accès aux membres via l'opérateur point (.)
+static_cast vs cast C-style ?;Cast C: (int)3.14 — contourne les vérifications, risque d'erreurs. static_cast<int>(3.14) — explicite, limité aux conversions compatibles, recommandé.
+Qu'est-ce qu'un prototype de fonction ?;Déclaration de l'interface d'une fonction avant sa définition: type nom(params); Il permet au compilateur de valider les appels sans connaître le corps.
+Qu'est-ce que l'opérateur ternaire ? : ?;Un raccourci pour if-else: condition ? valeur_si_vrai : valeur_si_faux. Ex: x > 0 ? "positif" : "négatif"
+setprecision est-il persistant ?;Oui, setprecision(n) reste actif pour les sorties suivantes. Par contre setw(n) ne s'applique qu'au PROCHAIN affichage seulement.
+Quelle est la hiérarchie des streams ?;ios (base: état+format) → istream (lecture>>) / ostream (écriture<<) → ifstream/ofstream (fichiers). cin est un istream, cout est un ostream.
+Pourquoi la v2.0 du BMD est préférable à la v1.0 ?;La v1.0 code l'arbre en dur (if-else). La v2.0 lit l'arbre d'un fichier: on peut changer de modèle sans recompiler, séparer entraînement et inférence.
+À quoi sert seekg(0) dans la lecture de fichier ?;Remet le curseur de lecture au début du fichier. Nécessaire quand on veut relire le fichier depuis le début dans une boucle.
+
+Quelle est la différence de temps d'accès entre le CPU Cache (L1) et le disque dur (SSD) ?;Le L1 prend environ 1 nanoseconde. Le SSD prend des dizaines de microsecondes (> 10 000 ns). Prioriser la RAM !
+Qu'est-ce qu'une variable array C++ sous le capot ?;Une adresse mémoire pointant vers la première case (index 0). Les cases suivantes sont stockées de façon contiguë.
+Que se passe-t-il si j'accède à myArray[100] alors que la taille est de 5 en C++ ?;Le compilateur ne vérifie pas les bornes. Vous lirez une adresse mémoire aléatoire, ce qui causera une "Segmentation Fault" ou corrompra d'autres données.
+Comment calculer la longueur d'un array de type T en C++ (style C) ?;int size = sizeof(myArray) / sizeof(myArray[0]); (taille totale divisée par la taille du premier élément).
+Si p pointe sur un int, que fait p + 3 ?;Il décale l'adresse mémoire de 3 fois la taille du type int (3 x 4 = 12 bytes), et pointe vers la troisième case suivante.
+Programmation procédurale vs orientée objet ?;Procédurale = centrée sur les fonctions/processus (séparé des données). POO = centrée sur les objets du monde réel (données et comportements combinés/encapsulés).
+Que signifie Encapsulation (Hiding data) en POO ?;Regrouper les données et les méthodes les manipulant. Les données sont cachées (private) pour protéger leur intégrité face à l'extérieur.
+Quelle est la différence entre public et private dans une classe ?;private : accessible uniquement par les fonctions de la classe. public : accessible de l'extérieur du bloc de la classe (sert d'interface).
+Pourquoi utiliser des méthodes set() (= setter) ?;Pour valider ou modifier l'entrée avant de changer une variable 'private'. Exemple : empêcher de mettre un âge négatif dans un objet Personne.
+Quel est l'avantage de séparer les fichiers .h et .cpp ?;Séparation Interface / Implémentation. L'utilisateur lit le .h pour savoir QUOI utiliser. Le .cpp contient le COMMENT et masque la logique complexe.
+Qu'est-ce qu'un Constructeur ?;Une méthode spéciale portant le même nom que la classe (sans type de retour), appelée automatiquement quand l'objet est créé, pour initialiser ses valeurs.
+Quelle est la syntaxe recommandée pour initialiser les attributs dans un Constructeur ?;La liste d'initialisation : Node::Node() : is_leaf(false), value(0.0) {} plutôt que de faire des affectations dans le corps de la fonction.
+À quoi sert une Enumération (enum) ?;À créer un nouveau type qui ne peut prendre qu'un nombre fini de valeurs contraintes et lisibles, par défaut associées aux entiers 0, 1, 2... (Ex: enum { ROUGE, VERT, BLEU })
+Quelle est la différence entre x = ++y et x = y++ ?;++y (pré-incrément) incrémente D'ABORD, puis assigne. y++ (post-incrément) assigne D'ABORD, puis incrémente.
+Pourquoi la v3.0 du BMD stocke-t-elle l'arbre dans un Array plutôt que de le lire depuis un fichier ?;Pour éliminer la latence monstrueuse de la lecture de fichier. Indexer les nœuds de l'arbre permet de sauter d'un nœud à l'autre en mémoire RAM ultra-rapide.

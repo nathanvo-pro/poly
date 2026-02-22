@@ -1,0 +1,35 @@
+#separator:;
+#html:true
+#deck:Physique PHYSH1002
+#tags column:3
+Recto;Verso;Tags
+Qu'est-ce que le <b>gradient</b> d'un champ scalaire ?;Un <b>vecteur</b> pointant dans la direction de croissance maximale, perpendiculaire aux courbes de niveau.<br><br>$$\vec{\text{grad}}\, f = \frac{\partial f}{\partial x}\hat{x} + \frac{\partial f}{\partial y}\hat{y} + \frac{\partial f}{\partial z}\hat{z}$$;ch1_gradient
+Quelle est la formule du gradient en coordonnées <b>cylindriques</b> ?;$$\vec{\text{grad}}\, f = \frac{\partial f}{\partial r}\hat{r} + \frac{1}{r}\frac{\partial f}{\partial \theta}\hat{\theta} + \frac{\partial f}{\partial z}\hat{z}$$;ch1_gradient
+Quelle est la formule de la <b>dérivée directionnelle</b> ?;$$\frac{\partial f}{\partial \vec{u}} = \vec{\text{grad}}\, f \cdot \vec{u}$$<br>C'est la projection du gradient sur la direction $\vec{u}$ (unitaire).;ch1_gradient
+Que vaut le <b>rotationnel d'un gradient</b> ?;$$\text{rot}(\vec{\text{grad}}\, f) = \vec{0}$$<br>Toujours nul → un champ dérivant d'un potentiel est <b>conservatif</b>.;ch1_gradient ch2_flux
+Qu'est-ce que la <b>circulation</b> d'un champ vectoriel ?;L'intégrale de ligne du champ le long d'un contour :<br>$$\mathcal{C} = \oint_C \vec{A} \cdot d\vec{\ell}$$<br>Mesure l'entraînement du champ le long du chemin.;ch2_flux
+Énoncer le <b>théorème de Stokes</b>.;$$\oint_C \vec{A} \cdot d\vec{\ell} = \iint_{S_C} \text{rot}\,\vec{A} \cdot d\vec{S}$$<br>La circulation sur un contour fermé = flux du rotationnel à travers la surface bordée.;ch2_flux
+Qu'est-ce que le <b>flux</b> d'un champ vectoriel ?;La quantité de champ traversant une surface :<br>$$\Phi = \iint_S \vec{A} \cdot d\vec{S}$$;ch2_flux
+Énoncer le <b>théorème de la divergence</b> (Gauss).;$$\oiint_S \vec{A} \cdot d\vec{S} = \iiint_V \text{div}\,\vec{A}\, dV$$<br>Le flux à travers une surface fermée = intégrale volumique de la divergence.;ch2_flux
+Que vaut la <b>divergence d'un rotationnel</b> ?;$$\text{div}(\text{rot}\,\vec{A}) = 0$$<br>Toujours nulle.;ch2_flux
+Quelle est l'<b>équation de continuité</b> (conservation de la charge) ?;$$\frac{\partial \rho}{\partial t} + \text{div}\,\vec{J} = 0$$<br>La charge est conservée localement.;ch2_flux ch4_maxwell
+Donner les <b>4 équations de Maxwell</b> sous forme locale.;1. $\text{div}\,\vec{E} = \rho/\varepsilon_0$ (Gauss E)<br>2. $\text{div}\,\bar{B} = 0$ (Gauss B)<br>3. $\text{rot}\,\vec{E} = -\partial_t\bar{B}$ (Faraday)<br>4. $\text{rot}\,\bar{B} = \mu_0\vec{J} + \mu_0\varepsilon_0\partial_t\vec{E}$ (Ampère-Maxwell);ch4_maxwell
+Quelle est la <b>force de Lorentz</b> ?;$$\vec{F}_L = q(\vec{E} + \vec{v} \times \bar{B})$$<br>La composante magnétique est toujours ⊥ à $\vec{v}$ → ne fournit <b>pas de travail</b>.;ch3_faraday
+Énoncer la <b>loi de Faraday</b> (forme intégrale).;$$\mathcal{E} = -\frac{d\Phi_B}{dt}$$<br>L'é.m.f. induite est l'opposé de la variation de flux magnétique.;ch3_faraday
+Comment se transforme $\vec{E}$ lors d'un changement de repère <b>galiléen</b> ?;$$\vec{E}' = \vec{E} + \vec{u}_0 \times \bar{B}$$<br>$\bar{B}' \approx \bar{B}$ (pour $u_0 \ll c$).;ch3_faraday
+Qu'est-ce que le <b>potentiel vecteur</b> $\vec{A}$ ?;$$\text{rot}\,\vec{A} = \bar{B}$$<br>Et le champ électrique se décompose en :<br>$$\vec{E} = -\vec{\text{grad}}\,V - \frac{\partial \vec{A}}{\partial t}$$;ch3_faraday
+Quel problème Maxwell a-t-il résolu avec le <b>courant de déplacement</b> ?;La loi d'Ampère classique donnait des résultats <b>contradictoires</b> selon la surface choisie (ex: condensateur). Maxwell a ajouté $\varepsilon_0\partial\vec{E}/\partial t$ pour restaurer la conservation de la charge.;ch4_maxwell
+Énoncer la <b>loi de Lenz</b>.;Le courant induit crée un champ $\bar{B}_i$ qui <b>s'oppose à la variation</b> de flux magnétique qui lui a donné naissance.<br>C'est le reflet de la <b>conservation de l'énergie</b>.;ch4_maxwell
+Qu'est-ce que le <b>diamagnétisme</b> ?;Phénomène d'induction EM à l'échelle atomique : l'application de $\bar{B}$ modifie les orbites électroniques, créant un courant net <b>opposé</b> à $\bar{B}$.<br>$\mu_r < 1$ (très proche de 1).<br>Force toujours <b>répulsive</b>.;ch4_maxwell
+Donner la loi courant-tension d'un <b>inducteur idéal</b>.;$$V_L = L\frac{dI}{dt}$$<br>Analogue au condensateur : $I = C\,dV/dt$.;ch5_circuits
+Quelle est l'<b>inductance</b> d'un solénoïde ?;$$L = \mu \frac{N^2 S}{\ell}$$<br>$N$ : nombre de spires, $S$ : section, $\ell$ : longueur.;ch5_circuits
+Donner l'expression du courant lors de la <b>charge d'un circuit RL</b>.;$$I(t) = \frac{V}{R}\left(1 - e^{-t/\tau}\right), \quad \tau = \frac{L}{R}$$;ch5_circuits
+Quelle est l'<b>énergie stockée</b> dans un inducteur ?;$$W_L = \frac{1}{2}LI^2$$<br>Analogue au condensateur : $W_C = \frac{1}{2}CV^2$.;ch5_circuits
+Donner le <b>rapport de transformation</b> d'un transformateur.;$$\frac{V_s}{V_p} = \frac{N_s}{N_p}$$<br>La puissance est conservée : $V_sI_s = V_pI_p$.;ch5_circuits
+Pourquoi transporte-t-on l'électricité à <b>haute tension</b> ?;Pour minimiser les pertes Joule $P_J = RI^2$ dans les câbles.<br>À puissance constante $P = VI$ : augmenter $V$ → diminuer $I$ → diminuer $RI^2$.;ch5_circuits
+Définir la <b>valeur efficace</b> d'un courant alternatif.;$$I_{\text{eff}} = \frac{I_m}{\sqrt{2}}$$<br>C'est la valeur qui donne la même puissance dissipée qu'un courant continu : $\langle P \rangle = RI_{\text{eff}}^2$.;ch5_circuits
+Quelle est la <b>réactance</b> d'un inducteur et d'un condensateur ?;Inducteur : $X_L = \omega L$ (↑ avec $\omega$ → filtre <b>passe-bas</b>)<br>Condensateur : $X_C = 1/(\omega C)$ (↓ avec $\omega$ → filtre <b>passe-haut</b>);ch5_circuits
+Quel est le <b>déphasage</b> courant–tension pour L et C ?;Inducteur : courant <b>en retard</b> de $\pi/2$ ($\Delta\varphi = -\pi/2$)<br>Condensateur : courant <b>en avance</b> de $\pi/2$ ($\Delta\varphi = +\pi/2$)<br>Dans les deux cas : $\langle P \rangle = 0$.;ch5_circuits
+Comment interpréter $\text{div}\,\bar{B} = 0$ physiquement ?;Il n'existe <b>pas de monopôles magnétiques</b>. Les lignes de champ magnétique sont toujours fermées (ou vont à l'infini). Le flux net de $\bar{B}$ à travers toute surface fermée est nul.;ch2_flux ch4_maxwell
+Quelle est la <b>densité d'énergie</b> du champ EM ?;Magnétique : $w_B = \frac{1}{2\mu}\|\bar{B}\|^2$<br>Électrique : $w_E = \frac{1}{2}\varepsilon_0\|\vec{E}\|^2$;ch5_circuits
+Que sont les <b>courants de Foucault</b> ?;Des courants parasites induits dans un conducteur massif exposé à un champ magnétique variable. Ils créent des boucles de courant, dissipent de l'énergie par effet Joule, et constituent un effet souvent <b>nuisible</b> (mais utile pour le freinage EM).;ch4_maxwell

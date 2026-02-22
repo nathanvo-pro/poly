@@ -1,0 +1,21 @@
+Question;Réponse
+En représentation virgule flottante standard, que représente $t$ ?;Le nombre de chiffres de la mantisse (le nombre de chiffres significatifs).
+Qu'est-ce qu'une mantisse normalisée ?;Une mantisse dont le premier chiffre significatif n'est pas zéro ($d_1 \neq 0$).
+En binaire ($\beta = 2$), pourquoi la normalisation fait gagner un bit ?;Si $d_1$ ne peut pas être 0, il vaut obligatoirement 1. Pas besoin de le stocker (bit implicite).
+Quelle est la formule de l'unité d'arrondi $u$ ?;$u = \frac{1}{2}\beta^{1-t}$
+Que borne l'unité d'arrondi $u$ en machine ?;L'erreur *relative* d'arrondi sur n'importe quel nombre réel lors de sa projection en mémoire $\text{fl}(x) = x(1+\varepsilon), |\varepsilon| \leq u$
+Format IEEE : Combien de bit pour la mantisse en simple precision ? et en double précision ?;23 bits en simple; 52 bits en double (donc 53 avec l'implicite).
+Qu'est-ce qu'un Overflow et un Underflow ?;Overflow = La valeur dépasse l'exposant max (renvoie `Inf`). Underflow = La valeur est sous le seuil min (devient très imprécise, "dénormalisée").
+Formule du "Modèle d'arithmétique standard" ?;$A \circledcirc B = (A \circ B)(1 + \varepsilon)$ avec $|\varepsilon| \leq u$.
+Si $x \approx y$, quel est l'énorme danger informatique de calculer $x - y$ ?;L'annulation catastrophique. Les chiffres fiables s'annulent et la machine comble avec du bruit numérique (erreur relative énorme).
+Définition et relation de la Stabilité Algorithmique (directe/inverse);Directe : l'erreur $\hat{y} - y$ n'est pas pire que celle de données altérées. Inverse : le résultat $\hat{y}$ EST la vraie solution parfaite de $f(x + \Delta x)$. (L'inverse implique la directe).
+Quelle est la formule Jacobienne du Conditionnement d'un problème $\kappa(x)$ ?;$\kappa(x) = \frac{\|f'(x)\| \cdot \|x\|}{\|f(x)\|}$
+Quelle est la différence radicale entre Stabilité et Conditionnement ?;La stabilité dépend de l'algorithme choisi. Le conditionnement appartient exclusivement au problème mathématique lui-même, peu importe l'ordinateur.
+Quelle est la formule du Conditionnement d'une matrice $A$ ?;$\kappa(A) = \|A^{-1}\| \cdot \|A\|$
+Pourquoi la méthode de Cramer est-elle à proscrire en programmation ?;Sa complexité algorithmique est factorielle $\approx O(n!)$, ce qui est excessivement lent pour des matrices un tant soit peu grandes (contrairement aux méthodes matricielles en $O(n^3)$).
+Que stipule le Théorème de Factorisation LU ?;Toute matrice régulière $A$ peut se décomposer en un produit $A = LU$ (avec $L$ triangulaire Inférieure de diagonale unitaire, et $U$ triangulaire Supérieure).
+Quel est le coût brut de l'algorithme de factorisation LU ?;Environ $\frac{2}{3}n^3$ flops.
+Une fois $A=LU$ connu, comment résoudre $Ax = b$ super rapidement ?;On substitue $LUx = b$, on résout d'abord $Ly = b$ (descente), puis $Ux = y$ (remontée). Coût total dérisoire $\approx 2n^2$.
+Pourquoi la factorisation LU "naïve" est-elle hyper dangereuse informatiquement ?;Parce que diviser par de minuscules anciens pivots crée de l'instabilité numérique monstrueuse.
+Quelle est l'astuce pour stabiliser parfaitement l'algorithme $A=LU$ ?;Le Pivotage partiel des lignes. On cherche toujours la plus grande valeur de la colonne comme pivot et on permute les lignes. On obtient alors $PA = LU$.
+Quelle est la formule surpuissante pour calculer le déterminant d'une grande matrice ?;Après l'exécution de l'algorithme LU : $\det(A) = (-1)^p \cdot u_{11} \cdot u_{22} \cdots u_{nn}$ avec $p$ le nombre de permutations.
