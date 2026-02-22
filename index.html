@@ -18,27 +18,31 @@
   <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
   <style>
     :root {
-      --bg: #0a0a0f;
-      --surface: #13131a;
-      --surface2: #1a1a24;
-      --surface3: #21212e;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(255, 255, 255, 0.18);
-      --text: #e8e8f0;
-      --text-muted: #6b6b88;
-      --text-dim: #9191a8;
-      --accent: #7c5cfc;
-      --accent2: #5c8dfc;
-      --accent3: #fc5c9c;
-      --success: #4ade80;
-      --warning: #fbbf24;
-      --info: #38bdf8;
-      --gradient: linear-gradient(135deg, #7c5cfc, #5c8dfc);
-      --gradient2: linear-gradient(135deg, #fc5c9c, #7c5cfc);
-      --glow: 0 0 40px rgba(124, 92, 252, 0.15);
+      --bg: #e6e9ef;
+      --surface: #e6e9ef;
+      --surface2: #e6e9ef;
+      --surface3: #e6e9ef;
+      --border: transparent;
+      --border-hover: transparent;
+      --text: #091a38;
+      --text-muted: #4e638b;
+      --text-dim: #2f456a;
+      --accent: #1e3a8a;
+      --accent2: #274db2;
+      --accent3: #4b6ebd;
+      --success: #1e3a8a;
+      --warning: #4b6ebd;
+      --info: #274db2;
+      --gradient: linear-gradient(135deg, #1e3a8a, #274db2);
+      --gradient2: linear-gradient(135deg, #274db2, #4b6ebd);
+      --glow: 6px 6px 12px #c8d0e7, -6px -6px 12px #ffffff;
+      --shadow: 8px 8px 16px #c8d0e7, -8px -8px 16px #ffffff;
+      --shadow-sm: 4px 4px 8px #c8d0e7, -4px -4px 8px #ffffff;
+      --shadow-inset: inset 6px 6px 12px #c8d0e7, inset -6px -6px 12px #ffffff;
+      --shadow-inset-sm: inset 3px 3px 6px #c8d0e7, inset -3px -3px 6px #ffffff;
       --radius: 16px;
       --radius-sm: 10px;
-      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     * {
@@ -67,9 +71,9 @@
     /* ─── Topbar ─── */
     .topbar {
       grid-column: 1 / -1;
-      background: rgba(19, 19, 26, 0.95);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow-sm);
       display: flex;
       align-items: center;
       padding: 0 24px;
@@ -85,8 +89,8 @@
       font-size: 18px;
       background: var(--gradient);
       -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--accent);
+      background: none;
     }
 
     .topbar-logo .emoji {
@@ -104,8 +108,9 @@
     .topbar-search input {
       width: 100%;
       background: var(--surface3);
-      border: 1px solid var(--border);
+      border: none;
       border-radius: 8px;
+      box-shadow: var(--shadow-inset);
       padding: 8px 16px 8px 36px;
       color: var(--text);
       font-size: 13px;
@@ -115,8 +120,7 @@
     }
 
     .topbar-search input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.15);
+      box-shadow: var(--shadow-inset), 0 0 0 2px var(--accent);
     }
 
     .topbar-search input::placeholder {
@@ -142,8 +146,9 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      background: var(--surface3);
-      border: 1px solid var(--border);
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow-inset-sm);
       border-radius: 20px;
       padding: 4px 12px;
       font-size: 12px;
@@ -200,8 +205,9 @@
     }
 
     .course-card {
-      background: var(--surface2);
-      border: 1px solid var(--border);
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow);
       border-radius: var(--radius-sm);
       padding: 14px;
       cursor: pointer;
@@ -219,20 +225,20 @@
     }
 
     .course-card.math::before {
-      background: linear-gradient(135deg, rgba(124, 92, 252, 0.08), transparent);
+      background: rgba(30, 58, 138, 0.04);
     }
 
     .course-card.info::before {
-      background: linear-gradient(135deg, rgba(92, 141, 252, 0.08), transparent);
+      background: rgba(30, 58, 138, 0.04);
     }
 
     .course-card.phys::before {
-      background: linear-gradient(135deg, rgba(252, 92, 156, 0.08), transparent);
+      background: rgba(30, 58, 138, 0.04);
     }
 
     .course-card:hover {
-      border-color: var(--border-hover);
-      transform: translateX(3px);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(2px);
     }
 
     .course-card:hover::before {
@@ -240,8 +246,7 @@
     }
 
     .course-card.active {
-      border-color: var(--accent);
-      box-shadow: var(--glow);
+      box-shadow: var(--shadow-inset);
     }
 
     .course-card.active::before {
@@ -267,15 +272,15 @@
     }
 
     .course-icon.math {
-      background: linear-gradient(135deg, #7c5cfc, #5c8dfc);
+      background: var(--gradient);
     }
 
     .course-icon.info {
-      background: linear-gradient(135deg, #5c8dfc, #38d9fc);
+      background: var(--gradient);
     }
 
     .course-icon.phys {
-      background: linear-gradient(135deg, #fc5c9c, #fc9c5c);
+      background: var(--gradient);
     }
 
     .course-name {
@@ -372,7 +377,7 @@
       align-items: center;
       justify-content: center;
       font-size: 48px;
-      box-shadow: 0 0 60px rgba(124, 92, 252, 0.4);
+      box-shadow: var(--shadow);
       animation: float 3s ease-in-out infinite;
     }
 
@@ -393,8 +398,8 @@
       font-weight: 800;
       background: var(--gradient);
       -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--accent);
+      background: none;
     }
 
     .welcome p {
@@ -409,8 +414,9 @@
       align-items: center;
       gap: 8px;
       background: var(--surface2);
-      border: 1px solid var(--border);
+      border: none;
       border-radius: 8px;
+      box-shadow: var(--shadow-inset);
       padding: 10px 16px;
       font-size: 13px;
       color: var(--text-dim);
@@ -429,8 +435,9 @@
 
     .course-header {
       padding: 28px 32px 20px;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(135deg, var(--surface), var(--bg));
+      border-bottom: none;
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
     }
 
     .course-header-top {
@@ -466,7 +473,7 @@
       display: flex;
       gap: 4px;
       padding: 0 32px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: none;
       background: var(--surface);
       overflow-x: auto;
     }
@@ -518,8 +525,9 @@
     }
 
     .file-card {
-      background: var(--surface2);
-      border: 1px solid var(--border);
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow);
       border-radius: var(--radius);
       padding: 20px;
       cursor: pointer;
@@ -564,9 +572,8 @@
     }
 
     .file-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      transform: translateY(2px);
+      box-shadow: var(--shadow-sm);
     }
 
     .file-card:hover::after {
@@ -602,8 +609,9 @@
 
     /* ─── Progress tracker ─── */
     .progress-section {
-      background: var(--surface2);
-      border: 1px solid var(--border);
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow);
       border-radius: var(--radius);
       padding: 20px;
       margin-bottom: 20px;
@@ -646,7 +654,8 @@
     .check-box {
       width: 18px;
       height: 18px;
-      border: 2px solid var(--border-hover);
+      border: none;
+      box-shadow: var(--shadow-inset-sm);
       border-radius: 5px;
       display: flex;
       align-items: center;
@@ -674,15 +683,16 @@
 
     /* ─── Content viewer ─── */
     .content-viewer {
-      background: var(--surface2);
-      border: 1px solid var(--border);
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow);
       border-radius: var(--radius);
       overflow: hidden;
     }
 
     .content-viewer-bar {
       background: var(--surface3);
-      border-bottom: 1px solid var(--border);
+      border-bottom: none;
       padding: 12px 20px;
       display: flex;
       align-items: center;
@@ -712,12 +722,13 @@
     .btn-ghost {
       background: transparent;
       color: var(--text-muted);
-      border: 1px solid var(--border);
+      border: none;
+      box-shadow: var(--shadow);
     }
 
     .btn-ghost:hover {
-      border-color: var(--border-hover);
-      color: var(--text);
+      box-shadow: var(--shadow-inset);
+      color: var(--accent);
     }
 
     .btn-primary {
@@ -727,7 +738,7 @@
 
     .btn-primary:hover {
       background: #6b4eeb;
-      box-shadow: 0 4px 20px rgba(124, 92, 252, 0.4);
+      box-shadow: var(--shadow-inset);
     }
 
     .btn-danger {
@@ -753,7 +764,7 @@
       font-weight: 800;
       margin-bottom: 16px;
       padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: none;
     }
 
     .markdown-body h2 {
@@ -805,8 +816,9 @@
     }
 
     .markdown-body pre {
-      background: var(--surface3);
-      border: 1px solid var(--border);
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow-inset-sm);
       border-radius: 10px;
       padding: 16px 20px;
       overflow-x: auto;
@@ -821,10 +833,11 @@
     }
 
     .markdown-body blockquote {
-      border-left: 3px solid var(--accent);
+      border-left: 4px solid var(--accent);
       padding: 8px 16px;
       margin: 12px 0;
-      background: rgba(124, 92, 252, 0.06);
+      background: var(--surface);
+      box-shadow: var(--shadow-inset);
       border-radius: 0 8px 8px 0;
       color: var(--text-dim);
     }
@@ -841,13 +854,15 @@
       text-align: left;
       font-size: 12px;
       font-weight: 700;
-      border: 1px solid var(--border);
+      border: none;
+      box-shadow: var(--shadow);
       color: var(--text-dim);
     }
 
     .markdown-body td {
       padding: 9px 14px;
-      border: 1px solid var(--border);
+      border: none;
+      box-shadow: var(--shadow);
       font-size: 13px;
     }
 
@@ -882,8 +897,9 @@
 
     .markdown-body details {
       background: var(--surface3);
-      border: 1px solid var(--border);
+      border: none;
       border-radius: 8px;
+      box-shadow: var(--shadow-inset);
       padding: 12px 16px;
       margin-bottom: 10px;
     }
@@ -958,7 +974,8 @@
       inset: 0;
       backface-visibility: hidden;
       border-radius: var(--radius);
-      border: 1px solid var(--border);
+      border: none;
+      box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -968,12 +985,15 @@
     }
 
     .flashcard-front {
-      background: linear-gradient(135deg, var(--surface2), var(--surface3));
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow);
     }
 
     .flashcard-back {
-      background: linear-gradient(135deg, rgba(124, 92, 252, 0.12), var(--surface2));
-      border-color: rgba(124, 92, 252, 0.3);
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow-inset);
       transform: rotateY(180deg);
     }
 
@@ -1016,7 +1036,8 @@
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
-      border: 1px solid var(--border);
+      border: none;
+      box-shadow: var(--shadow);
       font-family: inherit;
     }
 
@@ -1047,7 +1068,7 @@
 
     .fc-btn-next:hover {
       background: rgba(124, 92, 252, 0.18);
-      border-color: rgba(124, 92, 252, 0.3);
+      border-color: transparent;
     }
 
     /* ─── Exercises panel ─── */
@@ -1065,15 +1086,16 @@
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
-      border: 1px solid var(--border);
+      border: none;
+      box-shadow: var(--shadow);
       background: var(--surface2);
       color: var(--text-muted);
       font-family: inherit;
     }
 
     .level-btn:hover {
-      border-color: var(--border-hover);
-      color: var(--text);
+      box-shadow: var(--shadow-inset);
+      color: var(--accent);
     }
 
     .level-btn.active {
@@ -1109,12 +1131,13 @@
 
     /* ─── Info box ─── */
     .info-box {
-      background: rgba(56, 189, 248, 0.06);
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow-inset);
       border-radius: 10px;
       padding: 14px 18px;
       font-size: 13px;
-      color: #7dd3fc;
+      color: var(--accent);
       display: flex;
       gap: 10px;
       align-items: flex-start;
@@ -1202,8 +1225,9 @@
       top: 0;
       max-height: calc(100vh - 200px);
       overflow-y: auto;
-      background: var(--surface2);
-      border: 1px solid var(--border);
+      background: var(--surface);
+      border: none;
+      box-shadow: var(--shadow);
       border-radius: var(--radius-sm);
       padding: 16px;
       display: none;
@@ -1654,25 +1678,21 @@
     // ─── Dashboard Panel ──────────────────────────────────────────────────────────
     async function renderDashboard(course, panel) {
       const dashFile = course.files.find(f => f.type === 'dashboard');
-      let checklistHtml = '';
+      let markdownHtml = '';
 
       if (dashFile) {
         const content = await fetchFile(dashFile.path);
-        const checks = extractChecklist(content, course.id);
-        if (checks.length > 0) {
-          checklistHtml = `
-        <div class="progress-section">
-          <h3>✅ Suivi de révision <span style="margin-left:auto;font-size:11px;color:var(--text-muted);font-weight:400">${checks.filter(c => c.done).length}/${checks.length} complétés</span></h3>
-          <div class="checklist">
-            ${checks.map(c => `
-              <label class="check-item ${c.done ? 'checked' : ''}" onclick="toggleCheck('${course.id}_${c.key}', this)">
-                <div class="check-box"></div>
-                <span class="check-label">${c.label}</span>
-              </label>
-            `).join('')}
-          </div>
-        </div>
-      `;
+        if (content) {
+            // Render the dashboard markdown text
+            let htmlContent = renderMarkdownProtected(content);
+            markdownHtml = `
+            <div class="markdown-body" style="background:var(--surface); border:none; box-shadow:var(--shadow); border-radius:var(--radius); padding:28px; margin-top:24px;">
+                <div class="content-viewer-bar" style="border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:16px; margin-left:-8px; margin-right:-8px; display:flex; align-items:center;">
+                    <span class="content-viewer-title" style="font-size:16px; font-weight:700; flex:1;">${dashFile.emoji} Contenu du Dashboard</span>
+                    <button class="btn btn-ghost" onclick="openInEditor('${dashFile.path}')">📂 Ouvrir le fichier</button>
+                </div>
+                ${htmlContent}
+            </div>`;
         }
       }
 
@@ -1691,8 +1711,14 @@
         </div>
       `).join('')}
       </div>
-      ${checklistHtml}
+      ${markdownHtml}
       `;
+      // Render LaTeX in the newly added markdown
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(panel, {
+          delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }, { left: '\\[', right: '\\]', display: true }, { left: '\\(', right: '\\)', display: false }]
+        });
+      }
     }
 
     // ─── Checklist extraction ─────────────────────────────────────────────────────
