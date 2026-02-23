@@ -500,7 +500,29 @@ L'algorithme parfait et inconditionnellement stable de l'Analyse Numérique n'es
 
 ---
 
-**Exercice 20 — L'Astuce de $\det(A)$**
+**Exercice 19/Bis — L'Astuce de $\det(A)$**
+
+En vous appuyant du théorème des déterminants $\det(AB) = \det(A)\det(B)$, et de la spécificité de la diagonale de $L, U$ et $P$; démontrez pourquoi Octave/Matlab peut calculer le déterminant d'une matrice gigantesque instantanément dès que $PA = LU$ est terminé.
+
+<details>
+<summary>Voir la réponse et l'explication détaillée</summary>
+
+Si $PA=LU$, alors $\det(P)\det(A) = \det(L)\det(U)$.
+
+1. $L$ et $U$ sont purement triangulaires, donc leur déterminant est exactement le produit de leur diagonale. 
+2. Magie : $L$ n'a QUE des $1$ sur sa propre diagonale. Donc $\det(L) = 1$. Toujours !
+3. $P$ est une matrice de permutation, à chaque échange de ligne le signe de $\det(P)$ s'inverse depuis $+1$. Ainsi, $\det(P) = (-1)^p$ avec $p$ le nombre de pivots inversés.
+
+L'équation finale géniale :
+$$
+\det(A) = (-1)^p \cdot \det(U) = (-1)^p \cdot u_{11} \cdot u_{22} \cdots u_{nn}
+$$
+Il suffit à la machine de multiplier la simple diagonale existante de $U$ !
+</details>
+
+---
+
+**Exercice 19/Bis — L'Astuce de $\det(A)$**
 
 En vous appuyant du théorème des déterminants $\det(AB) = \det(A)\det(B)$, et de la spécificité de la diagonale de $L, U$ et $P$; démontrez pourquoi Octave/Matlab peut calculer le déterminant d'une matrice gigantesque instantanément dès que $PA = LU$ est terminé.
 
@@ -524,3 +546,195 @@ $$
 
 **Conclusion magique :** Dès que Gauss a exécuté son $PA = LU$ (qui de toutes façons est nécessaire pour plein d'autres choses), le déterminant complet du système originel se révèle par simple multiplication de l'ossature diagonale de $U$ !
 </details>
+
+---
+
+## Chapitre 3 : Factorisation QR et systèmes surdéterminés
+
+> 📈 **Difficulté croissante :** De la compréhension de l'orthogonalité (⭐) à la preuve absolue de la supériorité algorithmique de QR sur le modèle $A^TA$ (⭐⭐⭐⭐⭐). Préparez vos démonstrations géométriques !
+
+---
+
+### ⭐ Niveau 1 — Matrices Orthogonales et Factorisation QR
+
+---
+
+**Exercice 20 — La Décomposition Formelle**
+
+Expliquez avec des mots ce qu'est la factorisation QR complète d'une matrice $A$ de dimension $m \times n$ (avec $m \geq n$). À quoi ressemblent physiquement les matrices $Q$ et $R$ ?
+
+<details>
+<summary>Voir la réponse et l'explication détaillée</summary>
+
+C'est une scission de $A$ en deux composants : $A = QR$.
+- **La matrice $Q$** est carrée ($m \times m$) et **orthogonale**. Toutes ses colonnes sont des vecteurs de longueur 1 qui sont strictement perpendiculaires les uns aux autres. $Q^{-1} = Q^T$.
+- **La matrice $R$** est un grand rectangle ($m \times n$) **trapézoïdal supérieur**. Au lieu d'avoir un "triangle", toute la partie inférieure sous la diagonale principale est remplie de zéros. Étant donné que $m \geq n$, tout le grand bloc inférieur final de $m-n$ lignes n'est composé que d'étages de zéros. De ce fait, on l'ampute souvent informatiquement. C'est la factorisation QR réduite $\hat{Q}\hat{R} = A$.
+</details>
+
+---
+
+### ⭐⭐ Niveau 2 — Les Miroirs de Householder
+
+---
+
+**Exercice 21 — Démonstration de l'Inversion de la matrice $H$**
+
+Soit $v$ un vecteur réel de rebond. La matrice de transformation de Householder s'écrit $H = I - 2 \frac{vv^T}{\|v\|^2_2}$.
+**Démontrez mathématiquement** que cette matrice est strictement orthogonale (Prouvez formellement que $H^T H = I$).
+
+*Indice : Souvenez-vous que $(vv^T)(vv^T) = v \|v\|^2 v^T$.*
+
+<details>
+<summary>Voir la réponse et l'explication détaillée</summary>
+
+La démonstration algébrique pas à pas :
+Premièrement, la matrice est visuellement symétrique car $(vv^T)^T = (v)^T(v^T)^T = vv^T$. Ainsi $H^T = H$.
+On veut évaluer $H^T H$. Comme elle est symétrique, cela revient à calculer $H \cdot H$ (soit $H^2$) :
+
+$$
+HH = \left(I - 2 \frac{vv^T}{\|v\|_2^2}\right) \left(I - 2 \frac{vv^T}{\|v\|_2^2}\right)
+$$
+On distribue cette double parenthèse :
+$$
+= I^2 - 2 \frac{vv^T}{\|v\|_2^2} - 2 \frac{vv^T}{\|v\|_2^2} + 4 \frac{(vv^T)(vv^T)}{(\|v\|_2^2)^2}
+$$
+On fusionne les deux termes du milieu :
+$$
+= I - 4 \frac{vv^T}{\|v\|_2^2} + 4 \frac{v (v^Tv) v^T}{\|v\|_2^4}
+$$
+Astuce matricielle décisive : la quantité $(v^T v)$ au milieu du dernier numérateur est la définition exacte du produit scalaire, donc de la norme au carré $\|v\|_2^2$.
+$$
+= I - 4 \frac{vv^T}{\|v\|_2^2} + 4 \frac{v \|v\|_2^2 v^T}{\|v\|_2^4}
+$$
+Le scalaire $\|v\|_2^2$ en haut s'annule avec une puissance du dominateur $\|v\|_2^4 \to \|v\|_2^2$ :
+$$
+= I - 4 \frac{vv^T}{\|v\|_2^2} + 4 \frac{vv^T}{\|v\|_2^2}
+$$
+Les deux énormes fractions résiduelles sont strictement identiques de signes opposés. Elles s'autodétruisent :
+$$
+HH = I
+$$
+La matrice miroir est strictement orthogonale. C'est magique : son inverse est elle-même ! (Faire le "miroir" deux fois de suite nous ramène à la position initiale géométrique).
+</details>
+
+---
+
+### ⭐⭐⭐ Niveau 3 — Équations Normales (Les Moindres Carrés)
+
+---
+
+**Exercice 22 — Trouver le Sommet du Cratère (Le Tenseur de Gradient)**
+
+Votre algorithme industriel tente d'approcher un modèle de données bruité $Ax \approx b$. La cuvette de pénalité à minimiser est $f(x) = \|b - Ax\|^2$.
+**Construisez de A à Z la démonstration algébrique** trouvant le point critique optimal (où $\nabla f(x) = 0$) pour découvrir le système suprême des Equations Normales $A^T A x = A^T b$.
+
+<details>
+<summary>Voir la réponse et l'explication détaillée</summary>
+
+**Démonstration algébrique :**
+Développons la norme au carré de l'erreur en multiplications matricielles classiques ($v^Tv$) :
+$$ 
+f(x) = (b-Ax)^T(b-Ax) 
+$$
+Distribuons la transposée $(AB)^T = B^TA^T$ :
+$$ 
+f(x) = (b^T - x^TA^T)(b-Ax) 
+$$
+Distribuons complètement la double parenthèse :
+$$ 
+f(x) = b^Tb - b^TAx - x^TA^Tb + x^TA^TAx 
+$$
+Les deux termes du milieu sont des scalaires (produits purs $1 \times 1$). Un scalaire est égal à sa propre transposée, donc $(b^TAx)^T = x^TA^Tb$. Par conséquent, ces deux termes sont identiques et on peut les fusionner :
+$$ 
+f(x) = b^Tb - 2(A^Tb)^Tx + x^T(A^TA)x 
+$$
+Calculons la jacobienne (dérivée multi-variable vectorielle par rapport au vecteur colonne $\vec{x}$) :
+- La dérivée d'une constante pure ($b^Tb$) est la matrice $\mathbf{0}$.
+- La dérivée vectorielle d'un tenseur linéaire projeté $-2(c)^Tx$ est formellement $-2c \implies -2A^Tb$.
+- La dérivée de la forme quadratique centrale $x^T(\text{Symétrique})x$ devient $2(\text{Symétrique})x \implies 2A^TAx$.
+La jacobienne totale est $\nabla f = -2A^Tb + 2A^TAx$.
+
+Pour trouver le minimum de la cuvette, on pose $\nabla f = \mathbf{0}$ :
+$$ 
+-2A^Tb + 2A^TAx = \mathbf{0} \implies 2A^TAx = 2A^Tb \implies \boxed{A^TAx = A^Tb} 
+$$
+Ce magnifique système est le réseau des Équations Normales.
+</details>
+
+---
+
+**Exercice 23 — L'Angle d'Improvisation $\theta$**
+
+Si l'ordinateur fait de son mieux pour limiter l'erreur $r = b - Ax_{approx}$, à quoi correspond géométriquement l'angle $\theta$ ? Pourquoi veut-on qu'il tende vers zéro absolu ?
+
+<details>
+<summary>Voir la réponse et l'explication détaillée</summary>
+
+L'angle $\theta$ sépare le nuage absolu des données brutes réelles (le vecteur abstrait $b$) et la fine plaque d'approximation linéaire construite par notre modèle (l'hyperplan construit par l'image $\text{Im}(A)$ de nos algorithmes).
+- Si l'angle est à $0$, le vecteur vrai repose PARFAITEMENT sur la plaque des prédictions. L'erreur de notre modèle est formellement nulle ($r = 0$). Les observations collent à la théorie à la perfection.
+- Si l'angle pointe vers $90^\circ$, cela signifie que notre modèle s'enfonce dans une dimension spatiale où la donnée réelle de $b$ diverge orthogonalement... L'erreur de l'approximation $r$ va écraser la prédiction pure, l'hypothèse (notre grille A) est absolument impuissante à modéliser la donnée physique $b$.
+</details>
+
+---
+
+### ⭐⭐⭐⭐ Niveau 4 — Complexité Algorithmique
+
+---
+
+**Exercice 24 — La guerre du CPU : Forme brute vs Forme Orthogonale**
+
+Énoncez les étapes informatiques (et leur temps Processeur respectif en flops) pour résoudre un réseau surdéterminé $m \times n$ (avec $m \gg n$). D'un côté par la formation de base brute des équations normales, de l'autre point de vue par la factorisation QR stricte des matrices. Quelle méthode consomme le double de son adversaire ?
+
+<details>
+<summary>Voir la réponse et l'explication détaillée</summary>
+
+**Option 1 : Méthodes des Équations Normales (LU brut) :**
+- Assembler le super bloc symétrique $A^T A$ (et modifier $b \to A^Tb$) : Frappe processeur extrêmement massive car on multiplie deux grandes matrices rectangulaires $\to \approx m n^2$ flops.
+- Attaquer le bloc généré avec la factorisation $LU$ pivotée au centre de son arène (bloc $n \times n$) $\to \approx \frac{2}{3}n^3$ flops.
+- Total dominé par : $\approx mn^2$ flops.
+
+**Option 2 : Méthode QR par Miroirs Householder :**
+- Calcul de la factorisation formelle directe sans jamais détruire les matrices originales $A = QR$ avec une multitude de matrices miroirs $\to \approx 2n^2(m - \frac{n}{3})$. C'est massif car on attaque physiquement toute la hauteur $m$.
+- Lancer le vecteur de substitution terminal $Rx = Q^Tb$ (Trivial et gratuit) $\to \approx 4mn$ flops.
+- Total dominé par : $\approx 2mn^2$ flops.
+
+**Vainqueur (Vitesse Brute) :** La victoire CPU revient écrasamment aux Équations Normales simples, exigeant littéralement la **moitié du temps de calcul total** par rapport à l'extraction fine géométrique $QR$. L'ordinateur préfère de loin le $LU$ basique. (Mais à quel prix algorithmique... ? Voir niveau 5 !)
+</details>
+
+---
+
+### ⭐⭐⭐⭐⭐ Niveau 5 — Le Désastre de Stabilité $\kappa(A)^2$
+
+---
+
+**Exercice 25 — Pourquoi les statisticiens vénèrent QR**
+
+La matrice carrée $A^TA$ est magique à manipuler, la méthode des équations usuelles gagne tout niveau rapidité (voir dessus)... Et pourtant, l'algorithme $QR$ est vital. 
+**Prouvez mathématiquement** ce qu'il se passera concernant l'instabilité (Le Conditionnement $\kappa$) du pauvre processeur tentant de résoudre une matrice complexe $A$ si elle a la malchance d'être fortement instable au départ (ex: $\kappa(A) = 1.0 \times 10^{11}$). 
+
+<details>
+<summary>Voir la réponse et l'explication détaillée</summary>
+
+Pour comprendre pourquoi l'ordinateur qui utilise $LU$ sur $A^T A$ va crasher ses mémoires, nous devons vérifier à quel conditionnement mathématique la factorisation fait face. LU ne va pas se heurter à $\kappa(A)$, il va se heurter à l'hydre **$\kappa(A^T A)$** !
+
+Analysons la formule absolue en norme :
+$$ 
+\kappa(A^T A) = \| (A^T A)^{-1} \|_2 \cdot \| A^T A \|_2 
+$$
+Souvenons nous des interludes mathématiques sur la norme des transposées symétriques : $\| A^T A \|_2 = \|A\|^2_2$.  
+Il s'avère que cela fonctionne pareil pour l'pseudo inverse :
+$$ 
+\kappa(A^T A) = \| A^{\dagger} \|^2_2 \cdot \|A\|^2_2 = (\kappa(A))^2 
+$$
+
+**La Réalité Informatique du Crash :**
+Le processeur affronte littéralement avec fureur **$\kappa(A)$ élevé au carré** :
+Si la matrice de départ avait un conditionnement de $10^{11}$, l'ordinateur, pour pouvoir s'exécuter à la va-vite, fabrique au milieu de sa mémoire RAM une monstruosité absolue conditionnée à $10^{22}$ !!
+Sachant que la limitation physique absolue des doubles précisions IEEE-754 ($64$ bits) ne mémorise que 16 chiffres stricts ($\approx 10^{-16}$). Les erreurs microscopiques inévitables vont exploser par un levier multiplicateur massif $10^{22}$. 
+
+La totalité des décimales du résultat sortant $\sim x$ seront composées exclusivement avec **$100\%$ de bruit blanc d'arrondis sans aucun lien avec l'algèbre**. C'est une perte sèche !
+
+**Conclusion :** Householder et sa douce Factorisation Orthogonale pure $A=QR$ n'utilise **jamais** la structure en carré $A^T A$. La chirurgie opère de face et encaisse simplement $\approx \kappa(A)$, sauvant formellement des milliards de calculs de la destruction informatique au profit de mathématiques fiables et robustes.
+</details>
+
+

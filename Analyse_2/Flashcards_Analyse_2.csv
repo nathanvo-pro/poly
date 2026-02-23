@@ -1,0 +1,31 @@
+Question;Réponse;Tags
+Qu'est-ce qu'une série de Fourier ?;C'est la décomposition d'une fonction périodique $f$ en une somme (potentiellement infinie) de sinusoïdes : $f(x) \sim \frac{a_0}{2} + \sum_{k=1}^{\infty} [a_k \cos(k\omega x) + b_k \sin(k\omega x)]$.;14
+Quel est le produit scalaire dans $L^2([a,b])$ ?;$\langle f, g \rangle = \int_a^b f(x) \overline{g(x)} \, dx$. Si $f$ et $g$ sont réelles : $\langle f, g \rangle = \int_a^b f(x) g(x) \, dx$.;14
+Comment calcule-t-on la norme $L^2$ d'une fonction ?;$\;f\;_2 = \sqrt{\langle f,f \rangle} = \left(\int_a^b ;f(x);^2 \, dx\right)^{1/2}$. Elle mesure l'énergie totale du signal.;14
+Quand dit-on que deux fonctions sont orthogonales ?;Quand leur produit scalaire $L^2$ est nul : $\langle f, g \rangle = \int_a^b f(x)g(x) \, dx = 0$.;14
+Quelle est la norme au carré de $\cos(kx)$ sur $[-\pi, \pi]$ ?;$\;\cos(kx)\;_2^2 = \int_{-\pi}^{\pi} \cos^2(kx) \, dx = \pi$ pour $k \geq 1$. Et $\;1\;_2^2 = 2\pi$.;14
+Quelle est la formule du coefficient de Fourier $c_k$ (cas général) ?;$c_k = \frac{\langle f, \varphi_k \rangle}{\;\varphi_k\;_2^2}$. On projette $f$ sur la direction de $\varphi_k$.;14
+Formule de $a_k$ pour la série sur $[-L, L]$ ?;$a_k = \frac{1}{L}\int_{-L}^{L} f(t) \cos\left(\frac{k\pi t}{L}\right) dt$.;14
+Formule de $b_k$ pour la série sur $[-L, L]$ ?;$b_k = \frac{1}{L}\int_{-L}^{L} f(t) \sin\left(\frac{k\pi t}{L}\right) dt$.;14
+Que représente $a_0/2$ dans la série de Fourier ?;C'est la **valeur moyenne** de $f$ sur $[-L, L]$.;14
+Quelle est l'Inégalité de Bessel ?;$\sum_{k=0}^{\infty} ;c_k;^2 \;\varphi_k\;_2^2 \leq \;f\;_2^2$. Les coefficients de Fourier au carré sommés ne dépassent jamais l'énergie totale de $f$.;14
+Quand l'Inégalité de Bessel devient-elle une Égalité (Parseval) ?;Quand la série de Fourier converge en $L^2$ vers $f$, i.e. quand le système est complet : $\sum ;c_k;^2\;\varphi_k\;^2 = \;f\;_2^2$.;14
+Qu'est-ce qu'un système complet ?;Un système orthogonal $\mathcal{F}$ est complet dans $L^2$ si pour toute $f \in L^2$, la série de Fourier de $f$ converge en $L^2$ vers $f$.;14
+Qu'est-ce que la convergence en moyenne quadratique ($L^2$) ?;$\sum c_k \varphi_k \overset{L^2}{=} f$ signifie $\lim_{n\to\infty} \;f - \sum_{k=0}^{n} c_k \varphi_k\;_2 = 0$ (la distance $L^2$ tend vers 0).;14
+Série de Fourier complexe : formule des $c_k$ ?;$c_k = \frac{1}{T}\int_{-T/2}^{T/2} f(t)e^{-ik\omega_0 t} \, dt$ avec $\omega_0 = 2\pi/T$.;14
+Relation entre $c_k$ réels $(a_k, b_k)$ et complexes ?;$c_k = \frac{a_k - ib_k}{2}$, $c_{-k} = \frac{a_k + ib_k}{2}$, $c_0 = a_0/2$. Si $f$ est réelle : $c_{-k} = \overline{c_k}$.;14
+Qu'est-ce qu'une fonction régularisée $\tilde{f}$ ?;$\tilde{f}(x) = \frac{f(x^-) + f(x^+)}{2}$. Aux points de continuité, $\tilde{f} = f$. Aux discontinuités, c'est la moyenne des limites latérales.;14
+Que dit le Théorème de Dirichlet ?;Si $f$ et $f'$ sont continues par morceaux, la série de Fourier converge simplement vers $\tilde{f}(x) = \frac{f(x^-)+f(x^+)}{2}$ en tout point.;14
+Qu'est-ce que le phénomène de Gibbs ?;Près d'une discontinuité, les sommes partielles de Fourier oscillent et dépassent la vraie valeur d'environ 9% du saut. Ce dépassement ne disparaît pas avec $n\to\infty$.;14
+Coefficients de Fourier de la dérivée $f'$ (série complexe) ?;$c_k(f') = ik\omega_0 \cdot c_k(f)$. Dériver revient à multiplier les coefficients par $ik\omega_0$.;14
+Propriété de la convolution en Fourier ?;$c_k(f * g) = c_k(f) \cdot c_k(g)$. La convolution dans le temps = multiplication dans la fréquence.;14
+Solution de l'équation de la chaleur 1D avec extrémités à 0 ?;$u(x,t) = \sum_{n=1}^{\infty} b_n \sin(n\pi x/L) e^{-\alpha^2(n\pi/L)^2 t}$ où $b_n$ sont les coefficients sinus de la condition initiale $f(x)$.;14
+Pourquoi les hautes fréquences disparaissent vite dans l'équation de la chaleur ?;Le facteur $e^{-\alpha^2(n\pi/L)^2 t}$ décroît exponentiellement avec $n^2$. Les harmoniques de haute fréquence (grand $n$) s'amortissent beaucoup plus vite.;14
+Qu'est-ce que la dérivée généralisée à droite d'une fonction $C^0_{\text{morc}}$ ?;$\text{DDG}(f);_x = \lim_{h \to 0^+} \frac{f(x+h) - f(x^+)}{h}$. Elle utilise la **limite à droite** $f(x^+)$ et non $f(x)$. La valeur de $f(x)$ elle-même n'a aucune importance !;14
+Que signifie $f \in C^1_{\text{morc}}([a,b])$ ?;Il existe une subdivision de $[a,b]$ telle que $f \in C^1$ sur chaque sous-intervalle ouvert, ET les limites $f(x_i^\pm)$ et $f'(x_i^\pm)$ existent (finies) de part et d'autre de chaque point de subdivision.;14
+Formule des coefs de la dérivée quand $f(-\pi) \neq f(\pi)$ ?;Si $\delta = f(\pi) - f(-\pi)$ : $a_k(f') = k b_k(f) + \frac{(-1)^k}{\pi}\delta$ et $b_k(f') = -k a_k(f)$. Le terme correctif $\delta(-1)^k/\pi$ ne tend PAS vers 0 : la formule naïve est **fausse** !;14
+Série de Fourier de l'onde triangulaire $f(x) = ;x;$ sur $[-L, L]$ ?;$f(x) = \frac{L}{2} - \frac{4L}{\pi^2}\sum_{n \text{ impair}} \frac{\cos(n\pi x/L)}{n^2}$. La série converge **uniformément** car $f_{\text{pro}}$ est continue. Coefs décroissent en $1/n^2$.;14
+Série de Fourier de l'onde en dents de scie $f(x) = x/2$ sur $[-\pi,\pi]$ ?;$f(x) = \sum_{k=1}^\infty \frac{(-1)^{k+1}}{k}\sin(kx)$. La convergence est **simple seulement** (pas uniforme) car $f_{\text{pro}}$ est discontinue. Coefs décroissent en $1/k$ et $\sum;b_k;$ diverge. On déduit $\sum 1/k^2 = \pi^2/6$.;14
+Coefs de Fourier du produit $f \cdot g$ (en notation complexe) ?;$c_k(f \cdot g) = \sum_{\ell=-\infty}^{+\infty} f_\ell \cdot g_{k-\ell}$ (convolution **discrète** des suites de coefs). Inverse de la convolution : produit dans le temps = convolution discrète des fréquences.;14
+Que garantit la convergence uniforme $\sum b_j \varphi_j \overset{C.U.}{=} f$ sur les coefs ?;Les $b_j$ sont nécessairement les **coefs de Fourier** de $f$ : $b_k = \langle f, \varphi_k \rangle / \;\varphi_k\;^2$. On peut intervertir somme et intégrale car la convergence est uniforme. Unicité garantie.;14
+Condition pour C.U. de $\sum c_k \varphi_k$ avec système complet ?;Si $\mathcal{F}$ est complet dans $L^2$, $f \in C^2([a,b])$, et $f$ satisfait les **conditions aux limites** ad hoc, alors la série de Fourier de $f$ converge uniformément. Pour le système classique : condition = $f(-L) = f(L)$.;14

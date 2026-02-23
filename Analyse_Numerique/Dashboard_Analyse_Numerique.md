@@ -49,3 +49,41 @@ L'ordinateur n'utilisant qu'une mémoire finie (flottants), il est inévitable d
 | [ ] | Exercices Niveau 3 ⭐⭐⭐ (Le sauvetage par matrices Triangulaires) |
 | [ ] | Exercices Niveau 4 ⭐⭐⭐⭐ (Théorème et exécution LU) |
 | [ ] | Exercices Niveau 5 ⭐⭐⭐⭐⭐ (Maîtriser $PA=LU$ et le $\det(A)$) |
+
+---
+
+## 📌 Chapitre 3 : Factorisation QR et systèmes surdéterminés
+
+### 📝 Plan de révision
+1. **La Factorisation QR :** Comprendre l'orthogonalité de $Q$ et la décomposition en matrices idéales.
+2. **Le Miroir de Householder :** L'isométrie algébrique et la fabrication de la matrice $H = I - 2 \frac{vv^T}{\|v\|^2}$.
+3. **Les Moindres Carrés :** Pourquoi un système surdéterminé n'a pas de solution parfaite. L'approche du résidu minimal $\min \|r\|_2$.
+4. **Les Équations Normales :** Démonstration par la Jacobienne et la naissance de $A^T A x = A^T b$.
+5. **Le Pseudo-Inverse ($A^\dag$) :** La formule de projection $(A^T A)^{-1} A^T$.
+6. **Le Duel Final :** LU sur Équations Normales (rapide mais détruit le conditionnement en $\kappa^2$) vs Householder QR (Lent, inconditionnellement stable).
+
+### ☑️ Suivi de progression
+
+| Statut | Sujet |
+| :---: | :--- |
+| [ ] | Synthèse du Chapitre 3 lue et comprise |
+| [ ] | Flashcards étudiées (score > 80%) |
+| [ ] | Exercices Niveau 1 ⭐ et 2 ⭐⭐ (Orthogonalité $Q^TQ$ et Preuve de $H$) |
+| [ ] | Exercices Niveau 3 ⭐⭐⭐ (Moindres Carrés et Jacobienne) |
+| [ ] | Exercices Niveau 4 ⭐⭐⭐⭐ (Analyse CPU : $A^TA$ vs Householder) |
+| [ ] | Exercices Niveau 5 ⭐⭐⭐⭐⭐ (Preuve intégrale du Conditionnement $\kappa^2$) |
+
+---
+
+## 🏋️ Séances de Travaux Pratiques
+
+| Statut | Séance |
+| :---: | :--- |
+| [ ] | Séance 1 — Prise en main d'Octave (rappels lus + exercices similaires faits) |
+| [ ] | Séance 2 — Erreurs d'arrondi et propagation |
+| [ ] | Séance 3 — Conditionnement et factorisation LU |
+| [ ] | Séance 4 — Factorisation PA=LU et QR à la main |
+| [ ] | Séance 5 — Moindres carrés : équations normales vs QR |
+| [ ] | Séance 6 — Méthodes itératives (Jacobi, Gauss-Seidel) et splines |
+| [ ] | Séances 7-8 — Recherche de zéros d'équations non-linéaires |
+| [ ] | Séance 9 — Intégration numérique (Trapèzes, Simpson, Romberg) |

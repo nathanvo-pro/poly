@@ -132,3 +132,85 @@ $$\langle P \rangle = 0 \quad \text{(inducteur ou condensateur idéal)}$$
 | $\mu_0$ | $4\pi \times 10^{-7}$ H/m |
 | $c = 1/\sqrt{\varepsilon_0\mu_0}$ | $3 \times 10^8$ m/s |
 | $e$ | $1.602 \times 10^{-19}$ C |
+
+---
+
+## Chapitre 6 — Oscillateurs harmoniques et amortis
+
+**Oscillateur harmonique :** $\ddot{x} + \omega_0^2 x = 0$, solution $x = A\cos(\omega_0 t + \varphi)$, $\omega_0 = \sqrt{\kappa/m}$
+
+**Énergie :** $E_p = \frac{1}{2}\kappa x^2$, $E_c = \frac{1}{2}m\dot{x}^2$, $E_{\text{tot}} = E_c + E_p = \text{const}$
+
+**Pendule :** $\omega_0 = \sqrt{g/l}$ (indépendant de $m$)
+
+**Circuit LC :** $\omega_0 = 1/\sqrt{LC}$, $W_m = \frac{1}{2}LI^2$, $W_e = \frac{1}{2}CV^2$
+
+**OLA :** $\ddot{x} + 2\alpha\dot{x} + \omega_0^2 x = 0$, $\alpha = \lambda/(2m)$, solution $x = Ae^{-\alpha t}\cos(\omega_a t + \varphi)$, $\omega_a = \sqrt{\omega_0^2 - \alpha^2}$
+
+**RLC :** $\omega_0 = 1/\sqrt{LC}$, $\alpha = R/(2L)$
+
+**Phaseurs :** $x = \text{Re}[\underline{X}e^{i\omega t}]$, $d/dt \to i\omega$
+
+**Universalité :** $\kappa_{\text{eff}} = E_p''(x_0)$ → tout potentiel en U est un OH autour de son minimum
+
+---
+
+## Chapitre 7 — Oscillateur forcé et résonance
+
+**OLAF :** $\ddot{x} + 2\alpha\dot{x} + \omega_0^2 x = a\cos(\omega t)$, phaseur $\underline{X} = \frac{a}{\omega_0^2 - \omega^2 + 2\alpha i\omega}$
+
+**Résonance :** $|\underline{X}|_{\max} = \frac{a}{2\alpha\omega_0}$ quand $\omega = \omega_0$, déphasage $\pi/2$
+
+**Largeur :** $\delta\omega^* = \sqrt{3}\,\alpha$, facteur de qualité $Q = \frac{\omega_0}{2\alpha} = \frac{1}{R}\sqrt{L/C}$
+
+**Impédances :** $Z_R = R$, $Z_L = i\omega L$, $Z_C = \frac{1}{i\omega C}$
+
+**RLC série :** $\underline{Z} = R + i(\omega L - \frac{1}{\omega C})$, résonance quand $\omega_0 = 1/\sqrt{LC}$
+
+**Puissance :** $P_{\text{moy}} = V_{\text{eff}}I_{\text{eff}}\cos\varphi$
+
+---
+
+## Chapitre 8 — Ondes de corde et de compression
+
+**Éq. d'onde :** $\frac{\partial^2 x}{\partial t^2} = v^2\frac{\partial^2 x}{\partial z^2}$
+
+**Corde :** $v = \sqrt{F_T/\mu}$
+
+**Cristal :** $v = d\sqrt{\kappa_c/m}$
+
+**Gaz :** $v = \sqrt{\gamma P/\rho}$
+
+**Solutions :** $x = f(z-vt) + g(z+vt)$ (d'Alembert)
+
+**Superposition :** $ax_1 + bx_2$ est solution si $x_1,x_2$ le sont
+
+---
+
+## Chapitre 9 — Ondes électromagnétiques
+
+**Éq. de l'onde lumineuse :** $\Delta\vec{E} - \frac{1}{c^2} \frac{\partial^2\vec{E}}{\partial t^2} = \vec{0}$, idem pour $\vec{B}$
+
+**Vitesse :** $c = \frac{1}{\sqrt{\mu_0\varepsilon_0}} \approx 3 \times 10^8\;\text{m/s}$
+
+**Onde harmonique progressive (selon z) :** $\vec{E}(z,t) = \vec{E}_0\cos(kz - \omega t + \varphi)$
+
+**Relations :** $\omega = 2\pi f = \frac{2\pi}{T}$, $k = \frac{2\pi}{\lambda}$, $\lambda = cT = \frac{c}{f}$, $v = \frac{\omega}{k} = c$
+
+**Polarisation :** Direction du vecteur champ électrique $\vec{E}$. Toujours perpendiculaire à la propagation ($\text{div}\vec{E} = 0$).
+
+**Trièdre électromagnétique :** $\vec{E}$, $\vec{B}$, $\vec{k}$ (ou la vitesse) forment un trièdre direct, et $B_0 = E_0/c$.
+
+---
+
+## Chapitre 10 — Ondes stationnaires, battements et Doppler
+
+**Onde stationnaire :** $y(z,t) = 2a\sin(kz)\sin(\omega t + \phi)$ (variables séparées)
+
+**Corde fixée aux extrémités :** $\lambda_n = \frac{2L}{n} \implies f_n = n \frac{v}{2L}$ (modes propres, harmoniques)
+
+**Battement :** $y(t) = 2A\cos\left(\frac{\omega_1-\omega_2}{2}t\right)\cos\left(\frac{\omega_1+\omega_2}{2}t\right)$. Fréquence de l'enveloppe de puissance : $f_b = |f_1 - f_2|$.
+
+**Effet Doppler (général) :** 
+$$f' = f \left(\frac{v \pm v_{obs}}{v \mp v_{source}}\right)$$
+*Règle :* L'approche mutuelle **augmente** $f'$ (prendre $+$ en haut, $-$ en bas). L'éloignement mutuel **diminue** $f'$ (prendre $-$ en haut, $+$ en bas). Double effet pour un écho sur cible mobile.

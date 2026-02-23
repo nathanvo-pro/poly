@@ -124,7 +124,7 @@ const COURSES = [
         icon: 'assets/icons/physique.png',
         type: 'phys',
         folder: 'Physique',
-        description: 'PHYS-H1002 — Électromagnétisme Vol. I',
+        description: 'PHYS-H1002 — Élec., Osc., Ondes Vol. I & II',
         files: [
             {
                 id: 'dashboard',
@@ -132,7 +132,7 @@ const COURSES = [
                 emoji: '📊',
                 type: 'dashboard',
                 fcClass: 'fc-dashboard',
-                desc: 'Vue d\'ensemble — 5 chapitres d\'électromagnétisme',
+                desc: 'Vue d\'ensemble — 10 chapitres de matière',
                 path: 'Physique/Dashboard_Physique.md',
             },
             {
@@ -141,7 +141,7 @@ const COURSES = [
                 emoji: '📖',
                 type: 'synthesis',
                 fcClass: 'fc-synthesis',
-                desc: 'Gradient, Flux, Faraday, Maxwell, Lenz, Circuits',
+                desc: '10 chapitres : Électromagnétisme, Oscillations, Ondes',
                 path: 'Physique/Synthese_Physique.md',
             },
             {
@@ -150,7 +150,7 @@ const COURSES = [
                 emoji: '✏️',
                 type: 'exercises',
                 fcClass: 'fc-exercises',
-                desc: '15 exercices à difficulté croissante ⭐→⭐⭐⭐⭐⭐',
+                desc: 'De nombreux exercices progressifs ⭐→⭐⭐⭐⭐⭐',
                 path: 'Physique/Exercices_Physique.md',
             },
             {
@@ -170,6 +170,15 @@ const COURSES = [
                 fcClass: 'fc-flashcards',
                 desc: 'Révision active — 30 cartes Q/R',
                 path: 'Physique/Flashcards_Physique.csv',
+            },
+            {
+                id: 'qcms',
+                name: 'Quiz (QCM)',
+                emoji: '✅',
+                type: 'qcms',
+                fcClass: 'fc-dashboard',
+                desc: 'Questions à choix multiples par chapitre',
+                path: 'Physique/QCM_Physique.md',
             },
         ]
     },

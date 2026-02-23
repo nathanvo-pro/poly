@@ -1,8 +1,8 @@
-# 📊 Dashboard — Physique PHYSH1002 Vol. I
+# 📊 Dashboard — Physique PHYSH1002 Vols. I & II
 
-> **Cours** : Électromagnétisme — PHYS-H-1002, Volume I  
+> **Cours** : Électromagnétisme — PHYS-H-1002, Volumes I & II  
 > **Professeur** : P. Kockaert, 2025–2026  
-> **Thèmes** : Gradient, Flux, Circulation, Faraday, Maxwell, Lenz, Circuits dynamiques
+> **Thèmes** : Gradient, Flux, Circulation, Faraday, Maxwell, Lenz, Circuits dynamiques, Oscillateurs, Ondes mécaniques, EM et stationnaires, Doppler
 
 ---
 
@@ -62,3 +62,40 @@
 - [ ] AC : valeurs efficaces I_eff = I_m/√2
 - [ ] Réactances : X_L = ωL (passe-bas), X_C = 1/(ωC) (passe-haut)
 - [ ] Déphasage : L retarde I de π/2, C avance I de π/2
+
+### Chapitre 6 — Oscillateurs harmoniques et amortis
+- [ ] Équation et solutions de l'oscillateur harmonique (OH)
+- [ ] Modèles OH : masse-ressort, pendule (petit angle), circuit LC, molécules
+- [ ] Pulsations propres : $\omega_0 = \sqrt{\kappa/m}$, $\sqrt{g/l}$, $1/\sqrt{LC}$
+- [ ] OLA (amorti) : équation caractéristique $\lambda^2 + \gamma\lambda + \omega_0^2 = 0$
+- [ ] Les 3 régimes : sous-critique (pseudo-périodique), critique, sur-critique (apériodique)
+- [ ] Facteur de qualité $Q = \omega_0 / \gamma$
+
+### Chapitre 7 — Oscillateur linéaire amorti forcé (OLAF)
+- [ ] Équation différentielle avec forcage $F_0 \cos(\omega t)$
+- [ ] Utilisation des phaseurs pour la solution stationnaire
+- [ ] Résonance d'amplitude : fréquence de résonance $\omega_R = \sqrt{\omega_0^2 - \gamma^2/2}$
+- [ ] Largeur de résonance $\delta\omega^* \approx \gamma = \omega_0/Q$
+- [ ] Déphasage en quadrature à la résonance
+- [ ] Circuit RLC forcé : Impédance complexe $Z = R + i(X_L - X_C)$
+
+### Chapitre 8 — Ondes de corde et de compression
+- [ ] Équation d'onde 1D : $\partial_t^2 x = v^2 \partial_z^2 x$
+- [ ] Corde tendue : $v = \sqrt{F_T/\mu}$
+- [ ] Ondes sonores dans les gaz : $v = \sqrt{\gamma P / \rho}$
+- [ ] Solutions de d'Alembert $f(z-vt) + g(z+vt)$ et superposition
+- [ ] Lien entre accélération et courbure locale de la corde
+
+### Chapitre 9 — Ondes électromagnétiques
+- [ ] Équations de Maxwell dans le vide
+- [ ] Équation d'onde vectorielle pour $\vec{E}$ et $\vec{B}$
+- [ ] Vitesse de propagation universelle : $c = 1/\sqrt{\mu_0\varepsilon_0}$
+- [ ] Ondes planes harmoniques transversales : $v = \omega/k = c$
+- [ ] Polarisation rectiligne et trièdre de propagation orthogonale
+
+### Chapitre 10 — Ondes stationnaires, battements et effet Doppler
+- [ ] Onde stationnaire : $y(z,t) = 2a\sin(kz)\sin(\omega t + \phi)$
+- [ ] Différence entre nœuds et ventres (séparés de $\lambda/4$)
+- [ ] Modes propres d'une corde de longueur $L$ fixée : $\lambda_n = 2L/n$
+- [ ] Phénomène de battement d'amplitude : $f_B = |f_1 - f_2|$
+- [ ] Effet Doppler acoustique : $f_{per\c{c}ue} = f_{émise} \frac{v \pm v_{obs}}{v \mp v_{source}}$

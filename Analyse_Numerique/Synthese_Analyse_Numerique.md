@@ -357,3 +357,131 @@ $$
 #### Calcul profond de l'Inversion ($A^{-1}$)
 L'inverse s'écrit formellement en recherchant la collection des colonnes vectorielles $x_i$ répondant à l'indépendance de la base canonnique : $A x_i = e_i$.
 On exécute l'algorithme de factorisation en cascade sur $PA=LU$ pour toutes les colonnes unitaires, coûtant au global un impressionnant total brut de : $\frac{8}{3}n^3$ flops en pur temps machine.
+
+---
+
+## Chapitre 3 : Factorisation QR et systèmes surdéterminés
+
+> 📚 **Objectif du chapitre :**  Apprendre à résoudre des systèmes sans solution exacte (Moindres Carrés), et découvrir une factorisation alternative ($QR$) basée sur des transformations géométriques orthogonales, plus lente mais vitale pour l'analyse spectrale et les statistiques multidimensionnelles.
+
+### 1. La Factorisation QR : Généralités
+
+La factorisation $QR$ est l'autre grande décomposition matricielle de l'Analyse Numérique.
+Contrairement à $LU$ (qui scinde une matrice en deux triangles), $QR$ prend une matrice $A$ de dimension rectangulaire $m \times n$ (souvent plus "haute" que "large", avec $m \ge n$) et la scinde en :
+
+$$
+A = QR
+$$
+
+Où :
+- **$Q$ est une matrice Orthogonale** (dimension $m \times m$ pour la forme pleine). Ses colonnes forment une base de vecteurs superposables de longueur 1 à $90^{\circ}$ les uns des autres. 
+  **Propriété suprême :** L'inverse d'une matrice orthogonale est simplement sa transposée : $Q^{-1} = Q^T \implies Q^T Q = I$.
+- **$R$ est une matrice Trapézoïdale Supérieure**. Les éléments en dessous de sa diagonale sont complètement zérotés. Puisque $m \ge n$, les $m-n$ dernières lignes de $R$ sont physiquement constituées uniquement de zéros (vide complet).
+
+*(Pour des raisons informatiques d'économie de mémoire, MATLAB/Octave calculent souvent la factorisation QR **réduite** : $\hat{Q}\hat{R} = A$. On arrache la coquille inutile des zéros inférieurs de l'équation).*
+
+### 2. La Magie de la matrice de Householder ($H$)
+
+Il existe plusieurs algorithmes pour fabriquer le $Q$ et le $R$ (Gram-Schmidt, Rotations de Givens...). Le standard absolu, stable et rapide s'appelle l'algorithme par **Transformations de Householder**.
+
+**Le principe :** De la même manière que Gauss écrasait les parties inférieures des vecteurs colonnes en les multipliant par $L_1, L_2\dots$ , Householder les écrase en les multipliant par $Q_1, Q_2\dots$, mais tout en gardant une isométrie parfaite (sans déformer l'espace vectoriel, en faisant des "miroirs" multidimensionnels).
+
+**Démonstration de la matrice miroir de Householder :**
+Householder construit un "reflet géométrique" permettant de basculer n'importe quel vecteur pointant vers le vide sur l'axe standard désiré en utilisant un vecteur miroir $v$.
+La formule de la transformation $H$ associée à un vecteur de rebond $v$ est :
+$$
+\boxed{H = I - 2 \frac{vv^T}{\|v\|^2_2}}
+$$
+
+Cette matrice possède des propriétés algébriques miracles :
+1. **Elle est Symétrique ($H^T = H$) :**
+   $(I - 2 \frac{vv^T}{\|v\|^2_2})^T = I^T - 2 \frac{(vv^T)^T}{\|v\|^2_2}$.
+   Or $(vv^T)^T = (v^T)^T (v)^T = vv^T$.  La matrice est fondamentalement symétrique !
+2. **Elle est Orthogonale ($H^T H = I$) ce qui implique qu'elle est sa propre inverse ($H^2 = I$) :**
+   Multiplions : $HH$
+   $$ HH = (I - 2 \frac{vv^T}{\|v\|^2_2}) (I - 2 \frac{vv^T}{\|v\|^2_2}) = I - 4 \frac{vv^T}{\|v\|^2_2} + 4 \frac{(vv^T)(vv^T)}{(\|v\|^2_2)^2} $$
+   Le terme de droite $(vv^T)(vv^T)$ contient à l'intérieur un $(v^Tv)$ scalaire qui n'est autre que la définition de la norme euclidienne au carré $\|v\|^2_2$. Il va donc purement s'annuler avec le bas de la fraction :
+   $$ = I - 4 \frac{vv^T}{\|v\|^2_2} + 4 \frac{v (\|v\|^2_2) v^T}{\|v\|^4_2} = I - \text{truc} + \text{truc} = I $$
+
+**L'algorithme de factorisation :** 
+Pour forcer des zéros en dessous du pivot courant de la colonne vectorielle $x$, l'ordinateur sélectionne le vecteur de rebond parfait :
+$$ v = x \pm \|x\|_2 e_1 $$
+*(En pratique sur un ordinateur, le bit de signe `sign(x1)` dictera le choix du $\pm$ pour éviter à tout prix une Annulation Catastrophique lors de l'opération sur la mantisse).*
+
+On attaque alors par la gauche $H_1 A$, puis $H_2 (H_1 A) \dots$ coûtant pour une factorisation complète environ $\sim 2n^2(m - \frac{n}{3})$ flops machine.
+
+### 3. Interlude Algébrique : Normes et Symétries Absolues
+Avant de résoudre le mystère des systèmes impossibles, il faut solidifier deux propriétés universelles en algèbre :
+
+- **Propriété 1 :** Pour une matrice symétrique $A$, $\|A\|_2$ correspond directement à la plus grande valeur propre (en valeur absolue) de son spectre spectral $\max |\lambda_i|$.
+- **Propriété 2 :** L'accumulation carrée $\|A^T A\|_2$ se réduit en norme équivalente à $\|A\|^2_2$. 
+
+### 4. Gérer l'Impossible : Les Systèmes Surdéterminés
+
+Dans la vraie vie (Ingénierie, statistiques, capteurs de Data Science), on a souvent **beaucoup plus d'équations** de prise de données que de variables pures dans notre modèle fonctionnel. Le système est un rectangle très haut : $m \gg n$. 
+
+$$
+Ax = b
+$$
+Dans la vaste majorité des cas, ce système avec trop de contraintes n'a **aucune solution stricte et exacte**. Les points ne s'alignent pas chimiquement.
+
+L'objectif en calcul numérique est de s'approcher au maximum d'une issue acceptable. 
+On définit formellement l'écart à la perfection (le **résidu**) par le vecteur d'erreur : $r = b - Ax$.
+L'approche choisie se nomme la résolution aux **Moindres Carrés** (Minimisation globale de la variance euclidienne).
+
+$$
+\min_x \|b - Ax\|_2
+$$
+
+### 5. La solution formelle des Équations Normales (La Jacobienne)
+
+**Démonstration formelle par annulation des pentes géodésiques :**
+On cherche virtuellement le point vectoriel $x$ le plus bas dans la cuvette de l'erreur carrée $f(x) = \|b - Ax\|^2_2$. Le point critique minimum est l'unique endroit où le gradient multidimensionnel est nul ($\nabla f(x) = 0$).
+
+En algèbre matricielle :
+$$ f(x) = (b-Ax)^T(b-Ax) = b^Tb - x^TA^Tb - b^TAx + x^TA^TAx $$
+On trouve la dérivée par rapport au vecteur $x$ (règle des tenseurs analytiques) :
+$$ \nabla f(x) = 0 - 2A^Tb + 2A^TAx $$
+En égalisant ce gradient différentiel purement à $0$, on découvre le Saint Graal des statistiques, condition de l'optimum divin :
+$$
+\boxed{A^T A x = A^T b}
+$$
+C'est le système des **Équations Normales**. 
+
+*(Note : Dans ces circonstances strictes, ce rectangle $(A^T A)$ d'origine devient un bloc super symétrique carré de dimension pure $(n \times n)$, positif défini. Sa robustesse permet l'usage inconditionnel de Factorisations ultra-stables comme Cholesky ou $PA=LU$ !)*
+
+#### Le Tenseur Pseudo-inverse ($A^{\dagger}$)
+Dans le cas surdéterminé, on ne peut pas techniquement parler d'inversion ($A^{-1}$ n'existe pas pour un rectangle !). On va devoir "bricoler" une matrice de projection rectangulaire à gauche.
+Si je résous l'équation de l'optimum $x = (A^T A)^{-1} A^T b$, j'emballe la formule dans le package mathématique du **Pseudo-inverse de Moore-Penrose** noté $A^{\dagger}$ ("A dague").
+
+$$ A^{\dagger} = (A^T A)^{-1} A^T $$
+
+### 6. Interprétation Géométrique de l'Improvisation ($\sin(\theta)$)
+
+L'Analyse des données est une géométrie. Lors d'un problème aux "moindres carrés", mon programme tente désespérément d'approcher le vecteur de mes données ($b$) par une simple combinaison de colonnes de $A$ (l'hyperplan de l'Image de A appelé $\text{Im}(A)$ ou Range($A$)).
+Le résidu $r$ est le rayon laser d'erreur vectorielle. Pour que ce rayon soit le plus "court" possible (pythagore), ce rayon doit **pointer obligatoirement à un angle droit de $90^\circ$ de notre image plane projetée**.
+
+Plus l'angle d'élévation original ($\theta$) entre mes vraies données chaotiques absolues $b$ et mon horizon plat d'approximation synthétique $A x_{approx}$ est grand, plus le $\sin(\theta)$ se rapproche gravement de sa limite ($1.0$). L'équation devient géométriquement intenable !
+
+### 7. Le duel décisif : Équations Normales *vs* Factorisation QR
+
+Si j'utilise mon ordinateur pour coder la résolution du meilleur lissage matriciel $Ax \approx b$. J'ai deux méthodes lourdes :
+
+**1. La Méthode LU sur les Équations Normales (Force brute)**
+On ordonne au processeur de générer physiquement $(A^TA)$ puis on l'attaque au $LU$ pivoté de la partie 2 du cours. L'avantage absolu : calcul foudroyant !
+- **Coût** : L'assemblage de ce bloc de tenseur symétrique est $\approx mn^2$ flops, puis attaqué avec $\approx \frac{2}{3}n^3$ flops. Temps machine hyper dominé par sa propre création.
+
+**2. La Méthode par Algorithme QR de Householder (Chirurgie orthogonale)**
+Sans jamais fabriquer $A^T A$ (qui détruit des informations), l'ordinateur lance ses miroirs de factorisations dessus : $A = QR \implies A^T A = (QR)^T(QR) = R^T Q^T Q R = R^T I R = R^T R$. Une fois que $Q$ est tombé de l'équation, on résout simplement par un blocage triangulaire magique $Rx = Q^Tb$.
+- **Coût** : Énorme pénalité $2mn^2$. Sensiblement double du temps processeur pour tout exécuter.
+
+**La tragédie du Conditionnement $\kappa$ :**
+Pourquoi utiliser la méthode lente $QR$ au lieu de l'algorithme bourrin des Équations Normales ? 
+La **Démonstration du conditionnement des moindres carrés** révèle que la stabilité de tout le processus s'effondre avec la première méthode sous l'escalade d'une simple puissance $2$ :
+$$
+\kappa(\text{Équations Normales}) = \kappa(A^T A) = \|(A^T A)^{-1}\|_2 \|A^T A\|_2 = \|A^{\dagger}\|_2^2 \|A\|^2_2 = \boxed{\kappa(A)^2}
+$$
+
+Si les données sont instables (matrice source mal-conditionnnée de base avec un pauvre $\kappa \approx 10^{10}$), attaquer brutalement à la méthode des équations usuelles va **arracher les décimales des pauvres flottants à la puissance $2$ ($\approx 10^{20}$ !)** ce qui détruit littéralement la plage de précision double de l'ordinateur ($10^{16}$). Résultat final en sortie ? Seulement du pur bruit blanc dénué de tout sens physique.
+
+La force de la chirurgie $QR$ est de bloquer l'escalade : l'ordinateur sort le modèle **inconditionnellement stable**.

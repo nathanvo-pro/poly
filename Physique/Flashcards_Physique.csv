@@ -33,3 +33,37 @@ Quel est le <b>déphasage</b> courant–tension pour L et C ?;Inducteur : couran
 Comment interpréter $\text{div}\,\bar{B} = 0$ physiquement ?;Il n'existe <b>pas de monopôles magnétiques</b>. Les lignes de champ magnétique sont toujours fermées (ou vont à l'infini). Le flux net de $\bar{B}$ à travers toute surface fermée est nul.;ch2_flux ch4_maxwell
 Quelle est la <b>densité d'énergie</b> du champ EM ?;Magnétique : $w_B = \frac{1}{2\mu}\|\bar{B}\|^2$<br>Électrique : $w_E = \frac{1}{2}\varepsilon_0\|\vec{E}\|^2$;ch5_circuits
 Que sont les <b>courants de Foucault</b> ?;Des courants parasites induits dans un conducteur massif exposé à un champ magnétique variable. Ils créent des boucles de courant, dissipent de l'énergie par effet Joule, et constituent un effet souvent <b>nuisible</b> (mais utile pour le freinage EM).;ch4_maxwell
+Qu'est-ce que l'oscillateur harmonique ?;Un système dont l'accélération est proportionnelle et opposée à la position : ẍ = -ω₀² x. Solution : x(t) = A cos(ω₀t + φ).;ch6
+Donnez la pulsation propre d'une masse-ressort.;ω₀ = √(κ/m) où κ est la constante de rappel et m la masse.;ch6
+Quelle est l'énergie potentielle de l'oscillateur harmonique ?;Ep = ½κx² (parabole). La force est f = -dEp/dx = -κx.;ch6
+Comment obenir la constante de rappel effective d'un potentiel quelconque ?;Par développement de Taylor au 2ᵉ ordre autour du minimum x₀ : κeff = E''p(x₀).;ch6
+Donnez la pulsation propre du pendule simple.;ω₀ = √(g/l). Elle est indépendante de la masse.;ch6
+Donnez la pulsation propre du circuit LC.;ω₀ = 1/√(LC). L'énergie oscille entre magnétique (½LI²) et électrique (½CV²).;ch6
+Quelle est l'équation canonique de l'OLA ?;ẍ + 2αẋ + ω₀²x = 0 avec α = λ/(2m) le coefficient d'amortissement.;ch6
+Quelle est la solution de l'OLA en amortissement faible ?;x(t) = A cos(ωₐt + φ)e^(-αt) avec ωₐ = √(ω₀² - α²) < ω₀.;ch6
+Dans le circuit RLC, identifiez ω₀ et α.;ω₀ = 1/√(LC) et α = R/(2L). R dissipe l'énergie par effet Joule.;ch6
+Qu'est-ce qu'un phaseur ?;Un nombre complexe X tel que x(t) = Re[X·e^(iωt)]. |X| = amplitude, arg(X) = déphasage.;ch6
+Quel est l'avantage des phaseurs ?;La dérivée temporelle d/dt devient une multiplication par iω. L'EDO se simplifie en équation algébrique.;ch6
+Quelle est la solution en phaseur de l'OLAF ?;X = a/(ω₀² - ω² + 2αiω) avec a = F/m. L'amplitude et le déphasage du mouvement sont donnés par |X| et arg(X).;ch7
+Que vaut l'amplitude maximale de l'OLAF à la résonance ?;|X|_max = a/(2αω₀) = (F/κ) × ω₀/(2α). C'est le produit de l'amplitude statique par le facteur de qualité Q.;ch7
+Quel est le déphasage à la résonance exacte (ω = ω₀) ?;φ = π/2 (quadrature). Le mouvement est x(t) = -|X|sin(ωt), en retard de 90° sur la force.;ch7
+Qu'est-ce que la largeur de résonance ?;C'est la demi-largeur à mi-amplitude : δω* = √3 α. Plus l'amortissement est faible, plus la résonance est étroite.;ch7
+Qu'est-ce que l'impédance d'un circuit RLC ?;Z = R + i(X_L - X_C) avec X_L = ωL et X_C = 1/(ωC). C'est la loi d'Ohm généralisée : V = Z·I.;ch7
+Quelle est la condition de résonance du circuit RLC ?;X_L = X_C ⟹ ωL = 1/(ωC) ⟹ ω₀ = 1/√(LC). L'impédance est alors purement résistive |Z| = R.;ch7
+Donnez la formule de la puissance moyenne en alternatif.;P_moy = V_eff × I_eff × cos(φ) où φ est le déphasage tension-courant. cos(φ) est le facteur de puissance.;ch7
+Qu'est-ce que le facteur de qualité Q ?;Q = ω₀/(2α) = (1/R)√(L/C) pour un RLC. Plus Q est grand, plus la résonance est étroite et sélective.;ch7
+Quelle est l'équation d'onde des cordes ?;∂²x/∂t² = v² ∂²x/∂z² avec v = √(F_T/μ). L'accélération est proportionnelle à la courbure locale.;ch8
+Quelles sont les solutions de d'Alembert ?;Toute fonction f(z-vt) + g(z+vt). f = onde progressive, g = onde régressive. La forme est arbitraire.;ch8
+Qu'est-ce que le principe de superposition ?;Si x₁ et x₂ sont solutions de l'éq. d'onde (linéaire), alors ax₁+bx₂ est aussi solution.;ch8
+Donnez la vitesse du son dans un gaz parfait.;v = √(γP/ρ) où γ = Cp/Cv, P = pression, ρ = masse volumique. Pour l'air : v ≈ 340 m/s.;ch8
+Vitesse du son dans un cristal 1D ?;v = d√(κ_c/m) où d = distance interatomique, κ_c = constante de rappel, m = masse atomique.;ch8
+Quelle équation de Maxwell a été modifiée avec le courant de déplacement ?;La loi d'Ampère : rot B = μ₀J + μ₀ε₀(∂E/∂t). Le terme de Maxwell est indispensable pour l'existence des ondes.;ch9
+Quelle est l'équation d'onde pour E dans le vide ?;ΔE - μ₀ε₀(∂²E/∂t²) = 0. En déduire que la vitesse de propagation est c = 1/√(μ₀ε₀).;ch9
+Qu'est-ce qu'une onde plane par rapport aux coordonnées spatiales ?;Les champs E et B uniformes dans tout plan orthogonal à la direction de propagation (dérivées x et y nulles si propagation en z).;ch9
+Qu'est-ce que le nombre d'onde k ?;k = 2π/λ (périodicité spatiale). Il est lié à la pulsation par k = ω/c.;ch9
+Qu'est-ce que la polarisation d'une onde ?;C'est la direction d'oscillation du champ E (rectiligne si les composantes transversales sont en phase).;ch9
+Quelle est l'expression mathématique d'une onde stationnaire spatio-temporelle ?;f(z,t) = 2a·sin(kz)·sin(ωt). Variables spatiales et temporelles sont séparées.;ch10
+Qu'est-ce qu'un ventre et un nœud ?;Ventre = point qui vibre avec l'amplitude maximale. Nœud = point immobile en permanence.;ch10
+Quelle est la distance entre deux nœuds dans une onde stationnaire ?;La distance est λ/2 (une demi-longueur d'onde).;ch10
+Donnez la formule de la fréquence de battement.;f_B = |f₁ - f₂|. C'est le nombre de variations d'amplitude par seconde créées par des ondes de fréquences proches.;ch10
+Quelle est la formule de l'effet Doppler (source mobile approchant d'un observateur fixe) ?;f_perçue = f_émise × [ v / (v - v_s) ]. La fréquence augmente.;ch10

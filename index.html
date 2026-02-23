@@ -45,6 +45,31 @@
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    [data-theme="dark"] {
+      --bg: #1c1e26;
+      --surface: #1e2028;
+      --surface2: #232530;
+      --surface3: #2a2d39;
+      --border: transparent;
+      --border-hover: transparent;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #cbd5e1;
+      --accent: #60a5fa;
+      --accent2: #3b82f6;
+      --accent3: #818cf8;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --info: #38bdf8;
+      --gradient: linear-gradient(135deg, #60a5fa, #818cf8);
+      --gradient2: linear-gradient(135deg, #3b82f6, #6366f1);
+      --glow: 6px 6px 12px #15161d, -6px -6px 12px #272a33;
+      --shadow: 8px 8px 16px #15161d, -8px -8px 16px #272a33;
+      --shadow-sm: 4px 4px 8px #15161d, -4px -4px 8px #272a33;
+      --shadow-inset: inset 6px 6px 12px #15161d, inset -6px -6px 12px #272a33;
+      --shadow-inset-sm: inset 3px 3px 6px #15161d, inset -3px -3px 6px #272a33;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -89,8 +114,8 @@
       font-size: 18px;
       background: var(--gradient);
       -webkit-background-clip: text;
-      color: var(--accent);
-      background: none;
+      background-clip: text;
+      color: transparent;
     }
 
     .topbar-logo .emoji {
@@ -271,12 +296,6 @@
       flex-shrink: 0;
     }
 
-    .course-icon.math {}
-
-    .course-icon.info {}
-
-    .course-icon.phys {}
-
     .course-name {
       font-size: 13px;
       font-weight: 600;
@@ -392,8 +411,8 @@
       font-weight: 800;
       background: var(--gradient);
       -webkit-background-clip: text;
-      color: var(--accent);
-      background: none;
+      background-clip: text;
+      color: transparent;
     }
 
     .welcome p {
@@ -1302,6 +1321,9 @@
           oninput="handleSearch(this.value)">
       </div>
       <div class="topbar-stats">
+        <button id="themeToggle" class="btn btn-ghost" onclick="toggleTheme()"
+          style="padding: 6px; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 16px;"
+          title="Basculer le thème">🌙</button>
         <div class="stat-chip"><span class="dot"></span> <span id="totalFiles">0</span> fichiers</div>
         <div class="stat-chip">📚 <span id="totalCourses">0</span> cours</div>
       </div>
@@ -1327,6 +1349,32 @@
 
   <script src="courses_data.js?v=2"></script>
   <script>
+    // ─── Theme ───────────────────────────────────────────────────────────────────
+    function setTheme(isDark) {
+      const btn = document.getElementById('themeToggle');
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (btn) btn.textContent = '☀️';
+        localStorage.setItem('studyhub_theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        if (btn) btn.textContent = '🌙';
+        localStorage.setItem('studyhub_theme', 'light');
+      }
+    }
+
+    function toggleTheme() {
+      setTheme(!document.documentElement.hasAttribute('data-theme'));
+    }
+
+    // Init theme initially
+    const savedTheme = localStorage.getItem('studyhub_theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setTheme(true);
+    } else {
+      setTheme(false);
+    }
+
     // ─── State ───────────────────────────────────────────────────────────────────
     let currentCourse = null;
     let currentTab = 'dashboard';
@@ -1533,7 +1581,7 @@
 
       // Extract H2 chapters for filtering
       let filterHtml = '';
-      if (fileObj.type === 'exercises' || fileObj.type === 'synthesis') {
+      if (fileObj.type === 'exercises' || fileObj.type === 'synthesis' || fileObj.type === 'qcms') {
         const h2Regex = /<h2[^>]*>(.*?)<\/h2>/gi;
         const chapters = [];
         let m;

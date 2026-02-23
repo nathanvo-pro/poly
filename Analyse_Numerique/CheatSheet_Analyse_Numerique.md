@@ -104,5 +104,33 @@ $$
 ## 4. Les Pièges Classiques du Standard
 
 ⚠️ **Division par 0 ou Dépassement Capacitaire** $\to$ `±Inf` (Overflow).
-⚠️ **Chute sous le niveau minimum** $\to$ Représentation Dénormalisée (Underflow, perte gravissime de précision).
 ⚠️ **Formes indéterminées** $\to$ `NaN` (Not a Number).
+
+---
+
+## 6. Systèmes Surdéterminés et Moindres Carrés (Chapitre 3)
+
+### Factorisation QR
+Scission matricielle $A = QR$
+- **$Q$** : Matrice Orthogonale. Préserve les longueurs, $Q^{-1} = Q^T$, et son inverse globale produit l'identité : $Q^T Q = I$.
+- **$R$** : Trapézoïdale Supérieure. Résolution par méthode magique de substitution arrière : $Rx = Q^T b$.
+
+### Miroir de Householder
+Transformation géométrique qui force des zéros :
+$$
+H = I - 2 \frac{vv^T}{\|v\|_2^2}
+$$
+Propriété d'or de $H$ : Strictement Symétrique **et** Orthogonale ($H = H^T = H^{-1}$).
+
+### Les Équations Normales (Force Brute)
+Le système découlant du minimum vectoriel de l'erreur carrée $\min \|b-Ax\|_2$ (Jacobienne $= 0$) :
+$$
+A^T A x = A^T b
+$$
+**(Danger)** : Bien qu'ultra-rapide, la matrice $A^T A$ propulse le conditionnement à $\kappa(A)^2$. Solution inapplicable pour les systèmes physiquement instables.
+
+### Le Pseudo-Inverse ($A^\dagger$)
+L'inversion gauche synthétique pour une matrice rectangulaire $m \times n$ :
+$$
+A^{\dagger} = (A^T A)^{-1} A^T
+$$
