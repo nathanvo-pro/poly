@@ -1,5 +1,7 @@
 # Synthèse — Analyse Numérique
 
+# Synthèse — Analyse Numérique
+
 ## Chapitre 1 : Représentation en virgule flottante, stabilité et conditionnement
 
 > 📚 **Objectif du chapitre :** Comprendre comment les ordinateurs représentent les nombres réels de façon finie, quantifier les erreurs inévitables que cela engendre, et analyser la robustesse d'un algorithme (stabilité) vis-à-vis d'un problème donné (conditionnement).

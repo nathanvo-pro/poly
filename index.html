@@ -1630,16 +1630,34 @@
         `;
       }
 
-      // Render LaTeX
+      // Render LaTeX asynchronously in chunks to prevent UI freeze
       if (typeof renderMathInElement !== 'undefined') {
-        renderMathInElement(document.getElementById(`md-${tabId}`), {
-          delimiters: [
-            { left: '$$', right: '$$', display: true },
-            { left: '$', right: '$', display: false },
-            { left: '\\(', right: '\\)', display: false },
-            { left: '\\[', right: '\\]', display: true }
-          ]
-        });
+        const container = document.getElementById(`md-${tabId}`);
+        if (container) {
+          const children = Array.from(container.children);
+          const chunkSize = 15; // Process 15 DOM nodes per frame
+          let currentIndex = 0;
+
+          function processChunk() {
+            const end = Math.min(currentIndex + chunkSize, children.length);
+            for (let i = currentIndex; i < end; i++) {
+              renderMathInElement(children[i], {
+                delimiters: [
+                  { left: '$$', right: '$$', display: true },
+                  { left: '$', right: '$', display: false },
+                  { left: '\\(', right: '\\)', display: false },
+                  { left: '\\[', right: '\\]', display: true }
+                ]
+              });
+            }
+            currentIndex += chunkSize;
+            if (currentIndex < children.length) {
+              requestAnimationFrame(processChunk);
+            }
+          }
+
+          requestAnimationFrame(processChunk);
+        }
       }
     }
 
@@ -1809,6 +1827,7 @@
 
       flashcardIndex = 0;
       flashcardFlipped = false;
+      initialCardCount = flashcardData.length;
 
       if (flashcardData.length === 0) {
         panel.innerHTML = '<div class="empty-state"><div class="icon">🃏</div><h3>Aucune flashcard trouvée</h3></div>';
@@ -1873,12 +1892,29 @@
       }
       flashcardIndex = 0;
       flashcardFlipped = false;
+      initialCardCount = flashcardData.length;
       renderFlashcard(getFlashcardPanel());
     };
 
     function renderFlashcard(panel) {
+      if (flashcardData.length === 0) {
+        panel.innerHTML = `
+        <div class="flashcard-area fade-in">
+          <div style="text-align:center;padding:40px">
+            <div style="font-size:56px">🎉</div>
+            <h2 style="margin:16px 0 8px;font-size:22px">Bravo !</h2>
+            <p style="color:var(--text-muted)">Tu as terminé toutes les flashcards de cette session.</p>
+            <br>
+            <button class="btn btn-primary" onclick="restartFlashcards()">🔄 Recommencer</button>
+          </div>
+        </div>
+        `;
+        return;
+      }
+
       const fc = flashcardData[flashcardIndex];
-      const progress = Math.round(((flashcardIndex + 1) / flashcardData.length) * 100);
+      // Progress calculation based on how many cards are left from the initial pool
+      const progress = Math.round(((initialCardCount - flashcardData.length) / initialCardCount) * 100);
 
       // Collect all tags available for building the selector
       const allTags = new Set();
@@ -1895,7 +1931,7 @@
       panel.innerHTML = `
       <div class="flashcard-area fade-in">
         <div style="text-align:center;">${filterHtml}</div>
-        <div class="flashcard-counter">Carte ${flashcardIndex + 1} / ${flashcardData.length}</div>
+        <div class="flashcard-counter">Cartes restantes : ${flashcardData.length}</div>
         <div class="flashcard-progress-bar">
           <div class="flashcard-progress-fill" style="width:${progress}%"></div>
         </div>
@@ -1916,9 +1952,10 @@
           <button class="fc-btn fc-btn-fail" onclick="nextCard(false)">❌ À revoir</button>
           <button class="fc-btn fc-btn-pass" onclick="nextCard(true)">✅ Su !</button>
         </div>
-        <div id="fcNextOnly" style="display:flex;gap:12px">
-          <button class="fc-btn fc-btn-next" onclick="flipCard()">👁 Révéler</button>
-          ${flashcardIndex > 0 ? `<button class="fc-btn" style="background:var(--surface2);color:var(--text-muted)" onclick="prevCard()">← Précédente</button>` : ''}
+        <div id="fcNextOnly" style="display:flex;gap:12px;justify-content:center;align-items:center;">
+          <button class="btn btn-ghost" style="padding:10px;font-size:20px;border-radius:100px;width:44px;height:44px;display:flex;justify-content:center;align-items:center;" onclick="prevCard()" ${flashcardData.length <= 1 ? 'disabled style="opacity:0.3;cursor:not-allowed;"' : 'title="Carte précédente"'}><i class="ri-arrow-left-s-line">←</i></button>
+          <button class="fc-btn fc-btn-next" style="margin:0 12px;" onclick="flipCard()">👁 Révéler</button>
+          <button class="btn btn-ghost" style="padding:10px;font-size:20px;border-radius:100px;width:44px;height:44px;display:flex;justify-content:center;align-items:center;" onclick="skipCard()" ${flashcardData.length <= 1 ? 'disabled style="opacity:0.3;cursor:not-allowed;"' : 'title="Passer à la suivante"'}><i class="ri-arrow-right-s-line">→</i></button>
         </div>
       </div>
       `;
@@ -1946,41 +1983,55 @@
     }
 
     function nextCard(passed) {
-      if (flashcardIndex < flashcardData.length - 1) {
-        flashcardIndex++;
-        flashcardFlipped = false;
-        const panel = getFlashcardPanel();
-        renderFlashcard(panel);
+      if (passed) {
+        // "Su!" -> Remove card from queue. Maintain index unless we were at the end.
+        flashcardData.splice(flashcardIndex, 1);
+        if (flashcardIndex >= flashcardData.length) {
+          flashcardIndex = 0; // Wrap around to the start
+        }
       } else {
-        const panel = getFlashcardPanel();
-        panel.innerHTML = `
-      <div class="flashcard-area fade-in">
-        <div style="text-align:center;padding:40px">
-          <div style="font-size:56px">🎉</div>
-          <h2 style="margin:16px 0 8px;font-size:22px">Bravo !</h2>
-          <p style="color:var(--text-muted)">Tu as terminé toutes les flashcards de ce cours.</p>
-          <br>
-            <button class="btn btn-primary" onclick="restartFlashcards()">🔄 Recommencer</button>
-        </div>
-      </div>
-    `;
+        // "À revoir" -> Keep the card, push it behind logically by advancing index.
+        flashcardIndex++;
+        if (flashcardIndex >= flashcardData.length) {
+          flashcardIndex = 0; // Wrap around
+        }
       }
+
+      flashcardFlipped = false;
+      renderFlashcard(getFlashcardPanel());
+    }
+
+    function skipCard() {
+      if (flashcardData.length <= 1) return;
+      flashcardIndex++;
+      if (flashcardIndex >= flashcardData.length) {
+        flashcardIndex = 0; // Wrap around
+      }
+      flashcardFlipped = false;
+      renderFlashcard(getFlashcardPanel());
     }
 
     function prevCard() {
-      if (flashcardIndex > 0) {
-        flashcardIndex--;
-        flashcardFlipped = false;
-        const panel = getFlashcardPanel();
-        renderFlashcard(panel);
+      if (flashcardData.length <= 1) return;
+      flashcardIndex--;
+      if (flashcardIndex < 0) {
+        flashcardIndex = flashcardData.length - 1; // Wrap around backwards
       }
+      flashcardFlipped = false;
+      renderFlashcard(getFlashcardPanel());
     }
 
     function restartFlashcards() {
       flashcardIndex = 0;
       flashcardFlipped = false;
-      // Reshuffle ONLY the filtered subset
+      // Re-populate from original filtered selection (if a filter is active)
+      if (currentFcFilter === 'all') {
+        flashcardData = [...fullFlashcardData];
+      } else {
+        flashcardData = fullFlashcardData.filter(fc => fc.tags.includes(currentFcFilter));
+      }
       flashcardData = flashcardData.sort(() => Math.random() - 0.5);
+      initialCardCount = flashcardData.length;
       const panel = getFlashcardPanel();
       renderFlashcard(panel);
     }
@@ -1989,7 +2040,8 @@
     async function fetchFile(path) {
       if (fileCache[path] !== undefined) return fileCache[path];
       try {
-        const resp = await fetch(path);
+        const cacheBuster = '?t=' + new Date().getTime();
+        const resp = await fetch(path + cacheBuster);
         if (!resp.ok) throw new Error();
         const text = await resp.text();
         fileCache[path] = text;

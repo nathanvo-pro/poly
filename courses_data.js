@@ -61,6 +61,15 @@ const COURSES = [
                 desc: 'Préparation aux séances TP — rappels & exercices similaires',
                 path: 'Analyse_Numerique/Seances_Exercices_Analyse_Numerique.md',
             },
+            {
+                id: 'qcms',
+                name: 'Quiz (QCM)',
+                emoji: '✅',
+                type: 'qcms',
+                fcClass: 'fc-dashboard',
+                desc: 'Questions à choix multiples par chapitre',
+                path: 'Analyse_Numerique/QCM_Analyse_Numerique.md',
+            },
         ]
     },
     {
@@ -116,6 +125,16 @@ const COURSES = [
                 desc: 'Révision active — mode cartes',
                 path: 'Informatique_OOP/Flashcards_Informatique_OOP.csv',
             },
+            {
+                id: 'qcms',
+                name: 'Quiz (QCM)',
+                emoji: '✅',
+                type: 'qcms',
+                fcClass: 'fc-dashboard',
+                desc: 'Questions à choix multiples (45 questions)',
+                path: 'Informatique_OOP/QCM_Informatique_OOP.md',
+            },
+
         ]
     },
     {
@@ -243,6 +262,15 @@ const COURSES = [
                 fcClass: 'fc-exercises',
                 desc: 'Rappels + exercices résolus par type (Séance 2 — Fourier)',
                 path: 'Analyse_2/Seances_Exercices_Analyse_2.md',
+            },
+            {
+                id: 'qcms',
+                name: 'Quiz (QCM)',
+                emoji: '✅',
+                type: 'qcms',
+                fcClass: 'fc-dashboard',
+                desc: 'Questions à choix multiples sur Fourier',
+                path: 'Analyse_2/QCM_Analyse_2.md',
             },
         ]
     }
