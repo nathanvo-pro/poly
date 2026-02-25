@@ -323,234 +323,234 @@
 **Réponse A**. L'IO Manipulator est l'assistant inéluctable du console out. `setprecision(3)` formelle impose au nombre le format $1.23$.
 </details>
 
-### Question 2.12 : Le marqueur spécial et flagrant `std::string::npos` (notamment retourné par la recherche `string.find("texte")`) signifie intrinsèquement :
-- [ ] A) Que la sémantique de la séquence textuelle que l'on recherche bêtement n'a " Pas Été Trouvée " (No Position).
-- [ ] B) the in THE
-- [ ] C) Un pur dépassement asymptotique.
-- [ ] D) Qu'il y a eu The bête au
+### Question 2.12 : Le marqueur spécial `std::string::npos` (retourné par `string.find("texte")`) signifie :
+- [ ] A) Que la séquence textuelle n'a pas été trouvée (No Position).
+- [ ] B) Que la chaîne a dépassé la limite de taille autorisée.
+- [ ] C) Que la recherche s'est arrêtée au premier espace.
+- [ ] D) Une erreur de pointeur nul.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse A**. C'est le concept de "Non-Position". L'algorithme a ratissé l'ensemble de la string sans l'apercevoir.
+**Réponse A**. C'est le concept de "Non-Position". L'algorithme a ratissé l'ensemble de la string sans trouver la sous-chaîne. `npos` est la valeur maximale possible pour le type de taille.
 </details>
 
-### Question 2.13 : Du coté de la Console, `cin` et `cout` ...
-- [ ] A) Bêtes The 
-- [ ] B) `cin` est une instance de `istream` (Flux D'Entrée). `cout` est un `ostream` (Flux De Sortie).
-- [ ] C) la from
-- [ ] D) in THE Asymètre
+### Question 2.13 : Concernant la console, que sont `cin` et `cout` ?
+- [ ] A) Des mots-clés réservés pour la compilation.
+- [ ] B) `cin` est une instance de `istream` (Flux d'Entrée) et `cout` est un `ostream` (Flux de Sortie).
+- [ ] C) Des variables globales de type int.
+- [ ] D) Des pointeurs vers des fichiers physiques.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse B**. i pour Input, o pour Output. `cin` absorbe les entrées du flux et `cout` propulse les sorties au terminal.
+**Réponse B**. "i" pour Input, "o" pour Output. `cin` absorbe les entrées du clavier et `cout` propulse les sorties vers le terminal.
 </details>
 
-### Question 2.14 : Le `ostringstream` ...
-- [ ] A) C'est une technique magique qui permet de " CONSTRUIRE " en concaténant des données variées à l'intérieur d'une string formatée sans même afficher à la console.
-- [ ] B) In au Bêtes 
-- [ ] C) asymètre from the 
-- [ ] D) from The In
+### Question 2.14 : Quel est l'intérêt principal de `std::ostringstream` ?
+- [ ] A) Il permet de construire une chaîne formattée en mémoire sans l'afficher immédiatement à l'écran, agissant comme un tampon.
+- [ ] B) Il convertit automatiquement du texte en binaire brut.
+- [ ] C) Il chiffre les données avant leur envoi sur le réseau.
+- [ ] D) Il crée une copie asynchrone du flux standard.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse A**. `std::ostringstream` is building strings. Cela évite le grand fatras de `+` ou les formattages complexes à la C-style, tout en bénéficiant de `.str()` à la fin pour récupérer la chaîne globale.
+**Réponse A**. `std::ostringstream` sert à "bâtir" des chaînes complexes en utilisant l'opérateur `<<` (comme on le ferait avec `cout`), puis on extrait le résultat final avec l'appel `.str()`.
 </details>
 
-### Question 2.15 : Côté Architecture de l'application, en C++ la `struct` ...
-- [ ] A) The 
-- [ ] B) in The 
-- [ ] C) stocke THE ses variables de `Façon CONTIGUË` en " Mémoire " (RAM).
-- [ ] D) The from
+### Question 2.15 : Côté architecture de l'application, en C++ une `struct`...
+- [ ] A) Contient uniquement des fonctions.
+- [ ] B) Alloue automatiquement ses attributs sur le Heap.
+- [ ] C) Stocke physiquement ses variables attributs de façon contiguë (les unes à la suite des autres) en mémoire RAM.
+- [ ] D) Ne peut contenir que des types de données primitifs.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse C**. La structure garantit que tous les champs variables alloués qu'elle porte existent en bloc direct contigu l'un après l'autre à son adresse physique pure RAM.
+**Réponse C**. Dans une structure, l'agencement mémoire garantit que toutes ses données sont rassemblées dans un bloc contigu direct.
 </details>
 
 ---
 
 ## Cours 3 : Hiérarchie mémoire, Arrays avancés et Introduction à la POO
 
-### Question 3.1 : Quelle est la hiérarchie des vitesses d'accès typique de la mémoire ?
-- [ ] A) bête
-- [ ] B) " **Registres** " (< 1 ns), puis " **Cache L1/L2/L3** " (1-20 ns), then " **RAM** " (~ 50 ns), then " **Storage SSD** " (> 10 000ns).
-- [ ] C) la The In
-- [ ] D) the The
+### Question 3.1 : Quelle est la hiérarchie classique des vitesses d'accès à la mémoire dans un ordinateur, du plus rapide au plus lent ?
+- [ ] A) Cache L1, RAM, Registres, Disque Dur.
+- [ ] B) Registres, Cache L1/L2/L3, RAM, Stockage (SSD/HDD).
+- [ ] C) RAM, Cache L3, Registres, SSD.
+- [ ] D) Registres, RAM, ROM, Disque Dur.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse B**. La pyramide hiérarchique memory memory.
+**Réponse B**. Les registres du processeur sont les plus rapides (< 1 ns), suivis par les différents niveaux de mémoire cache (1-20 ns), puis la RAM (~ 50-100 ns), et enfin le stockage persistant comme les SSD qui sont des milliers de fois plus lents.
 </details>
 
-### Question 3.2 : Quelle est la "Règle d'Or en optimisation" face à l'arbre BMD ?
-- [ ] A) " **Eviter Les Accès Disque (I/O) au profit de la RAM.** " Charger les data une seule fois en RAM Array (1000x plus rapide !).
-- [ ] B) IN THE
-- [ ] C) Bêtes 
-- [ ] D) au
+### Question 3.2 : Quelle est la règle d'or en optimisation de performance concernant les accès aux données ?
+- [ ] A) Privilégier systématiquement les accès disque (I/O) pour économiser la RAM.
+- [ ] B) Utiliser des variables globales pour tout le programme.
+- [ ] C) Minimiser les accès au disque dur (I/O) en chargeant unitairement de gros blocs en RAM.
+- [ ] D) Ne jamais utiliser le cache L1.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse A**. L'IO (Entrée et Sorties asymétriques sur le disque) constituent un inévitable goulot d'étranglement fatal. Un vecteur en mémoire sera exploré massivement plus vite.
+**Réponse C**. Les opérations d'entrée/sortie (I/O) sur un disque sont un très gros goulot d'étranglement. Il faut privilégier le travail en mémoire vive (RAM) avec des structures de données contiguës (comme les tableaux/vectors).
 </details>
 
-### Question 3.3 : Quel est le danger majeur de l'Array en natif C++ ?
-- [ ] A) Bêtes In
-- [ ] B) The 
-- [ ] C) " Le C++ n'effectue JAMAIS la moindre Vérification des limites (Bounds Checking). " L'Accès à un index qui est au-delà provoque un **comportement indéfini** (le pur `Segfault` ou de Memory Corruption ).
-- [ ] D) asymètre
+### Question 3.3 : Quel est le principal danger des tableaux statiques natifs (built-in arrays) en C++ ?
+- [ ] A) Ils sont très lents à allouer.
+- [ ] B) Le C++ ne fait aucune vérification de dépassement de limite (Bounds Checking), ce qui peut causer des accès mémoire indéfinis (Segfault) ou de la corruption de données.
+- [ ] C) Ils ne peuvent stocker que des entiers.
+- [ ] D) Ils nécessitent une commande `delete[]` même s'ils sont déclarés sur la pile (Stack).
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse C**. "No bounds Checking in C++". L'accès à une case pure hors taille lira la mémoire suivante de la machine non affiliée sans prévenir.
+**Réponse B**. Si vous déclarez `int tab[5];` et accédez à `tab[10]`, le C++ lira ou écrira la mémoire à cette adresse sans erreur de compilation, ce qui peut écraser d'autres variables et causer un crash brutal silencieux.
 </details>
 
-### Question 3.4 : Qu'est-ce qu'un pointer ?
-- [ ] A) from asymétrique
-- [ ] B) " **Une Variable qui contient une Adresse Mémoire** " au lieu d'une bête valeur primitive.
-- [ ] C) la THE Bêtes
-- [ ] D) Inbête from
+### Question 3.4 : Qu'est-ce qu'un pointeur en C++ ?
+- [ ] A) Une variable qui contient le type d'une autre variable.
+- [ ] B) Une fonction spéciale utilisée pour naviguer dans un tableau.
+- [ ] C) Une variable qui contient l'**adresse mémoire** d'une autre variable (ou d'un objet).
+- [ ] D) Une référence inaltérable.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse B**. Un pointeur pointe sur la localisation unique (l'adresse absolue RAM) là où le programme ou le SE stocke physiquement la pure data.
+**Réponse C**. Un pointeur pointe physiquement sur la case mémoire (l'adresse RAM) où se trouve la véritable donnée. Par exemple `int* p = &var;`.
 </details>
 
-### Question 3.5 : the In The IN The of `Dereference` The 
-- [ ] A) L'Opérateur de *Déréférencement* `*` Returns The VALUE pointed asymètre in The.
-- [ ] B) In The From
-- [ ] C) in the from
-- [ ] D) of THE from Inéluctablement Asymètre IN Bêtes
+### Question 3.5 : Quel opérateur est utilisé pour extraire la valeur pointée par un pointeur (déréférencement) ?
+- [ ] A) `&` (Esperluette)
+- [ ] B) `*` (Astérisque)
+- [ ] C) `->` (Flèche)
+- [ ] D) `.` (Point)
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse A**. *p = Value. En utilisant l'astérisque de déréférence (sur le pointeur mémoire pur the p), vous pouvez subtilement extraire sa valeur hébergée.
+**Réponse B**. L'opérateur `*` (`*p`) permet d'accéder à la valeur stockée à l'adresse pointée. L'opérateur `&` sert à obtenir l'adresse d'une variable.
 </details>
 
-### Question 3.6 : THE `new` permet...
-- [ ] A) IN 
-- [ ] B) of The
-- [ ] C) L'Instruction `new` permet de **ALLOUER DYNAMIQUEMENT** la Mémoire dans the the Heap (Le tas).
-- [ ] D) Asymétriquement IN in THE The Bêtes
+### Question 3.6 : En C++, à quoi sert l'instruction `new` ?
+- [ ] A) À instancier un nouvel espace de travail dans l'IDE.
+- [ ] B) À vider la mémoire tampon.
+- [ ] C) À allouer dynamiquement de la mémoire sur le Tas (Heap) pendant l'exécution du programme.
+- [ ] D) À déclarer une variable locale constante sur la Pile (Stack).
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse C**. Allocation du Heap dynamique pure in Memory C++ the $new$.
+**Réponse C**. `new` sollicite le système d'exploitation pour réserver un bloc de mémoire dynamique sur le Heap et retourne un pointeur vers cette adresse mémoire.
 </details>
 
-### Question 3.7 : THE from Of the Asymétriquement THE of the In Bêtes
-- [ ] A) " **Chaque Appel à `new` Doit inéluctablement Avoir SON `delete` correspondant** " (Pour in the Free la Memory the).
-- [ ] B) The in THE From
-- [ ] C) IN 
-- [ ] D) Asymètre the
+### Question 3.7 : Quelle est la règle stricte concernant l'utilisation de `new` pour éviter les fuites de mémoire ?
+- [ ] A) Tout appel à `new` doit être strictement couplé à un appel ultérieur à `delete` (ou `delete[]`) pour libérer la mémoire.
+- [ ] B) Le compilateur gère automatiquement la destruction via le Garbage Collector virtuel.
+- [ ] C) Il faut allouer avec `new` et libérer avec `free()`.
+- [ ] D) `new` ne s'utilise que pour les tableaux, pas pour les objets seuls.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse A**. The $new\dots{}delete$ The The $new[]\dots{}delete[]$. Bêtes The In IN from Memory from
+**Réponse A**. Sans `delete`, la mémoire reste allouée et verrouillée même si le pointeur est détruit, créant une "fuite de mémoire" (Memory Leak) qui remplit la RAM.
 </details>
 
-### Question 3.8 : Qu'est ce qu'un `Memory Leak` ?
-- [ ] A) Une "Fuite de Mémoire" the arrive quand le PROGRAM THE oublie the in `Free (delete)` la Memory in the. La RAM sature.
-- [ ] B) The In Bêtes the 
-- [ ] C) THE from
-- [ ] D) of Asymètre IN
+### Question 3.8 : Qu'est-ce qu'une Fuite de Mémoire (Memory Leak) ?
+- [ ] A) Un dépassement d'indice dans un tableau causant une réécriture accidentelle.
+- [ ] B) Une situation où de la mémoire allouée dynamiquement sur le Heap n'est jamais libérée, saturant peu à peu la RAM du système.
+- [ ] C) Un plantage de l'ordinateur causé par un pointeur nul.
+- [ ] D) Une faille de sécurité permettant d'injecter du code dans la Pile (Stack).
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse A**. In C++ $leak$ = asymètre In no The $delete$. 
+**Réponse B**. En C++, l'oubli scrupuleux de l'opérateur `delete` amène la mémoire de l'OS à saturer, obligeant parfois l'utilisateur à forcer la fermeture de son logiciel.
 </details>
 
-### Question 3.9 : Le Constructor in The OOP
-- [ ] A) Bêtes In asymètre
-- [ ] B) " le `Constructor` " is The Function in The that is " **Called Automatically at Object's Creation (Instantiation ) To Initialize the State (Data)** ".
-- [ ] C) la THE
-- [ ] D) bête the
+### Question 3.9 : En Programmation Orientée Objet (POO), qu'est-ce qu'un Constructeur ?
+- [ ] A) Une fonction qui détruit l'objet à la fin de son cycle de vie.
+- [ ] B) Une méthode globale permettant d'afficher l'état de la classe.
+- [ ] C) Une méthode spéciale, portant le même nom que la classe, appelée automatiquement lors de l'instanciation (création) de l'objet pour initialiser ses attributs.
+- [ ] D) Un fichier header `.h` qui déclare les variables de l'objet.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse B**. IN constructor from The Object.
+**Réponse C**. Le constructeur sert à préparer l'objet (allocation de mémoire interne, valeurs par défaut des attributs, etc.) dès l'instant où il naît en mémoire.
 </details>
 
-### Question 3.10 : Bêtes in `Encapsulation` ...
-- [ ] A) Bêtes 
-- [ ] B) Of The
-- [ ] C) L'`Encapsulation` in OOP is " **Data The Hiding** " = (`Private Attributes` The = Data , In `Public Methods (Getters/Setters )` = the Access).
-- [ ] D) THE In
+### Question 3.10 : Quel est l'objectif du principe d'Encapsulation en POO ?
+- [ ] A) Rendre tous les attributs publics pour faciliter l'accès depuis le `main()`.
+- [ ] B) Cacher les données internes (attributs privés) et fournir des méthodes publiques (Getters/Setters) pour les lire ou les modifier de manière sécurisée et contrôlée.
+- [ ] C) Mettre plusieurs classes dans le même fichier `.cpp`.
+- [ ] D) Compresser les données en mémoire vive.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse C**. IN asymètre from Encap = Data hiding the In (Private attributes).
+**Réponse B**. L'encapsulation (Data Hiding) protège les états internes de l'objet afin de garantir sa cohérence et d'empêcher le programme extérieur de corrompre des variables cruciales.
 </details>
 
-### Question 3.11 : Le `this` pointer ...
-- [ ] A) Le " `this` pointer " in The is The " Pointer to the In Current `OBJECT` " the asymétriquement the it is acting on.
-- [ ] B) bête 
-- [ ] C) la
-- [ ] D) the
+### Question 3.11 : À l'intérieur d'une classe, que représente le pointeur `this` ?
+- [ ] A) Un pointeur vers la classe mère (héritage).
+- [ ] B) Une référence globale au fichier source appelant.
+- [ ] C) Un pointeur invisible et natif de la classe, qui pointe vers l'adresse mémoire de **l'objet (l'instance) courant** sur lequel la méthode a été appelée.
+- [ ] D) Un mot clé équivalent à `nullptr`.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse A**. $this$ pointer = The object In the asymètre Address. 
+**Réponse C**. Par exemple `this->name = name;` permet de lever l'ambiguïté entre l'attribut de membre de cet objet précis `name` et le paramètre local `name` entrant dans la fonction.
 </details>
 
-### Question 3.12 : Le `Destructor` from The Asymètre 
-- [ ] A) The `Destructors (\~Classname)` the are " `Called Automatically` " when an `Object Is Destroyed` to Cleanup The any Memory au the In The allocated. 
-- [ ] B) In 
-- [ ] C) in The
-- [ ] D) l'
+### Question 3.12 : Quel est le rôle principal d'un Destructeur (ex: `~MyClass()`) ?
+- [ ] A) Forcer la suppression de tous les fichiers annexes du programme sur le disque dur.
+- [ ] B) Il est appelé automatiquement juste avant la destruction de l'objet, son rôle majeur est d'effectuer un grand nettoyage, notamment en libérant (delete) la mémoire dynamique allouée par l'objet durant sa vie.
+- [ ] C) Remettre à zéro toutes les variables primitives de la pile.
+- [ ] D) Il n'a aucun rôle en C++, c'est un héritage du langage C.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse A**. "called on The In Memory bêtes From The destroy. The $~$.
+**Réponse B**. C'est le nettoyeur officiel de l'objet pour éviter ces fameuses Memory Leaks quand ce dernier disparait de sa portée (scope).
 </details>
 
-### Question 3.13 : `Reference` the in C++
-- [ ] A) The 
-- [ ] B) `References` `&` The la create `an Alias` (another Name for the same Variable). It allows " `Pass By Reference` ". This avoids copying and permits modification of the original.
-- [ ] C) from
-- [ ] D) the
+### Question 3.13 : Qu'est-ce qu'une Référence `&` en C++ comparativement à un banal Pointeur ?
+- [ ] A) C'est exactement la même chose à l'octet près.
+- [ ] B) Une référence est un alias, un "autre nom" pour une variable existante. Elle ne peut pas être nulle (`nullptr`), ne peut pas être réaffectée à pointer ailleurs, et s'utilise avec une syntaxe plus simple (sans devoir utiliser `*` ou `->`).
+- [ ] C) Les références sont bien plus lentes et volumineuses que les pointeurs.
+- [ ] D) Les références ne servent que pour des constantes.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse B**. THE the Pass By Reference (no The In copy ). Modify original. 
+**Réponse B**. Sous le capot, c'est très similaire, mais structurellement et syntaxiquement l'alias symbolique d'une Référence amène beaucoup de sécurité et de clarté dans le code (notamment pour le passage de paramètres).
 </details>
 
-### Question 3.14 : `Pass by Const Reference`
-- [ ] A) `const Type&` `Combines The Performance` The with `Safety`. it `avoids copy` The (Fast ) and `prevents modifying` the (Safe). au
-- [ ] B) of 
-- [ ] C) in THE
-- [ ] D) The
+### Question 3.14 : Pourquoi le passage par "Référence Constante" (ex: `const std::string& str`) est-il très souvent utilisé en C++ ?
+- [ ] A) Pour obliger le programmeur à écrire plus de code de sécurisation mémoire.
+- [ ] B) Pour optimiser la base de données.
+- [ ] C) Cela combine la Performance et la Sécurité : on évite une coûteuse copie de la variable géante (performance), tout en interdisant à la fonction de modifier l'original par erreur (sécurité grâce au mot clé const).
+- [ ] D) Les passages de valeurs sont interdits, c'est l'unique alternative qui compile.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse A**. the The const Reference $\implies$ Fast (No Copy ) and Safe In (Const In). The
+**Réponse C**. Très très courant en C++. On passe une lourde `std::string` ou un lourd `Object` sans le dupliquer et pour uniquement le lire.
 </details>
 
-### Question 3.15 : Which of these is WRONG regarding memory areas?
-- [ ] A) The Stack provides large, dynamic memory blocks managed carefully by the user using 'new'.
-- [ ] B) The Stack is automatically managed via the scope of variables inside functions.
-- [ ] C) The Heap allows for massive memory capacity for the lifetime of the program until explicitly freed.
-- [ ] D) Accessing memory via references generally uses standard pointer logic underneath for abstraction without syntax clutter.
+### Question 3.15 : Laquelle de ces affirmations concernant l'allocation de mémoire est fausse ?
+- [ ] A) La Pile (Stack) offre de larges blocs de mémoire dynamique gérée soigneusement par l'utilisateur avec `new`.
+- [ ] B) La Pile (Stack) est gérée automatiquement via la portée (scope) des variables dans les fonctions.
+- [ ] C) Le Tas (Heap) permet de stocker des données massives dont la durée de vie persiste jusqu'à appel explicite de libération.
+- [ ] D) Dépasser la taille allouée de la pile provoque un plantage appelé Stack Overflow.
 
 <details>
 <summary>💡 Solution</summary>
 
-**Réponse A**. Stack memory provides small, statically managed, extremely fast memory buffers. The user uses the 'new' tool onto the mighty Heap area instead !
+**Réponse A**. La Pile (Stack) fournit des blocs fixes, petits et extrèmement rapides pour des variables locales, pas pour le mode dynamique manuel. L'utilisateur se sert de `new` pour viser le vaste Heap (Tas) !
 </details>
