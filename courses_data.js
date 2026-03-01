@@ -86,7 +86,7 @@ const COURSES = [
                 emoji: '📊',
                 type: 'dashboard',
                 fcClass: 'fc-dashboard',
-                desc: 'Vue d\'ensemble — Cours 1 à 3',
+                desc: 'Vue d\'ensemble — Cours 1 à 4',
                 path: 'Informatique_OOP/Dashboard_Informatique_OOP.md',
             },
             {
@@ -95,7 +95,7 @@ const COURSES = [
                 emoji: '📖',
                 type: 'synthesis',
                 fcClass: 'fc-synthesis',
-                desc: 'Bases C++, Arrays, POO & Classes',
+                desc: 'Bases C++, Arrays, POO, Pointeurs & Allocation dynamique',
                 path: 'Informatique_OOP/Synthese_Informatique_OOP.md',
             },
             {
@@ -131,7 +131,7 @@ const COURSES = [
                 emoji: '✅',
                 type: 'qcms',
                 fcClass: 'fc-dashboard',
-                desc: 'Questions à choix multiples (45 questions)',
+                desc: 'Questions à choix multiples (60 questions)',
                 path: 'Informatique_OOP/QCM_Informatique_OOP.md',
             },
 

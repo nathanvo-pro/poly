@@ -19,3 +19,14 @@ Le cours INFOH2001 enseigne la **programmation orientée objet en C++** pour les
 | 3 | Hiérarchie mémoire, Arrays avancés et POO | [Synthèse (Cours 3)](Synthese_Informatique_OOP.md#cours-3--hiérarchie-mémoire-arrays-avancés-et-introduction-à-la-poo) | [ ] Lu |
 
 ---
+
+
+---
+
+### 📋 Cours 4 — Systèmes de numération, Pointeurs & Allocation dynamique
+
+- [ ] Lire la synthèse (systèmes de numération, pointeurs, new/delete, Stack vs Heap, arbres récursifs, bitwise)
+- [ ] Faire les exercices (4.1 à 4.10)
+- [ ] Réviser les flashcards
+- [ ] Relire la cheat sheet
+- [ ] Faire le QCM (15 questions)

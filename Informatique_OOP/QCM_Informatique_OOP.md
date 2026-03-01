@@ -554,3 +554,188 @@
 
 **Réponse A**. La Pile (Stack) fournit des blocs fixes, petits et extrèmement rapides pour des variables locales, pas pour le mode dynamique manuel. L'utilisateur se sert de `new` pour viser le vaste Heap (Tas) !
 </details>
+
+
+---
+
+## Cours 4 : Pointeurs, Allocation dynamique & Bitwise
+
+### Question 4.1 : Que contient une variable de type pointeur ?
+- [ ] A) La valeur d'une autre variable.
+- [ ] B) L'adresse mémoire d'une autre variable.
+- [ ] C) Le type de la variable pointée.
+- [ ] D) Le nom de la variable pointée.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse B**. Un pointeur stocke une adresse mémoire (ex: `0x7fffffffd8dc`), pas la valeur elle-même. On accède à la valeur via le déréférencement (`*p`).
+</details>
+
+### Question 4.2 : Que signifie l'expression `*(ptr + 2)` si `ptr` pointe vers un tableau d'entiers ?
+- [ ] A) L'adresse du 3ème élément.
+- [ ] B) La valeur du 3ème élément du tableau (index 2).
+- [ ] C) La valeur du pointeur + 2 bytes.
+- [ ] D) Une erreur de compilation.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse B**. `ptr + 2` avance de `2 × sizeof(int)` bytes (soit 8 bytes pour un int). Le déréférencement `*` récupère la valeur à cette adresse, qui est `tab[2]`.
+</details>
+
+### Question 4.3 : Quelle est la différence entre `delete` et `delete[]` ?
+- [ ] A) Aucune, ils sont interchangeables.
+- [ ] B) `delete` libère un objet unique alloué par `new`. `delete[]` libère un tableau alloué par `new[]`.
+- [ ] C) `delete[]` est plus lent car il parcourt le tableau.
+- [ ] D) `delete` fonctionne sur le Heap, `delete[]` sur la Stack.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse B**. Utiliser `delete` au lieu de `delete[]` pour un tableau provoque un comportement indéfini : seul le premier élément serait libéré.
+</details>
+
+### Question 4.4 : Quelle zone mémoire est gérée automatiquement par le compilateur ?
+- [ ] A) Le Heap.
+- [ ] B) La Stack.
+- [ ] C) Le segment de texte.
+- [ ] D) La zone globale.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse B**. La Stack gère automatiquement les variables locales : elles sont allouées à l'entrée de la fonction et libérées à sa sortie (principe LIFO).
+</details>
+
+### Question 4.5 : Que produit `5 << 3` ?
+- [ ] A) 15
+- [ ] B) 8
+- [ ] C) 40
+- [ ] D) 125
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse C**. Le décalage à gauche de 3 positions multiplie par $2^3 = 8$. Donc $5 \times 8 = 40$.
+</details>
+
+### Question 4.6 : Pourquoi les enfants d'un nœud d'arbre sont-ils des pointeurs (`Node*`) et non des objets directs (`Node`) ?
+- [ ] A) Pour économiser de la mémoire.
+- [ ] B) Car `Node` contenant des `Node` directs créerait une taille mémoire infinie (récursion infinie de la définition du type).
+- [ ] C) Pour accélérer l'accès aux données.
+- [ ] D) Car le C++ l'interdit syntaxiquement.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse B**. Un `Node` contenant directement deux `Node` (pas des pointeurs) contiendrait eux-mêmes deux `Node`, etc., récursivement à l'infini. Les pointeurs ont une taille fixe (8 bytes), brisant cette récursion.
+</details>
+
+### Question 4.7 : Que fait l'opérateur `&` placé devant une variable (ex: `&x`) ?
+- [ ] A) Il effectue un AND logique.
+- [ ] B) Il retourne l'adresse mémoire de la variable.
+- [ ] C) Il crée une référence vers la variable.
+- [ ] D) B et C selon le contexte.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse D**. Dans une expression (`&x`), il retourne l'adresse. Dans une déclaration de paramètre (`int& ref = x`), il crée une référence (alias).
+</details>
+
+### Question 4.8 : Qu'est-ce qu'un Dangling Pointer ?
+- [ ] A) Un pointeur initialisé à nullptr.
+- [ ] B) Un pointeur qui pointe vers une mémoire déjà libérée (après delete).
+- [ ] C) Un pointeur qui pointe vers la Stack.
+- [ ] D) Un pointeur non initialisé.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse B**. Après `delete p;`, `p` contient toujours l'ancienne adresse (désormais invalide). Accéder à `*p` est un comportement indéfini. Bonne pratique : `p = nullptr;` après chaque `delete`.
+</details>
+
+### Question 4.9 : Quel est le résultat de `0b11010110 & 0b00001111` ?
+- [ ] A) 0b11011111
+- [ ] B) 0b00000110 (= 6)
+- [ ] C) 0b11010110
+- [ ] D) 0b00001111
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse B**. L'AND bit à bit ne conserve que les bits où les DEUX opérandes ont un 1. Le masque `0b00001111` ne laisse passer que les 4 bits de poids faible : `0110` = 6.
+</details>
+
+### Question 4.10 : Comment fonctionne le destructeur récursif d'un arbre ?
+- [ ] A) Il supprime uniquement la racine.
+- [ ] B) Il supprime les nœuds de gauche à droite en un seul passage.
+- [ ] C) Il appelle `delete` sur ses enfants left et right, ce qui déclenche leur destructeur, propageant la cascade jusqu'aux feuilles.
+- [ ] D) Il utilise une boucle for pour parcourir tous les nœuds.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse C**. `~Node() { if(left) delete left; if(right) delete right; }` — chaque `delete` déclenche le destructeur de l'enfant, qui fait de même. La récursion s'arrête aux feuilles (left==nullptr, right==nullptr).
+</details>
+
+### Question 4.11 : Quelle est l'équivalence fondamentale entre accès par indice et arithmétique de pointeurs ?
+- [ ] A) `tab[i]` ≡ `*(tab + i)`
+- [ ] B) `tab[i]` ≡ `*tab + i`
+- [ ] C) `tab[i]` ≡ `&(tab + i)`
+- [ ] D) `tab[i]` ≡ `tab * i`
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse A**. `tab[i]` et `*(tab + i)` sont strictement équivalents en C++. `tab + i` avance l'adresse de `i × sizeof(type)` bytes, puis `*` déréférence.
+</details>
+
+### Question 4.12 : Que se passe-t-il si on oublie le `delete` pour un objet alloué sur le Heap ?
+- [ ] A) Le compilateur génère une erreur.
+- [ ] B) La mémoire est automatiquement libérée à la fin de la fonction.
+- [ ] C) Fuite mémoire (Memory Leak) : le bloc reste réservé et inaccessible jusqu'à la fin du programme.
+- [ ] D) Le pointeur est automatiquement mis à nullptr.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse C**. Contrairement à la Stack, le Heap ne libère JAMAIS automatiquement la mémoire. Sans `delete`, le bloc reste alloué et devient inaccessible dès que le pointeur sort de portée.
+</details>
+
+### Question 4.13 : Quelle méthode utilise-t-on pour convertir 42 en binaire à la main ?
+- [ ] A) Multiplications successives par 2.
+- [ ] B) Divisions successives par 2, en notant les restes, lus de bas en haut.
+- [ ] C) Soustractions successives de puissances de 2.
+- [ ] D) Conversion en hexadécimal d'abord, puis en binaire.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse B**. On divise par 2 successivement, on note les restes (0 ou 1), et on lit les restes de bas en haut pour obtenir le nombre binaire.
+</details>
+
+### Question 4.14 : Dans `ptr->membre`, que fait exactement l'opérateur `->` ?
+- [ ] A) Il crée un nouveau pointeur vers le membre.
+- [ ] B) Il déréférence le pointeur `ptr` puis accède au membre de l'objet pointé. Équivalent à `(*ptr).membre`.
+- [ ] C) Il compare le pointeur au membre.
+- [ ] D) Il assigne la valeur du membre au pointeur.
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse B**. `ptr->membre` est un raccourci syntaxique pour `(*ptr).membre`. Il combine le déréférencement et l'accès au membre en une seule opération.
+</details>
+
+### Question 4.15 : Quelle est la taille d'un pointeur sur une machine 64 bits, indépendamment du type pointé ?
+- [ ] A) 4 bytes
+- [ ] B) 8 bytes
+- [ ] C) Dépend du type pointé
+- [ ] D) 16 bytes
+
+<details>
+<summary>💡 Solution</summary>
+
+**Réponse B**. Sur une architecture 64 bits, un pointeur fait toujours 8 bytes (64 bits), qu'il pointe vers un `char` (1 byte) ou vers une structure de 1000 bytes. C'est cette propriété qui permet aux types récursifs (comme les arbres) d'avoir une taille finie.
+</details>

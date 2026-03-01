@@ -894,3 +894,332 @@ float estimate_tree(float record[]) {
 Cette boucle est l'essence même de l'optimisation v3.0 : chaque étape correspond juste à lire `idx` dans le tableau (0.3 ns en cache L1) contre une lecture de disque dur (1 ms) en V2.0.
 
 </details>
+
+
+---
+
+## Cours 4 — Systèmes de numération, Pointeurs & Allocation dynamique
+
+### Exercice 4.1 ⭐ — Conversion décimal → binaire
+
+Convertissez les nombres suivants de décimal vers binaire **à la main** (méthode des divisions successives) :
+a) 13
+b) 100
+c) 255
+
+<details>
+<summary>Voir la réponse</summary>
+
+**a) 13₁₀ → 1101₂**
+13÷2=6 r1, 6÷2=3 r0, 3÷2=1 r1, 1÷2=0 r1 → lu de bas en haut : 1101
+
+**b) 100₁₀ → 1100100₂**
+100÷2=50 r0, 50÷2=25 r0, 25÷2=12 r1, 12÷2=6 r0, 6÷2=3 r0, 3÷2=1 r1, 1÷2=0 r1 → 1100100
+
+**c) 255₁₀ → 11111111₂**
+255÷2=127 r1, 127÷2=63 r1... tous les restes sont 1 → 8 bits tous à 1.
+
+</details>
+
+### Exercice 4.2 ⭐ — Pointeurs : lecture de code
+
+Quel est l'affichage produit par ce programme ?
+
+```cpp
+int a = 10, b = 20;
+int *p = &a;
+*p = 30;
+p = &b;
+*p = 40;
+cout << a << " " << b << endl;
+```
+
+<details>
+<summary>Voir la réponse</summary>
+
+**Affichage : `30 40`**
+
+Explication :
+1. `p` pointe vers `a`. `*p = 30` → modifie `a` qui vaut maintenant 30.
+2. `p` pointe maintenant vers `b`. `*p = 40` → modifie `b` qui vaut maintenant 40.
+
+</details>
+
+### Exercice 4.3 ⭐⭐ — Arithmétique des pointeurs
+
+Quel est l'affichage de ce code ?
+
+```cpp
+int arr[] = {10, 20, 30, 40, 50};
+int *p = arr;
+cout << *(p + 2) << endl;
+p += 3;
+cout << *p << endl;
+cout << p - arr << endl;
+```
+
+<details>
+<summary>Voir la réponse</summary>
+
+**Affichage :**
+```
+30
+40
+3
+```
+- `*(p + 2)` : p pointe vers arr[0], p+2 pointe vers arr[2] → 30.
+- `p += 3` : p pointe maintenant vers arr[3] → *p = 40.
+- `p - arr` : la distance en nombre d'éléments entre p et le début du tableau → 3.
+
+</details>
+
+### Exercice 4.4 ⭐⭐ — Stack vs Heap
+
+Pour chacune de ces variables, indiquez si elle est allouée sur la **Stack** ou le **Heap** :
+
+```cpp
+int main() {
+    int x = 5;                    // a)
+    int* p = new int(10);         // b) la variable p ? et l'objet pointé ?
+    double tab[100];              // c)
+    double* dyn = new double[50]; // d) la variable dyn ? et le tableau ?
+    static int count = 0;         // e)
+    delete p;
+    delete[] dyn;
+    return 0;
+}
+```
+
+<details>
+<summary>Voir la réponse</summary>
+
+- **a) `x`** : Stack (variable locale)
+- **b) `p`** : Stack (le pointeur lui-même), mais l'objet `new int(10)` est sur le **Heap**.
+- **c) `tab`** : Stack (tableau statique de taille fixe)
+- **d) `dyn`** : Stack (le pointeur), le tableau `new double[50]` est sur le **Heap**.
+- **e) `count`** : Zone **Global/Static** (mot-clé `static`)
+
+</details>
+
+### Exercice 4.5 ⭐⭐ — Détection de Memory Leaks
+
+Identifiez toutes les fuites mémoire dans ce code :
+
+```cpp
+void processData() {
+    int* a = new int(5);
+    int* b = new int(10);
+    a = b;                   // Ligne suspecte !
+    delete a;
+}
+```
+
+<details>
+<summary>Voir la réponse</summary>
+
+**1 fuite mémoire détectée :**
+
+À la ligne `a = b;`, le pointeur `a` est réaffecté pour pointer vers le même objet que `b`. L'ancien objet pointé par `a` (le `new int(5)`) n'est plus accessible par aucun pointeur → **Memory Leak** : impossible de faire `delete` sur ce bloc.
+
+`delete a;` libère l'objet originalement alloué pour `b`, mais l'objet `new int(5)` est perdu à jamais.
+
+**Correction :**
+```cpp
+delete a;    // Libérer l'ancien objet AVANT de réaffecter
+a = b;
+// ... utiliser a ...
+delete a;    // Libérer le second objet
+```
+
+</details>
+
+### Exercice 4.6 ⭐⭐⭐ — new[] et delete[]
+
+Écrivez une fonction `createArray(int n)` qui alloue dynamiquement un tableau de `n` entiers, les initialise aux valeurs 0, 1, 2, ..., n-1, et retourne le pointeur. Écrivez le `main` qui appelle cette fonction, affiche le tableau, et libère proprement la mémoire.
+
+<details>
+<summary>Voir la réponse</summary>
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int* createArray(int n) {
+    int* arr = new int[n];
+    for (int i = 0; i < n; i++) {
+        arr[i] = i;
+    }
+    return arr;  // Le tableau survit à la fonction car il est sur le Heap
+}
+
+int main() {
+    int taille = 10;
+    int* tab = createArray(taille);
+    
+    for (int i = 0; i < taille; i++) {
+        cout << tab[i] << " ";
+    }
+    cout << endl;
+    
+    delete[] tab;     // Libérer avec delete[] car c'est un array
+    tab = nullptr;    // Bonne pratique
+    return 0;
+}
+```
+
+</details>
+
+### Exercice 4.7 ⭐⭐⭐ — Opérateur flèche `->`
+
+Complétez le code suivant pour créer un objet `Student` sur le Heap, remplir ses champs via `->`, afficher ses données, et libérer la mémoire :
+
+```cpp
+struct Student {
+    string name;
+    int age;
+    float gpa;
+};
+
+int main() {
+    // TODO : créer un Student sur le Heap
+    // TODO : remplir les champs
+    // TODO : afficher les données
+    // TODO : libérer la mémoire
+    return 0;
+}
+```
+
+<details>
+<summary>Voir la réponse</summary>
+
+```cpp
+int main() {
+    Student* s = new Student();
+    s->name = "Alice";
+    s->age = 20;
+    s->gpa = 3.8;
+    
+    cout << "Nom: " << s->name << endl;
+    cout << "Age: " << s->age << endl;
+    cout << "GPA: " << s->gpa << endl;
+    
+    delete s;
+    s = nullptr;
+    return 0;
+}
+```
+
+</details>
+
+### Exercice 4.8 ⭐⭐⭐ — Opérations bit à bit
+
+Évaluez manuellement les expressions suivantes :
+a) `12 & 10`
+b) `12 | 10`
+c) `5 << 3`
+d) `40 >> 2`
+
+<details>
+<summary>Voir la réponse</summary>
+
+**a) 12 & 10 = 8**
+```
+  1100  (12)
+& 1010  (10)
+------
+  1000  (8)
+```
+
+**b) 12 | 10 = 14**
+```
+  1100  (12)
+| 1010  (10)
+------
+  1110  (14)
+```
+
+**c) 5 << 3 = 40**
+5 = 00000101, décalé de 3 → 00101000 = 40 (= 5 × 2³)
+
+**d) 40 >> 2 = 10**
+40 = 00101000, décalé de 2 → 00001010 = 10 (= 40 / 2²)
+
+</details>
+
+### Exercice 4.9 ⭐⭐⭐⭐ — Destructeur récursif
+
+Dessinez l'arbre suivant et indiquez dans quel ordre les nœuds sont détruits lorsqu'on fait `delete root;` :
+
+```
+root
+├── left
+│   ├── left->left (feuille)
+│   └── left->right (feuille)
+└── right (feuille)
+```
+
+<details>
+<summary>Voir la réponse</summary>
+
+**Ordre de destruction (en supposant que le destructeur appelle d'abord `delete left` puis `delete right`) :**
+
+1. `delete root` déclenche le destructeur de root.
+2. `delete root->left` déclenche le destructeur de left.
+3. `delete left->left` → c'est une feuille (left=nullptr, right=nullptr) → rien à supprimer récursivement → le nœud est détruit.
+4. `delete left->right` → feuille → détruit.
+5. Le nœud `left` est maintenant détruit.
+6. `delete root->right` → feuille → détruit.
+7. Le nœud `root` est maintenant détruit.
+
+**Ordre : left->left, left->right, left, right, root** (destruction des feuilles en premier, puis remontée vers la racine).
+
+</details>
+
+### Exercice 4.10 ⭐⭐⭐⭐⭐ — Arbre binaire complet
+
+Implémentez une classe `TreeNode` simple contenant un `int value`, et deux pointeurs `TreeNode* left` et `TreeNode* right`. Écrivez :
+1. Un constructeur qui initialise `value` et met les enfants à `nullptr`.
+2. Un destructeur récursif.
+3. Une fonction libre `int countNodes(TreeNode* root)` qui compte récursivement le nombre total de nœuds dans l'arbre.
+
+<details>
+<summary>Voir la réponse</summary>
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class TreeNode {
+public:
+    int value;
+    TreeNode* left;
+    TreeNode* right;
+    
+    TreeNode(int val) : value(val), left(nullptr), right(nullptr) {}
+    
+    ~TreeNode() {
+        if (left != nullptr) delete left;
+        if (right != nullptr) delete right;
+    }
+};
+
+int countNodes(TreeNode* root) {
+    if (root == nullptr) return 0;
+    return 1 + countNodes(root->left) + countNodes(root->right);
+}
+
+int main() {
+    TreeNode* root = new TreeNode(1);
+    root->left = new TreeNode(2);
+    root->right = new TreeNode(3);
+    root->left->left = new TreeNode(4);
+    root->left->right = new TreeNode(5);
+    
+    cout << "Nombre de noeuds: " << countNodes(root) << endl;  // 5
+    
+    delete root;  // Libère tout l'arbre récursivement
+    return 0;
+}
+```
+
+</details>

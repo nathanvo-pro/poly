@@ -45,3 +45,20 @@ Quelle est la syntaxe recommandée pour initialiser les attributs dans un Constr
 À quoi sert une Enumération (enum) ?;À créer un nouveau type qui ne peut prendre qu'un nombre fini de valeurs contraintes et lisibles, par défaut associées aux entiers 0, 1, 2... (Ex: enum { ROUGE, VERT, BLEU })
 Quelle est la différence entre x = ++y et x = y++ ?;++y (pré-incrément) incrémente D'ABORD, puis assigne. y++ (post-incrément) assigne D'ABORD, puis incrémente.
 Pourquoi la v3.0 du BMD stocke-t-elle l'arbre dans un Array plutôt que de le lire depuis un fichier ?;Pour éliminer la latence monstrueuse de la lecture de fichier. Indexer les nœuds de l'arbre permet de sauter d'un nœud à l'autre en mémoire RAM ultra-rapide.
+Qu'est-ce qu'un pointeur en C++ ?;Une variable qui contient l'adresse mémoire d'une autre variable (pas sa valeur). Déclaré avec * (ex: int* p = &var;). On accède à la valeur pointée par déréférencement (*p).
+Que fait l'opérateur & devant une variable ?;Il retourne l'adresse mémoire de cette variable. Exemple : &num retourne l'adresse où num est stocké en RAM.
+Que fait l'opérateur * devant un pointeur ?;C'est le déréférencement : il accède à la VALEUR stockée à l'adresse pointée. Si p pointe vers une case contenant 42, alors *p vaut 42.
+Qu'est-ce que nullptr ?;Une constante spéciale (C++11) signifiant "ne pointe vers rien". Il faut toujours initialiser un pointeur à nullptr s'il ne pointe pas encore vers un objet valide.
+Quelle est la relation entre un array et un pointeur ?;Le nom d'un array (ex: tab) est un pointeur CONSTANT vers son premier élément (&tab[0]). L'équivalence fondamentale est : tab[i] ≡ *(tab + i).
+Que fait l'opérateur new en C++ ?;Il alloue dynamiquement de la mémoire sur le Heap à l'exécution et retourne un pointeur vers cette mémoire. Exemple : int* p = new int(42);
+Que fait l'opérateur delete en C++ ?;Il libère la mémoire précédemment allouée par new. Pour un objet : delete p; Pour un array : delete[] p; Chaque new DOIT avoir son delete correspondant.
+Qu'est-ce qu'un Memory Leak (fuite mémoire) ?;C'est quand la mémoire allouée sur le Heap n'est jamais libérée (oubli de delete). Le bloc reste réservé et inaccessible, saturant progressivement la RAM.
+Qu'est-ce qu'un Dangling Pointer ?;Un pointeur qui contient l'adresse d'une mémoire déjà libérée (après delete). Y accéder provoque un comportement indéfini. Solution : toujours faire p = nullptr après delete p.
+Quelle est la différence entre la Stack et le Heap ?;Stack : gestion automatique (LIFO), rapide, taille limitée, durée de vie liée à la fonction. Heap : gestion manuelle (new/delete), plus lent, grande capacité, durée de vie contrôlée par le programmeur.
+Pourquoi utiliser delete[] au lieu de delete pour un array ?;delete seul ne libère que le premier élément. delete[] signale au système de libérer TOUS les éléments du tableau. Confondre les deux → comportement indéfini.
+Que fait l'opérateur -> en C++ ?;Il permet d'accéder aux membres d'un objet via un POINTEUR vers cet objet. ptr->membre est équivalent à (*ptr).membre.
+Comment convertir un nombre décimal en binaire ?;Par divisions successives par 2 : noter le reste (0 ou 1) à chaque étape, puis lire les restes de bas en haut. Exemple : 42 → 101010.
+Que fait l'opérateur << (décalage à gauche) sur un entier ?;Il multiplie par une puissance de 2. x << n = x × 2ⁿ. Exemple : 5 << 2 = 20 (5 × 4).
+Que fait l'opérateur & (AND bit à bit) entre deux entiers ?;Il compare chaque bit : le résultat est 1 seulement si les DEUX bits sont 1. Utilisé pour le masquage (isoler des bits spécifiques).
+Pourquoi un type récursif (comme Node) utilise des pointeurs pour ses enfants ?;Car sans pointeurs, Node contiendrait deux Node complets, eux-mêmes contenant deux Node → taille mémoire infinie. Les pointeurs ont une taille fixe (8 bytes sur 64 bits), brisant la récursion.
+Comment fonctionne un destructeur récursif d'arbre ?;Le destructeur de chaque Node fait delete left et delete right, ce qui déclenche les destructeurs des enfants. La cascade s'arrête aux feuilles (left==nullptr, right==nullptr).

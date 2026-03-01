@@ -266,3 +266,64 @@ int a = 1, b = 1;
 int x = ++a;   // PRE : a devient 2, puis x s'assigne 2. (x=2)
 int y = b++;   // POST : y s'assigne 1, puis b devient 2. (y=1)
 ```
+
+
+---
+
+## Cours 4 — Pointeurs, Allocation dynamique & Bitwise
+
+### Pointeurs
+```cpp
+int x = 42;
+int* p = &x;     // p stocke l'adresse de x
+cout << *p;       // 42 (déréférencement)
+cout << p;        // adresse de x
+```
+
+### Allocation dynamique
+```cpp
+// Objet unique
+int* p = new int(10);
+delete p;
+p = nullptr;
+
+// Array dynamique
+int* arr = new int[n];
+delete[] arr;
+arr = nullptr;
+```
+
+### Opérateur flèche
+```cpp
+Box* b = new Box();
+b->length = 5.0;       // ≡ (*b).length
+b->volume();
+delete b;
+```
+
+### Bitwise
+```
+x << n   // x × 2ⁿ  (décalage gauche)
+x >> n   // x / 2ⁿ  (décalage droite)
+a & b    // AND (masquage)
+a | b    // OR (activer bits)
+a ^ b    // XOR (toggle bits)
+```
+
+### Conversions de base
+```
+Décimal → Binaire : divisions successives par 2, lire restes de bas en haut
+Décimal → Hexa    : divisions successives par 16 (10=A, 11=B...15=F)
+```
+
+### Arbre récursif
+```cpp
+class Node {
+    Node* left;   // Pointeurs = taille fixe
+    Node* right;
+    ~Node() {     // Destructeur récursif
+        if(left) delete left;
+        if(right) delete right;
+    }
+};
+```

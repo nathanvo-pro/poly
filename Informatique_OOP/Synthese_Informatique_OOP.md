@@ -1690,3 +1690,604 @@ float estimate(float features[FEATURE_COUNT]) {
 }
 ```
 L'accès direct par index `tree[idx]` se fait intégralement en RAM en quelques nanosecondes, contre de multiples lectures de fichier très lentes en v2.0.
+
+
+---
+
+## Cours 4 : Systèmes de numération, Pointeurs, Allocation dynamique & Opérations bit à bit
+
+> 📚 **Objectif du cours :** Comprendre les systèmes de numération (binaire, hexadécimal), maîtriser les pointeurs et l'arithmétique des pointeurs, apprendre l'allocation dynamique de mémoire (new/delete), distinguer la Stack du Heap, et manipuler les données au niveau binaire avec les opérations bit à bit. Le tout est mis en pratique dans une version v4.0 de l'arbre de régression BMD utilisant des structures récursives avec pointeurs.
+
+---
+
+### 1. Systèmes de numération
+
+#### 🔑 Pourquoi comprendre les systèmes de numération ?
+Un ordinateur ne "pense" qu'en **binaire** (des 0 et des 1). Chaque donnée — un nombre, une lettre, une couleur — est au final stockée sous forme de bits. Comprendre comment convertir entre les bases numériques (décimal, binaire, octal, hexadécimal) est fondamental pour tout programmeur bas-niveau.
+
+#### Les 4 systèmes principaux
+
+| Système | Base | Chiffres | Usage principal |
+|---|---|---|---|
+| **Décimal** | 10 | 0-9 | Maths humaines |
+| **Binaire** | 2 | 0, 1 | Mémoire machine |
+| **Octal** | 8 | 0-7 | Rarement utilisé |
+| **Hexadécimal** | 16 | 0-9, A-F | Affichage compact d'adresses mémoire |
+
+#### Conversion Décimal → Binaire (méthode manuelle)
+
+**Algorithme :** Divisions successives par 2, on note les restes de bas en haut.
+
+**Exemple concret : convertir 42 en binaire :**
+
+```
+42 ÷ 2 = 21  reste 0  ← bit le moins significatif (LSB)
+21 ÷ 2 = 10  reste 1
+10 ÷ 2 = 5   reste 0
+ 5 ÷ 2 = 2   reste 1
+ 2 ÷ 2 = 1   reste 0
+ 1 ÷ 2 = 0   reste 1  ← bit le plus significatif (MSB)
+```
+
+On lit les restes **de bas en haut** : `42₁₀ = 101010₂`
+
+**Vérification :** $1 \times 2^5 + 0 \times 2^4 + 1 \times 2^3 + 0 \times 2^2 + 1 \times 2^1 + 0 \times 2^0 = 32 + 8 + 2 = 42$ ✅
+
+#### Conversion Décimal → Hexadécimal
+
+Même algorithme, mais on divise par 16. Les restes de 10 à 15 deviennent les lettres A à F.
+
+**Exemple : 255₁₀ → Hexadécimal**
+```
+255 ÷ 16 = 15  reste 15 → F
+ 15 ÷ 16 =  0  reste 15 → F
+```
+Résultat : `255₁₀ = FF₁₆`
+
+#### Code C++ : conversion décimal → binaire
+
+```cpp
+#include <iostream>
+#include <string>
+
+std::string decimalToBinary(int n) {
+    if (n == 0) return "0";
+    
+    std::string binary = "";
+    while (n > 0) {
+        // Préfixe le bit courant (le reste de la division par 2)
+        // Si n est impair, le reste est 1, sinon 0
+        binary = ((n % 2) ? '1' : '0') + binary;
+        n /= 2;  // Division entière par 2
+    }
+    return binary;
+}
+
+int main() {
+    int num = 42;
+    std::cout << num << " en binaire = " << decimalToBinary(num) << std::endl;
+    // Affiche : 42 en binaire = 101010
+    return 0;
+}
+```
+
+> 💡 **Astuce :** On préfixe chaque nouveau bit **à gauche** de la chaîne (`binary = ... + binary`), ce qui évite de devoir inverser la string à la fin, car les bits sont calculés du moins significatif au plus significatif.
+
+#### Code C++ : conversion décimal → hexadécimal
+
+```cpp
+std::string decimalToHex(int n) {
+    if (n == 0) return "0";
+
+    std::string hex = "";
+    while (n > 0) {
+        int remainder = n % 16;
+        char digit;
+        if (remainder < 10)
+            digit = '0' + remainder;        // 0-9 : on ajoute au code ASCII de '0'
+        else
+            digit = 'A' + (remainder - 10); // A-F : on décale à partir du code ASCII de 'A'
+        hex = digit + hex;
+        n /= 16;
+    }
+    return hex;
+}
+```
+
+> 💡 **Pourquoi `'0' + remainder` ?** En C++, les caractères sont des entiers (code ASCII). `'0'` vaut 48. Donc `'0' + 3` donne 51, qui est le code ASCII de `'3'`. C'est un raccourci universel pour convertir un chiffre entier en son caractère correspondant !
+
+---
+
+### 2. L'opérateur d'adresse `&` et les variables pointeurs
+
+#### 🔑 Concept clé : tout a une adresse
+
+Chaque variable dans un programme est stockée physiquement quelque part dans la RAM. Cette position physique est appelée son **adresse mémoire**. L'opérateur `&` permet d'obtenir cette adresse.
+
+```cpp
+int num = -23;
+cout << &num << '\t' << num;
+// Affiche : 0x7fffffffd8e4    -23
+//           ↑ adresse          ↑ valeur
+```
+
+> 💡 **Analogie :** Imaginez la RAM comme un immense casier de lycée. Chaque case a un numéro unique (l'adresse). La variable `num` est la valeur stockée dans la case. `&num` vous donne le numéro de la case.
+
+#### 🔑 Les pointeurs : des variables qui stockent des adresses
+
+Un **pointeur** est une variable spéciale dont le contenu n'est pas une donnée classique (int, float...), mais une **adresse mémoire**.
+
+```cpp
+int num = -23;        // num contient la valeur -23
+int *ptr = &num;      // ptr contient l'ADRESSE de num
+
+cout << ptr;          // Affiche l'adresse : 0x7fffffffd8dc
+cout << *ptr;         // Affiche la VALEUR pointée : -23 (déréférencement)
+cout << &ptr;         // Affiche l'adresse de ptr lui-même : 0x7fffffffd8e0
+```
+
+**Schéma mémoire :**
+```
+Variable   | Valeur              | Adresse
+-----------|---------------------|------------------
+num        | -23                 | 0x7fffffffd8dc
+ptr        | 0x7fffffffd8dc      | 0x7fffffffd8e0
+           | ↑ contient l'adresse de num
+```
+
+**Les 3 facettes d'un pointeur :**
+- `ptr` → affiche l'adresse stockée (vers où il pointe)
+- `*ptr` → affiche la valeur qui se trouve à l'adresse pointée (**déréférencement**)
+- `&ptr` → affiche l'adresse du pointeur lui-même (car `ptr` est aussi une variable !)
+
+#### Syntaxe de déclaration
+
+Les espaces autour de `*` sont indifférents : `int* ptr`, `int *ptr`, `int * ptr` sont identiques.
+
+```cpp
+int *ptr, x, *y = nullptr, z = 12;
+// ptr : pointeur vers int (non initialisé → dangereux !)
+// x   : int classique (pas un pointeur !)
+// y   : pointeur vers int, initialisé à nullptr (ne pointe vers rien)
+// z   : int classique valant 12
+```
+
+> ⚠️ **Piège classique :** `int *ptr, x` → seul `ptr` est un pointeur ! `x` est un simple `int`. L'astérisque s'attache au nom de la variable, pas au type.
+
+> 💡 **`nullptr`** est une adresse spéciale signifiant "ne pointe vers rien". Toujours initialiser un pointeur à `nullptr` s'il ne pointe pas encore vers quelque chose (évite les dangling pointers).
+
+---
+
+### 3. Arrays et Pointeurs : la relation fondamentale
+
+#### 🔑 Le nom d'un array EST un pointeur constant
+
+En C++, le nom d'un tableau se comporte comme un pointeur **constant** vers son premier élément.
+
+```cpp
+int val[] = {4, 7, 11};
+
+// Ces deux expressions sont IDENTIQUES :
+cout << val;        // adresse du premier élément
+cout << &val[0];    // adresse du premier élément aussi !
+```
+
+**Mais attention** : `val` est un pointeur **constant**. On ne peut PAS faire `val = autre_array;` (erreur de compilation). En revanche, on peut créer un pointeur modifiable :
+```cpp
+int* p = val;       // p pointe vers val[0]
+p = autre_array;    // OK, p est un vrai pointeur modifiable
+```
+
+#### 🔑 Arithmétique des pointeurs
+
+Quand on ajoute un entier `n` à un pointeur, l'adresse se déplace de `n × sizeof(type)` bytes, pas de `n` bytes bruts !
+
+```cpp
+int val[] = {4, 7, 11};
+// sizeof(int) = 4 bytes
+
+cout << val;       // 0x...dc  (adresse de val[0])
+cout << val + 1;   // 0x...e0  (adresse de val[1], +4 bytes)
+cout << val + 2;   // 0x...e4  (adresse de val[2], +8 bytes)
+
+// Déréférencement avec arithmétique :
+cout << *val;       // 4   (= val[0])
+cout << *(val + 1); // 7   (= val[1])
+cout << *(val + 2); // 11  (= val[2])
+```
+
+**Équivalence fondamentale :** `val[i]` ≡ `*(val + i)`
+
+> ⚠️ **Parenthèses obligatoires !** `*(ptr + 1)` et `*ptr + 1` sont très différents :
+> - `*(ptr + 1)` → déréférence l'adresse suivante (la valeur de `val[1]`)
+> - `*ptr + 1` → déréférence `ptr` d'abord, puis ajoute 1 à la valeur (= `val[0] + 1`)
+
+> ⚠️ **Règle de sécurité :** L'arithmétique des pointeurs n'est valide que dans l'intervalle `[&array[0], &array[taille]]`. Dépasser ces limites → comportement indéfini (plantage ou corruption silencieuse de la mémoire).
+
+---
+
+### 4. Allocation dynamique de mémoire (new / delete)
+
+#### 🔑 Pourquoi l'allocation dynamique ?
+
+Avec l'allocation **statique** (`int tab[100];`), la taille est fixée à la compilation. Problème :
+- Si les données réelles sont plus petites → **gaspillage de mémoire**
+- Si les données sont plus grandes → **dépassement de tableau** (crash)
+
+L'allocation **dynamique** résout ce problème : on réserve de la mémoire **à l'exécution**, au moment précis où on en a besoin, et on peut choisir exactement la taille nécessaire.
+
+#### Syntaxe de base : `new` et `delete`
+
+```cpp
+// Allocation d'un SEUL objet :
+float *number = new float(-6);     // Alloue un float sur le Heap, initialisé à -6
+cout << *number;                   // -6
+
+// Modification via déréférencement :
+*number = 3.14;
+
+// Libération de la mémoire :
+delete number;        // Rend la mémoire au système
+number = nullptr;     // Bonne pratique : éviter le dangling pointer
+```
+
+#### Allocation d'arrays dynamiques : `new[]` et `delete[]`
+
+```cpp
+int n = 5;                              // n peut être déterminé à l'exécution !
+double *decimals = new double[n];       // Alloue un array de 5 doubles sur le Heap
+
+// Utilisation classique :
+for (int i = 0; i < n; i++) {
+    decimals[i] = i * 1.5;
+}
+
+// Libération avec CROCHETS (obligatoire pour les arrays !)
+delete[] decimals;    // ← les [] sont indispensables
+decimals = nullptr;
+```
+
+> ⚠️ **Règle absolue :** `new` → `delete`. `new[]` → `delete[]`. Confondre les deux (utiliser `delete` au lieu de `delete[]` pour un array) provoque un **comportement indéfini** : seul le premier élément serait libéré, les autres resteraient en mémoire.
+
+#### Les dangers : Memory Leaks et Dangling Pointers
+
+**Memory Leak (Fuite de mémoire) :** Si on oublie `delete`, la mémoire reste réservée jusqu'à la fin du programme.
+```cpp
+void mauvaise_fonction() {
+    int* p = new int(42);
+    // On oublie delete p → fuite mémoire !
+    // Quand la fonction se termine, le pointeur p est détruit (il était sur la Stack),
+    // mais le bloc mémoire sur le Heap reste alloué et INACCESSIBLE à jamais.
+}
+```
+
+**Dangling Pointer :** Après un `delete`, le pointeur conserve l'ancienne adresse (désormais invalide). Accéder à cette adresse → comportement indéfini.
+```cpp
+int* p = new int(42);
+delete p;       // Mémoire libérée, mais p contient encore l'ancienne adresse !
+cout << *p;     // DANGER : comportement indéfini !
+p = nullptr;    // Bonne pratique : réinitialiser immédiatement après delete
+```
+
+---
+
+### 5. Structure de la mémoire : Stack vs Heap
+
+#### 🔑 Les 4 zones mémoire d'un programme
+
+Lors de l'exécution d'un programme C++, le système d'exploitation lui alloue un espace mémoire partitionné en 4 régions :
+
+| Zone | Contenu | Gestion |
+|---|---|---|
+| **Text** | Instructions machine (code compilé) | Fixe |
+| **Global/Static** | Variables globales et `static` | Allouées au démarrage, libérées à la fin |
+| **Stack (Pile)** | Variables locales, paramètres de fonctions | **Automatique** (LIFO) |
+| **Heap (Tas)** | Objets alloués avec `new` | **Manuelle** (new/delete) |
+
+#### La Stack (Pile) en détail
+
+- Fonctionne en **LIFO** (Last-In, First-Out) : comme une pile d'assiettes.
+- Quand une fonction est appelée → ses variables locales sont "poussées" (push) sur la pile.
+- Quand la fonction retourne → ses variables sont "dépilées" (pop) et la mémoire est automatiquement restituée.
+- **Avantages :** Extrêmement rapide (un simple ajustement de pointeur de sommet).
+- **Limites :** Taille limitée (~1-8 Mo), durée de vie liée à la fonction.
+
+```cpp
+void exemple() {
+    int x = 42;       // x est sur la Stack
+    double y = 3.14;  // y est sur la Stack
+}   // Ici, x et y sont automatiquement détruits et leur mémoire libérée
+```
+
+#### Le Heap (Tas) en détail
+
+- Permet d'allouer et libérer des blocs mémoire **dans n'importe quel ordre**.
+- La taille peut être déterminée **à l'exécution** (saisie utilisateur, taille d'un fichier...).
+- La durée de vie des objets **dépasse celle de la fonction** qui les a créés.
+- **Avantages :** Flexible, très grande capacité.
+- **Inconvénients :** Plus lent (recherche de blocs libres, fragmentation), et le programmeur DOIT libérer explicitement la mémoire.
+
+```cpp
+int* creerTableau(int taille) {
+    int* tab = new int[taille];  // Alloué sur le Heap
+    return tab;                  // Le tableau SURVIT à la fin de la fonction !
+}
+
+int main() {
+    int* monTab = creerTableau(100);
+    // monTab pointe vers le tableau sur le Heap
+    delete[] monTab;  // L'appelant est responsable de la libération
+}
+```
+
+---
+
+### 6. Pointeur vers une Classe (ou struct) : l'opérateur `->`
+
+Lorsqu'un pointeur pointe vers un objet (instance d'une classe ou d'une struct), on utilise l'opérateur **flèche** `->` pour accéder aux membres.
+
+```cpp
+class Box {
+public:
+    double length;
+    double volume() { return length * length * length; }
+};
+
+int main() {
+    Box* pbox = new Box();      // pbox est un POINTEUR vers un objet Box sur le Heap
+    pbox->length = 5.0;         // Accès au membre via ->
+    double v = pbox->volume();  // Appel de méthode via ->
+
+    // Équivalent plus verbeux (déréférencement explicite + point) :
+    (*pbox).length = 5.0;
+    double v2 = (*pbox).volume();
+
+    delete pbox;
+    return 0;
+}
+```
+
+**Règle simple :**
+- Objet direct (ex: `Box b;`) → utiliser le **point** : `b.length`
+- Pointeur vers objet (ex: `Box* p;`) → utiliser la **flèche** : `p->length`
+
+---
+
+### 7. Structures de données récursives : l'arbre binaire (BMD v4.0)
+
+#### 🔑 L'astuce fondamentale : un type qui se contient lui-même (via pointeurs)
+
+Pour modéliser un arbre, il faut un **type de données récursif** : la classe `Node` contient des pointeurs vers d'autres `Node`.
+
+```cpp
+class Node {
+private:
+    float value;          // Valeur de la feuille
+    float threshold;      // Seuil de décision (nœud interne)
+    Node* left;           // Pointeur vers le sous-arbre gauche
+    Node* right;          // Pointeur vers le sous-arbre droit
+public:
+    // Getters et Setters
+    void set_left(Node* l) { left = l; }
+    void set_right(Node* r) { right = r; }
+    Node* get_left() { return left; }
+    Node* get_right() { return right; }
+    bool test_leaf() { return (left == nullptr && right == nullptr); }
+    
+    // Constructeurs et Destructeur
+    Node();
+    Node(const char* cond_val, const bool is_leaf);
+    ~Node();
+};
+```
+
+> 💡 **Pourquoi des pointeurs (`Node*`) et pas des objets directs (`Node`) ?** Si on écrivait `Node left; Node right;`, chaque Node contiendrait deux Node complets, qui contiendraient eux-mêmes deux Node, etc. → **taille mémoire infinie !** Les pointeurs brisent cette récursion car un pointeur a toujours une taille fixe (8 bytes sur 64 bits), quelle que soit la taille de l'objet pointé.
+
+#### Constructeur par défaut et constructeur paramétré
+
+```cpp
+// Constructeur par défaut : initialise un Node "vide" et sûr
+Node::Node()
+    : left(nullptr), right(nullptr), value(0), feature(WEIGHT_KG)
+{}
+// left et right à nullptr = pas d'enfants
+// value à 0 = valeur neutre
+// feature initialisé par défaut
+
+// Constructeur paramétré : crée un Node depuis une chaîne parsée
+Node::Node(const char* cond_val, const bool is_leaf)
+    : left(nullptr), right(nullptr), feature(WEIGHT_KG) {
+    parse_condition(cond_val, is_leaf);
+    // Délègue le parsing à une méthode dédiée
+}
+```
+
+#### 🔑 Le destructeur récursif : libérer tout l'arbre automatiquement
+
+```cpp
+Node::~Node() {
+    if (left != nullptr) delete left;
+    if (right != nullptr) delete right;
+}
+```
+
+**Comment ça marche ?** Quand on fait `delete root;` sur la racine :
+1. Le destructeur de `root` est invoqué.
+2. Il fait `delete left;` → ce qui invoque le destructeur du nœud gauche.
+3. Ce destructeur fait lui-même `delete` sur SES enfants, etc.
+4. La récursion se propage jusqu'aux feuilles (dont `left` et `right` sont `nullptr`).
+5. Les tests `if (left != nullptr)` brisent la récursion aux feuilles.
+6. Résultat : **tout l'arbre est libéré proprement en un seul `delete root`**.
+
+> ⚠️ **Sans les gardes `if (left != nullptr)` :** supprimer un nœud feuille (dont les enfants sont `nullptr`) déclencherait une descente sans fin sur la stack, accumulant des appels récursifs jusqu'au **stack overflow** (dépassement de pile).
+
+#### La fonction `read_tree` : construire l'arbre depuis un fichier
+
+```cpp
+Node* read_tree(const char* filename) {
+    // Ouvrir le fichier...
+    Node* root = NULL;
+    while (fp.getline(line, sizeof(line))) {
+        // Parser chaque ligne...
+        if (root == nullptr) {
+            // Premier nœud → créer la racine
+            root = new Node(cond_val, is_leaf);
+        } else {
+            // Trouver le parent du nœud courant
+            Node* parent = find_parent(root, node_id);
+            if (node_id % 2 == 0)   // Enfant gauche (index pair)
+                parent->set_left(new Node(cond_val, is_leaf));
+            else                     // Enfant droit (index impair)
+                parent->set_right(new Node(cond_val, is_leaf));
+        }
+    }
+    fp.close();
+    return root;  // L'appelant est désormais propriétaire de ce pointeur
+}
+```
+
+#### La fonction `estimate` : parcourir l'arbre pour prédire
+
+```cpp
+float estimate(Node* root, float features[FEATURE_COUNT]) {
+    Node* cur = root;  // Commencer à la racine
+    while (cur != nullptr) {
+        float res = cur->eval_condition(features);
+        if (res == -1)         // Aller à gauche
+            cur = cur->get_left();
+        else if (res == 0)     // Aller à droite
+            cur = cur->get_right();
+        else                   // Feuille : retourner le résultat
+            return res;
+    }
+    return 0.0; // Fallback
+}
+```
+
+#### La fonction `print_tree` : parcours infixe récursif
+
+```cpp
+void Node::print_tree(Node* cur) {
+    if (cur->left != nullptr) print_tree(cur->left);   // Visiter gauche
+    cout << cur->value << ", " << cur->feature          // Afficher nœud
+         << ", " << cur->threshold << endl;
+    if (cur->right != nullptr) print_tree(cur->right);  // Visiter droite
+}
+```
+
+Ce parcours **infixe** (gauche → racine → droite) affiche les nœuds dans un ordre cohérent pour un arbre de décision.
+
+---
+
+### 8. Opérations bit à bit (Bitwise Operations)
+
+#### 🔑 Pourquoi manipuler les bits directement ?
+
+Les opérations bit à bit permettent de manipuler la **représentation binaire** des entiers. Elles sont exécutées en un seul cycle processeur et sont donc extrêmement performantes. Elles sont utilisées pour :
+- Le calcul haute performance
+- La configuration de registres matériels
+- La gestion de permissions/drapeaux
+- La navigation dans les arbres binaires (comme `find_parent`)
+
+#### Décalage de bits : `<<` et `>>`
+
+**Décalage à gauche (`<<`) = Multiplication par une puissance de 2**
+
+```cpp
+int x = 5;       // Binaire : 00000101
+int y;
+
+y = x << 1;      // 00001010 → valeur 10  (5 × 2¹)
+y = x << 2;      // 00010100 → valeur 20  (5 × 2²)
+```
+
+**Décalage à droite (`>>`) = Division entière par une puissance de 2**
+
+```cpp
+y = 20;           // 00010100
+y >>= 1;          // 00001010 → valeur 10  (20 / 2¹)
+y >>= 2;          // 00000010 → valeur 2   (10 / 2²)
+```
+
+#### AND bit à bit (`&`) : le masquage
+
+L'opérateur `&` compare chaque bit individuellement. Le résultat est `1` uniquement si les deux bits sont `1`.
+
+```cpp
+int flags = 0b11010110;  // 214 en décimal
+int mask  = 0b00001111;  // Masque : on ne garde que les 4 bits de poids faible
+
+int result = flags & mask;
+// 11010110
+// 00001111
+// --------
+// 00000110 → 6
+```
+
+> 💡 **Utilité :** Extraire des champs spécifiques d'un registre. Par exemple, isoler les 4 bits de poids faible d'un octet de configuration.
+
+#### OR bit à bit (`|`) : activer des bits
+
+L'opérateur `|` met un bit à `1` si au moins un des deux bits est `1`.
+
+```cpp
+int reg = 0b00000001;    // Valeur initiale : 1
+reg |= (1 << 3);         // (1 << 3) = 0b00001000 = masque avec bit 3 activé
+
+// 00000001
+// 00001000
+// --------
+// 00001001 → 9
+```
+
+> 💡 **Utilité :** Activer un drapeau spécifique sans toucher aux autres bits. Exemple : activer le bit 3 d'un registre de configuration matériel.
+
+#### Application pratique : `find_parent` dans l'arbre
+
+La fonction `find_parent` utilise le masquage binaire pour naviguer dans l'arbre :
+
+```cpp
+Node* find_parent(Node* root, int node_idx) {
+    int level = floor(log2(node_idx));
+    int mask = pow(2, level - 1);
+
+    Node* cur = root, *prev;
+    while (mask > 0) {
+        prev = cur;
+        if (node_idx & mask)          // Le bit courant est-il 1 ?
+            cur = cur->get_right();   // Oui → aller à droite
+        else
+            cur = cur->get_left();    // Non → aller à gauche
+        mask >>= 1;                   // Passer au bit suivant
+    }
+    return prev;
+}
+```
+
+> 💡 **Idée géniale :** Dans un arbre binaire complet, la représentation binaire de l'index d'un nœud encode son chemin depuis la racine ! Chaque bit (après le premier `1`) indique : `0` = gauche, `1` = droite.
+
+---
+
+### 9. Le programme `main()` complet (BMD v4.0)
+
+```cpp
+int main() {
+    Node* root = read_tree("bmd_tree_transition.txt");  // Allocation dynamique
+    float age, weight_kg, height_cm, waiting_time;
+    char choice;
+
+    do {
+        // Lire les données du patient...
+        float features[FEATURE_COUNT] = {weight_kg, age, height_cm, waiting_time};
+        float bmd = estimate(root, features);
+        cout << "\n--> Predicted BMD: " << bmd << "\n\n";
+        cout << "Estimate another patient? (y/n): ";
+        cin >> choice;
+    } while (choice == 'y');
+
+    delete root;  // Désallocation propre : le destructeur récursif libère tout l'arbre
+    return 0;
+}
+```
+
+> 💡 **Point clé :** Un seul `delete root` suffit pour libérer l'intégralité de l'arbre grâce au destructeur récursif défini dans la classe `Node`. Chaque nœud supprime ses enfants, qui suppriment les leurs, etc., jusqu'aux feuilles.
