@@ -971,3 +971,67 @@ $$\\boxed{1-\\frac{1}{3}+\\frac{1}{5}-\\frac{1}{7}+\\cdots = \\frac{\\pi}{4}} \\
 
 **3.** Par la **proposition d'identification** : la C.U. permet d'intervertir somme/intégrale. L'orthogonalité du système $\\{\\sin(kx)\\}$ impose alors $c_k = \\frac{1}{k}$ (coefs de Fourier de $\\frac{\\pi-x}{2}$). **Unicité garantie** par la complétude du système.
 </details>
+### ⭐⭐⭐⭐⭐ Niveau 5 ter — Preuves Théoriques de Haut Niveau
+
+---
+
+**Exercice 27 — Preuve de l'Inégalité de Bessel**
+
+Démontrez formellement que pour toute fonction $f \in L^2([-L, L])$, la série de ses coefficients de Fourier vérifie $\sum_{k=0}^{\infty} |c_k|^2 \|\varphi_k\|^2 \leq \|f\|_2^2$. 
+
+<details>
+<summary>Voir la démonstration détaillée</summary>
+
+**Démonstration :**
+Considérons le reste $R_n = f - \sum_{k=0}^n c_k \varphi_k$. Par définition de la norme :
+$$
+\|R_n\|_2^2 = \langle f - \sum c_k \varphi_k, f - \sum c_k \varphi_k \rangle
+$$
+En utilisant la linéarité du produit scalaire et l'orthogonalité des $\varphi_k$ :
+$$
+\|R_n\|_2^2 = \langle f, f \rangle - \sum_{k=0}^n c_k \langle \varphi_k, f \rangle - \sum_{k=0}^n \overline{c}_k \langle f, \varphi_k \rangle + \sum_{k=0}^n |c_k|^2 \langle \varphi_k, \varphi_k \rangle
+$$
+Comme $c_k = \frac{\langle f, \varphi_k \rangle}{\|\varphi_k\|^2}$ (donc $\langle f, \varphi_k \rangle = c_k \|\varphi_k\|^2$), on a :
+$$
+\|R_n\|_2^2 = \|f\|_2^2 - \sum c_k \overline{c}_k \|\varphi_k\|^2 - \sum \overline{c}_k c_k \|\varphi_k\|^2 + \sum |c_k|^2 \|\varphi_k\|^2
+$$
+$$
+\|R_n\|_2^2 = \|f\|_2^2 - \sum_{k=0}^n |c_k|^2 \|\varphi_k\|^2
+$$
+Puisque $\|R_n\|_2^2 \geq 0$, on en déduit que pour tout $n$ :
+$$
+\sum_{k=0}^n |c_k|^2 \|\varphi_k\|^2 \leq \|f\|_2^2
+$$
+En faisant tendre $n \to \infty$, l'inégalité est préservée. C'est l'**Inégalité de Bessel**. $\square$
+</details>
+
+---
+
+**Exercice 28 — Formule du saut $\delta$ pour la dérivée**
+
+Démontrez que si $f$ est $C^1_{\text{morc}}([-\pi, \pi])$ mais que $f(\pi) \neq f(-\pi)$, alors le coefficient $a_k(f')$ de sa dérivée est donné par $a_k(f') = k b_k(f) + \frac{(-1)^k}{\pi}(f(\pi) - f(-\pi))$.
+
+<details>
+<summary>Voir la démonstration détaillée</summary>
+
+**Démonstration :**
+Par définition :
+$$
+a_k(f') = \frac{1}{\pi} \int_{-\pi}^\pi f'(x) \cos(kx) dx
+$$
+On effectue une intégration par parties avec $u = \cos(kx)$ et $dv = f'(x)dx$ :
+- $u = \cos(kx) \implies du = -k\sin(kx)dx$
+- $dv = f'(x)dx \implies v = f(x)$
+$$
+a_k(f') = \frac{1}{\pi} [f(x)\cos(kx)]_{-\pi}^\pi + \frac{k}{\pi} \int_{-\pi}^\pi f(x)\sin(kx) dx
+$$
+Le deuxième terme est exactement $k \cdot b_k(f)$.
+Le premier terme (le crochet) vaut :
+$$
+\frac{1}{\pi} (f(\pi)\cos(k\pi) - f(-\pi)\cos(-k\pi)) = \frac{1}{\pi} (f(\pi)(-1)^k - f(-\pi)(-1)^k)
+$$
+$$
+= \frac{(-1)^k}{\pi} (f(\pi) - f(-\pi))
+$$
+En sommant : $a_k(f') = k b_k(f) + \frac{(-1)^k}{\pi} \delta$. $\square$
+</details>

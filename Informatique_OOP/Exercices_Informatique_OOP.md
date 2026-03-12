@@ -1203,6 +1203,7 @@ public:
     }
 };
 
+```cpp
 int countNodes(TreeNode* root) {
     if (root == nullptr) return 0;
     return 1 + countNodes(root->left) + countNodes(root->right);
@@ -1222,4 +1223,280 @@ int main() {
 }
 ```
 
+</details>
+
+---
+
+## Cours 5 : Fonctions, Passage de Paramètres et Portée
+
+### ⭐ Niveau 1 : Compréhension Théorique de la Mémoire
+
+---
+
+**Exercice 25 — Vrai ou Faux sur la Call Stack et la Portée**
+
+Indiquez si les affirmations suivantes sont Vraies ou Fausses et justifiez brièvement.
+
+1. "Si `main()` appelle `fonction_A()`, les variables locales de `main()` sont détruites pour faire de la place pour celles de `fonction_A()`."
+2. "Un tableau (array) passé en paramètre à une fonction est, par défaut, protégé contre les modifications puisqu'il est recopié entièrement."
+3. "Une variable marquée `static` à l'intérieur d'une fonction ne peut pas être lue depuis une autre fonction, mais son contenu reste en mémoire pour le prochain appel."
+4. "Le mot-clé `inline` garantit formellement que la fonction optimisée s'exécutera sans utiliser la pile d'appels."
+
+<details>
+<summary>Voir les réponses étayées étape par étape</summary>
+
+1. **FAUX**. La pile d'appels (Call Stack) *empile*. Les variables de `main()` restent en mémoire vive "au bas de la pile" pendant que `fonction_A()` tourne sur le dessus. Elles ne sont détruites que quand `main()` se termine (à la fin du programme).
+2. **FAUX**. En C++, le nom d'un array se convertit implicitement en un **pointeur** vers son premier élément. La fonction reçoit une adresse (`int* arr`), ce qui signifie qu'elle interagit en lien direct (par référence) avec le tableau d'origine. Les modifications sont donc répercutées.
+3. **VRAI**. Son *scope* (portée) reste limité au bloc dans lequel la variable est définie : on ne peut taper son nom ailleurs (encapsulation). Cependant, sa *durée de vie* devient globale : elle ne s'efface pas de la mémoire RAM en sortant de la fonction.
+4. **FAUX**. `inline` est une simple **suggestion** d'optimisation (hint). Le compilateur reste le seul juge définitif et peut très bien l'ignorer si la fonction est trop complexe (ex: si elle comprend des récursions profondes).
+</details>
+
+---
+
+### ⭐⭐ Niveau 2 : Traque de variables et Portée
+
+---
+
+**Exercice 26 — Prédire la vie des variables**
+
+Lisez le code suivant. Prédisez très exactement la sortie console de ce programme en justifiant chaque chiffre de la sortie.
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int alpha = 10; // Variable globale
+
+void compute() {
+    int beta = 5;          // Automatique
+    static int gamma = 3;  // Statique
+    
+    alpha += 1;
+    beta  += 10;
+    gamma += 100;
+    
+    cout << alpha << "," << beta << "," << gamma << " | ";
+}
+
+int main() {
+    compute();
+    compute();
+    cout << alpha;
+    return 0;
+}
+```
+
+<details>
+<summary>Voir la prédiction et l'explication pas-à-pas</summary>
+
+**Analyse de l'état initial :**
+- `alpha` (Globale) vit tout le long du programme. Départ = 10.
+- `gamma` (Statique locale) vit tout le temps, mais l'initialisation `= 3` n'est activée *qu'au premier passage*.
+
+**Appel 1 (`compute();`) :**
+- `beta` est initiée à `5`.
+- `gamma` est initiée à `3`.
+- `alpha` = 10 + 1 = `11`
+- `beta` = 5 + 10 = `15`
+- `gamma` = 3 + 100 = `103`
+- *Affichage 1* : `11,15,103 | `
+- Fin de fonction : `beta` meurt. `alpha` et `gamma` subsistent.
+
+**Appel 2 (`compute();`) :**
+- `beta` est **ré-initiée** à `5` (nouvelle variable sur la pile).
+- `gamma` **ignore** `= 3` et repart avec sa dernière valeur : `103`.
+- `alpha` repart avec sa dernière valeur : `11`.
+- `alpha` = 11 + 1 = `12`
+- `beta` = 5 + 10 = `15`
+- `gamma` = 103 + 100 = `203`
+- *Affichage 2* : `12,15,203 | `
+
+**Retour au `main()` :**
+- Affiche l'état final de `alpha` global : `12`.
+
+**Sortie finale exacte :**
+`11,15,103 | 12,15,203 | 12`
+</details>
+
+---
+
+### ⭐⭐⭐ Niveau 3 : Les trois passages en C++
+
+---
+
+**Exercice 27 — Coder les In/Out correctement**
+
+Une struct rudimentaire sert à gérer l'inventaire :
+```cpp
+struct Armure {
+    string nom;
+    int defence;
+    int poids_kg;
+};
+```
+Vous devez instancier l'armure `{"Cotte de mailles", 40, 15}` dans le stack de `main()`.
+Implémentez trois fonctions appelables pour qu'elle passe à 50 de défense après avoir frappé l'enclume :
+1. `upgradeVal(...)` (essayez, et montrez son échec argumenté).
+2. `upgradeRef(...)`.
+3. `upgradePtr(...)`.
+
+<details>
+<summary>Voir le code complet de la résolution</summary>
+
+```cpp
+#include <iostream>
+using namespace std;
+
+struct Armure {
+    string nom;
+    int defence;
+    int poids_kg;
+};
+
+// 1. Passage par valeur
+void upgradeVal(Armure a) {
+    a.defence = 50;
+    // La macro variable 'a' ici n'est qu'un CLONE jetable du paramètre initial.
+} // La copie modifiée se désintègre ici sans un bruit.
+
+// 2. Passage par Référence
+void upgradeRef(Armure& a) {
+    a.defence = 50; 
+    // '&' force 'a' à devenir une fenêtre transparente sur l'armure d'origine.
+}
+
+// 3. Passage par pointeur
+void upgradePtr(Armure* a) {
+    // Il faut utiliser la flèche pour dé-référencer et accéder simultanément
+    a->defence = 50; 
+}
+
+int main() {
+    Armure myArmor = {"Cotte de mailles", 40, 15};
+    
+    upgradeVal(myArmor);
+    cout << "Par Valeur : " << myArmor.defence << endl; // Affiche : 40
+    
+    upgradeRef(myArmor); // la syntaxe d'appel reste limpide
+    cout << "Par Reference : " << myArmor.defence << endl; // Affiche : 50
+    
+    myArmor.defence = 40; // reset
+    upgradePtr(&myArmor); // il FONDAMENTALEMENT signifier le passage d'adresse ici
+    cout << "Par Pointeur : " << myArmor.defence << endl; // Affiche : 50
+}
+```
+
+> ⚙️ **Piège du C-iste** : En C brut, les références `&` n'existaient pas. La méthode 3 (`*`) était obligatoire pour propager toute répercussion. Le C++ privilégie de loin aujourd'hui la méthode 2 pour le In/Out. 
+</details>
+
+---
+
+### ⭐⭐⭐⭐⭐ Niveau 5 : "Rapport de Notes" (Mini-projet d'implémentation)
+
+---
+
+**Exercice 28 — Système d'ajout dynamique**
+
+Dans la consigne d'un mini-projet gérant une classe d'étudiants, on vous demande de faire un tableau (array alloué dynamiquement) listant des objets étudiants `Student { string nom; double cote; }`.
+
+Dans votre boucle `while` lisant au départ un tableau de taille $N=2$, si le tableau est saturé, la taille d'allocation d'array sur le `heap` devra systématiquement doubler (de $2 \to 4 \to 8$). 
+
+L'exercice vous demande d'écrire spécifiquement **uniquement** la fonction C++ qui intercepte un tableau saturé, copie ses données pour l'étirer au double de sa capacité, le nettoyer de ses restes et réassigner le nouveau pointeur. Vous *refuserez* l'usage de la librairie `std::vector` (le but est didactique).
+
+Déclarez le prototype :
+`void rescaleArray(Student*& arr, int& current_capacity)`
+
+<details>
+<summary>Voir l'ingénierie mémoire pas-à-pas</summary>
+
+**Intention** :
+D'abord, notons la subtilité du prototype `Student*& arr`. Un tableau alloué dynamiquement se cache derrière un pointeur simple `Student* arr`. Or, nous devons détruire la mémoire d'origine de `arr` et *recâbler l'adresse du `arr` du main()* vers le nouveau territoire mémoire en Heap.
+Si nous avions écrit `Student* arr`, `arr` aurait été copié par valeur ! Mettre la valeur d'une adresse copiée sur un nouvel Heap pointer n'aurait en rien aidé le `main()`. D'où : un passage par *référence d'un pointeur*.
+
+```cpp
+struct Student {
+    string name;
+    double grade;
+};
+
+void rescaleArray(Student*& arr, int& capacity) {
+    // 1. Allouer un espace de la nouvelle (double) dimension
+    int new_capacity = capacity * 2;
+    Student* extended_arr = new Student[new_capacity];
+    
+    // 2. Transcription (Sauvetage des variables dans le nouveau tableau)
+    for (int i = 0; i < capacity; i++) {
+        extended_arr[i] = arr[i]; // Copie struct à struct
+    }
+    
+    // 3. Libérer le vieil espace étroit du heap qui ne sert plus à rien 
+    delete[] arr; // Piège ! ne pas oublier les [] pour détruire l'Array au complet
+    
+    // 4. Renommer les pointeurs / propriétés
+    arr = extended_arr;      // arr du main() pointe maintenant vers la vaste région mémoire
+    capacity = new_capacity; // Mise à jour partagée (Passer par ref)
+}
+```
+
+**Pourquoi ce code est crucial ?**
+La taille immuable des Arrays classiques générait d'énormes problèmes dans les années 70/80 : on estimait arbitrairement des tailles `Student tab[1000]` en gaspillant la RAM ou en causant de la saturation. La combinaison "Allocation Dynamique + Pointeur + Passage par Ref" solutionne ça en temps d'exécution réel (Runtime). La STD le fait de façon cachée avec `std::vector`, dont vous venez de recréer la méthode historique principale !
+</details>
+
+---
+
+**Exercice 29 — Rapport de Notes (Partie 2/2 : Statistiques et Références Constantes)**
+
+La seconde partie de l'algorithme "Rapport de Notes" exige d'afficher :
+- La moyenne de la classe
+- La meilleure note
+- La plus mauvaise note
+- Le nombre de distinctions (notes >= 14/20)
+
+Pour ce faire, écrivez une unique fonction `printReport` qui prend le tableau dynamique en paramètre, sa taille, et qui affiche ces 4 statistiques. 
+**Contrainte absolue** : Vous devez garantir au compilateur que cette fonction d'affichage ne modifiera *jamais* accidentellement les notes des étudiants en utilisant le bon mot-clé.
+
+<details>
+<summary>Voir l'implémentation par pointeur sécurisé (const-correctness)</summary>
+
+**Intention** :  
+Puisqu'on passe un accès direct en lecture au tableau entier, il est impératif de prévenir les écueils d'effacements de données inopportuns. Passer "par valeur" (copier un tableau de 10.000 étudiants) juste pour lire les notes détruirait les performances. 
+On va donc utiliser le puissant qualificateur `const` couplé au pointeur en paramètre (ou `const Student arr[]`).
+
+```cpp
+// Le pointeur 'arr' est déclaré comme visant des objets CONSTANTS.
+void printReport(const Student* arr, int count) {
+    if (count == 0) {
+        cout << "Aucun etudiant enregistre." << endl;
+        return;
+    }
+
+    double sum = 0.0;
+    double best = arr[0].grade;
+    double worst = arr[0].grade;
+    int distinctions = 0;
+
+    for (int i = 0; i < count; i++) {
+        double current = arr[i].grade;
+        
+        // arr[i].grade = 20; // ❌ CELA PROVOQUERAIT UNE ERREUR DE COMPILATION (GRACE A CONST)
+
+        sum += current;
+        if (current > best) best = current;
+        if (current < worst) worst = current;
+        if (current >= 14.0) distinctions++;
+    }
+
+    double average = sum / count;
+
+    cout << "--- RAPPORT DE NOTES ---" << endl;
+    cout << "  Moyenne classe: " << average << " / 20" << endl;
+    cout << "  Meilleure note: " << best << " / 20" << endl;
+    cout << "  Pire note:      " << worst << " / 20" << endl;
+    cout << "  Distinctions:   " << distinctions << endl;
+}
+```
+
+Ce second bloc vient parachever l'architecture :  
+1. **Lecture & Ajout Dynamique (Ex 28)** avec des pointeurs passés **pas référence** (`Student*& arr`) pour autoriser le Heap Resizing.
+2. **Statistiques (Ex 29)** via pointeur constant (`const Student* arr`) pour imposer la lecture seule et protéger l'intégrité du système de fiches.
 </details>

@@ -1,8 +1,12 @@
 import glob
 import re
 import os
+import sys
 
-courses = ['Informatique_OOP', 'Physique', 'Analyse_Numerique']
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
+
+courses = ['Informatique_OOP', 'Physique', 'Analyse_Numerique', 'Analyse_2']
 
 print("=========================================")
 print("          AUDIT DES COURS")

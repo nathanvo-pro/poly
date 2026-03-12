@@ -1,0 +1,666 @@
+INFOH2001 Object Oriented
+Programming
+Mahmoud SAKR <mahmoud.sakr@ulb.be>
+École polytechnique de Bruxelles
+2025/26
+88
+Lecture 5
+Mini-Project 5: Rapport De Notes
+
+Rapport De Notes - Algorithm
+étudiants = array vide
+WHILE il reste des lignes dans le fichier :
+Lire une ligne // contient le nom et les notes d'un étudiant
+Parser la ligne et créer un objet étudiant
+IF array étudiants est plein:
+Augmenter la taille d’array
+Ajouter l'étudiant à la fin d’array
+Afficher le rapport :
+Calculer et afficher la moyenne de la classe
+Calculer et afficher la meilleure note
+Calculer et afficher la plus mauvaise note
+Calculer et afficher le nombre de distinctions (mentions)Pour réaliser ce projet, nous utilisons :
+Nouveaux concepts :
+●Paramètres de fonction
+●Passage par valeur
+●Passage par référence
+●Passage par pointer
+●Retour d'array et de pointers
+●Prototypes de fonctions
+●const
+●Portée et durée de vie des
+variables
+Concepts déjà vus :
+●I/O de fichiers
+●Parse de texte
+●Pointers - allocation dynamique
+●Références
+●Manipulateurs de stream
+●class
+●enum
+Fonctions
+// Prototypes : déclarations avant utilisation
+double power (double x,int n);
+int read_exponent (); //aucun paramètre
+void display_result (double value); // rétour void
+int main () {
+double base =2.0;
+int exp =read_exponent ();
+double result =power (base, exp);
+display_result (result);
+return 0;
+// Ici, les variables locales sont détruites
+}// Définitions (peuvent apparaître après main)
+int read_exponent () {
+int local_value =3;// Variable locale
+return local_value; // Copie de la valeur retournée
+}
+double power (double x,int n) {
+if(n<0)return 0.0;// Premier return : arrêt anticipé
+double result =1.0;
+for (int i=0; i <n;++i)// i est local dans la boucle
+result *=x;
+return result; // Second return : valeur finale
+}
+void display_result (double value) {
+std::cout <<"Résultat: " <<value <<std::endl;
+}Segmentation des programmes
+Une application C++ ou un Class se compose de nombreuses fonctions,
+chacune fournissant une capacité distincte et bien définie. L'exécution
+commence dans main() , qui doit être définie dans l'espace de noms global,
+mais ce n'est qu'un point d'entrée : main() appelle d'autres fonctions,
+lesquelles peuvent à leur tour en appeler d'autres, formant ainsi une chaîne
+d'exécution imbriquée. Lorsque plusieurs fonctions sont actives simultanément
+- une ayant appelé une autre qui n'a pas encore retourné - le système doit
+mémoriser d'où chaque appel provient afin de reprendre l'exécution au bon
+endroit après le retour. Cette information est enregistrée et maintenue
+automatiquement dans lapile d'appels(call stack), qui conserve tous les
+appels en attente ainsi que les données transmises à chaque fonction. La pile
+d'appels est essentielle au bon déroulement des programmes imbriqués ; les
+outils de débogage des environnements de développement permettent
+généralement de l'inspecter à l'exécution.
+Fonctions dans les classes
+Une classe définit un nouveau type et contient généralement des fonctions
+représentant les opérations applicables aux objets de ce type. Vous avez déjà
+utilisé abondamment de telles fonctions membres : dans les cours précédents,
+les méthodes length() etfind() de la classe string , ou encore les
+opérateurs d'insertion et d'extraction ( <<,>>) appliqués aux objets cinet
+cout , qui invoquent en réalité des fonctions membres de ces objets. Ces
+fonctions appartenant à des classes sont fondamentales en programmation
+orientée objet ; elles encapsulent le comportement propre à chaque type et
+constituent l'un des piliers de la conception modulaire.
+Une fonction (soit dans le programme, soit dans une fonction membre d'une
+classe) devrait exécuter une seule action bien définie et rester relativement
+courte. La plupart des fonctions ne comportent que quelques lignes de code,
+certainement pas des centaines.
+Définition des fonctions
+Une fonction est un bloc de code autonome ayant un but spécifique. Sa
+définition comporte un en-tête suivi d'un bloc contenant le code. L'en-tête
+spécifie trois éléments : le type de retour (type de la valeur renvoyée, ou void
+si rien n'est retourné), le nom de la fonction (soumis aux mêmes règles que les
+variables), et la liste des paramètres entre parenthèses (nombre et types des
+données attendues à l'appel). La forme générale est :
+return_type function_name (parameter_list )
+{
+// Code de la fonction...
+}
+Si aucune donnée n'est transmise à l'appel, les parenthèses restent vides.
+Pour plusieurs paramètres, on les sépare par des virgules. L'ordre et le type
+des arguments fournis à l'appel doivent correspondre à ceux des paramètres ;
+les conversions implicites autorisées par le compilateur peuvent parfois
+entraîner une perte d'information sans avertissement.
+La combinaison du nom et de la liste des paramètres forme lasignaturede la
+fonction ; le type de retour n'en fait pas partie, ce qui deviendra crucial lors de
+l'étude de la surcharge de fonctions.
+Le mot-clé void indique l'absence de valeur de retour ; une fonction void ne
+peut pas être utilisée dans une expression. Un paramètre de type void*
+accepte en revanche un pointeur vers n'importe quel type de données,
+permettant un traitement générique.
+Corps de la fonction
+L'appel d'une fonction exécute les instructions de son corps, les paramètres
+étant initialisés avec les arguments fournis. Les variables définies à l'intérieur
+du corps - ainsi que les paramètres eux-mêmes - sont locales à la fonction :
+elles n'existent que pendant son exécution et disparaissent automatiquement
+à son terme. Leur portée s'étend du point de définition jusqu'à la fin du bloc qui
+les contient. Cette isolation garantit que des noms identiques peuvent être
+réutilisés dans d'autres fonctions sans conflit. Seules les variables déclarées
+static font exception à cette règle, leur durée de vie s'étendant au-delà de
+l'appel (étudié plus tard)
+Valeurs de retour
+Une fonction dont le type de retour n'est pas void doit renvoyer une valeur du
+type spécifié via l'instruction return , qui met fin à l'exécution de la fonction et
+reprend le contrôle au point d'appel. Plusieurs instructions return peuvent
+figurer dans le corps, chacune renvoyant éventuellement une valeur différente.
+Bien qu'une fonction ne puisse retourner qu'une seule valeur, celle-ci peut être
+un pointeur vers n'importe quelle structure complexe, par exemple array. Lors
+du retour, unecopiede la valeur est automatiquement créée et transmise à
+l'appelant ; la variable locale originale est détruite dès la fin de la fonction,
+mais sa copie persiste au point d'appel. Pour une fonction void , l'instruction
+se réduit à return; sans expression ; atteindre l'accolade fermante du corps
+équivaut alors implicitement à ce retour.
+Déclarations et prototypes de fonctions
+Si la définition d'une fonction apparaîtaprèsson premier appel dans le fichier
+source, le compilateur ne peut pas la traiter - il ignore encore son existence,
+son type de retour et ses paramètres. Ce problème se pose également
+lorsque deux fonctions s'appellent mutuellement (récursion croisée) ou lorsque
+des fonctions résident dans des fichiers sources distincts. La solution consiste
+à déclarer la fonction avant son utilisation via unprototype(ou déclaration de
+fonction). Un prototype reproduit l'en-tête de la fonction suivi d'un point-virgule,
+par exemple double power(double x, int n); . Il fournit au compilateur
+toutes les informations nécessaires pour valider les appels - nom, type de
+retour et types des paramètres - sans exiger l'implémentation immédiate. Les
+noms des paramètres dans le prototype sont optionnels pour le compilateur
+(seuls les types comptent), mais leur inclusion améliore considérablement la
+lisibilité ; un prototype comme double power(double, int); est
+fonctionnel mais peu informatif, surtout si les paramètres partagent le même
+type. Il est donc recommandé d'inclure systématiquement des noms explicites
+dans les prototypes. Adopter l'habitude de placer tous les prototypes en début
+de fichier élimine les erreurs de séquencement et offre aux lecteurs une vue
+d'ensemble rapide des fonctionnalités exposées par le module.
+Paramètres de la Fonction
+Les paramètres d'une fonction se classent selon leur rôle en trois catégories :
+●Les paramètresd'entrée(in) sont lus par la fonction mais ne sont pas modiﬁés;
+l'appelant s'attend à ce que leur valeur d'origine reste inchangée.
+●Les paramètresde sortie(out) servent uniquement à renvoyer des données depuis la
+fonction; leur valeur initiale est ignorée ou sans importance. L'appelant exploite le
+résultat après l'appel.
+●Les paramètresd'entrée-sortie(inout) remplissent un double rôle : la fonction lit leur
+valeur initiale puis la modiﬁe pour produire un nouveau résultat. L'appelant fournit une
+valeur de départ signiﬁcative et s'attend à ce qu'elle soit mise à jour par la fonction.
+Nous allons maintenant examiner la syntaxe pour déﬁnir chacune de ces trois catégories.
+92
+
+Passage des paramètres - Syntax
+●Pass-by-value (in): Dans la transmission par valeur la fonction reçoit des copies des arguments.
+Les modiﬁcations à l'intérieur de la fonction n'aﬀectent pas les variables originales. Les
+paramètres sont des variables automatiques/locales, existant uniquement pendant la fonction
+puis détruites après. Ce mécanisme protège les données de l'appelant contre les modiﬁcations.
+●Pass-by-reference (inout): La transmission par référence utilise & dans le paramètre (ex. :void
+f(int& x)). La fonction opère directement sur la variable d'origine, sans copie, , donc toutes les
+modiﬁcations eﬀectuées à l'intérieur de la fonction sont également conservées dans l'appelant.
+●Pass-by-pointer (inout): La transmission par pointer utilise un paramètre pointer (ex. :void
+f(int* x)). On transmet soit l'adresse d'une variable (&var), soit un pointeur existant.
+●Pass-by-reference and pass-by-pointer mécanismes évitent la copie d'objets volumineux.
+●Il n'y a aucun moyen de spéciﬁer des paramètressortie uniquement(out) en C++. Utilisez un
+paramètreinout, puis à l'intérieur de la fonction évitez de lire sa valeur, en limitant son
+utilisation à l'écriture seule.
+93
+
+126#include <iostream>
+using namespace std;
+void applyIndexByRef( float& k){ k*= 1.375 ;}
+void applyIndexByVal( float k){ k*= 1.375 ;}
+void applyIndexByPtr( float* k){ *k *= 1.375 ;}
+int main(){
+float salary= 3500 ;
+applyIndexByVal(salary);
+cout<< "Salaire après indexation by value" <<salary<<endl; //Salaire après indexation by value 3500
+salary= 3500 ;
+applyIndexByRef(salary);
+cout<< "Salaire après indexation by reference " <<salary<<endl; //Salaire après indexation by reference 4812.5
+salary= 3500 ;
+applyIndexByPtr(&salary);
+cout<< "Salaire après indexation by ptr " <<salary<<endl; //Salaire après indexation by ptr 4812.5
+float * salaryPtr= new float (3500 );
+applyIndexByPtr(salaryPtr);
+cout<< "Salaire après indexation by ptr " << *salaryPtr<<endl; //Salaire après indexation by ptr 4812.5
+delete salaryPtr;
+}
+Mécanismes de passage de paramètres en C++
+En C++, les arguments peuvent être transmis à une fonction selon trois
+mécanismes fondamentaux : la transmission par valeur (pass-by-value), par
+référence (pass-by-reference) et par pointeur (pass-by-pointer). Chacun de
+ces mécanismes détermine comment la fonction accède aux données de
+l'appelant, avec des implications directes sur la modification des variables
+originales, les performances et la sécurité du code. L'exemple de l'indexation
+salariale illustre clairement ces différences.
+Transmission par valeur : protection par copie
+La fonction applyIndexByVal(float k) illustre le mécanisme par défaut
+en C++. Lors de l'appel applyIndexByVal(salary) , le compilateur crée
+unecopie temporairede la variable salary (valeur 3500) sur la pile
+d'appels. Cette copie, stockée dans le paramètre local k, devient la propriété
+exclusive de la fonction. L'opération k *= 1.375 modifie uniquement cette
+copie, portant sa valeur à 4812,5. À la fin de l'exécution, la copie est détruite
+automatiquement et la variable originale salary dans main() reste
+inchangée à 3500. Ce comportement garantit que les données de l'appelant
+sont protégées contre toute modification involontaire - un avantage essentiel
+pour les paramètres d'entrée (in parameters). Toutefois, cette sécurité a un
+coût : pour les objets volumineux, la copie peut devenir coûteuse en temps et
+en mémoire.
+Transmission par référence : accès direct sans copie
+La fonction applyIndexByRef(float& k) utilise l'opérateur &dans sa
+déclaration pour indiquer qu'elle reçoit uneréférenceà la variable d'origine.
+Lors de l'appel applyIndexByRef(salary) , aucune copie n'est créée. Le
+paramètre kdevient un alias - un autre nom - pour la variable salary
+elle-même. L'opération k *= 1.375 modifie donc directement la mémoire
+occupée par salary dans main() , portant sa valeur à 4812,5. Cette
+modification persiste après le retour de la fonction, comme le montre
+l'affichage final. La référence agit comme une ‘fenêtre’ sur la variable originale
+: même adresse mémoire, même durée de vie, mais un nom différent à
+l'intérieur de la fonction. Ce mécanisme évite le coût de copie tout en
+permettant la modification explicite de l'argument - idéal pour les paramètres
+de sortie (out) ou d'entrée-sortie (inout).
+Transmission par pointeur : contrôle explicite de l'adresse
+La fonction applyIndexByPtr(float* k) reçoit unpointeur, c'est-à-dire
+l'adresse mémoire d'une variable de type float . Deux scénarios sont illustrés
+dans l'exemple. Premièrement, avec applyIndexByPtr(&salary) ,
+l'opérateur &transmet explicitement l'adresse de salary . Le paramètre k
+contient alors cette adresse ; l'opération *k *= 1.375 déréférence le
+pointeur pour modifier la valeur stockée à cette adresse - à savoir salary
+elle-même.
+Deuxièmement, avec float* salaryPtr = new float(3500) , la
+variable salaryPtr est déjà un pointeur vers une zone allouée
+dynamiquement sur le tas. L'appel applyIndexByPtr(salaryPtr)
+transmet directement cette adresse sans utiliser &. Dans les deux cas, la
+fonction accède à la même zone mémoire que l'appelant et peut en modifier le
+contenu. Contrairement à la référence, le pointeur peut être nullptr ou
+pointer vers n'importe quelle zone valide, ce qui offre plus de flexibilité mais
+aussi plus de risques (déréférencement de pointeur invalide).
+Comparaison des trois mécanismes dans l'exemple
+Après l'appel à applyIndexByVal(salary) , le salaire affiché reste 3500 :
+la copie locale a été modifiée, pas l'original. Après
+applyIndexByRef(salary) ouapplyIndexByPtr(&salary) , le salaire
+devient 4812,5 : dans les deux cas, la fonction a accédé directement à la
+variable originale. La différence fondamentale réside dans la syntaxe et la
+sémantique : la référence ( &) fournit un accès transparent et sûr à l'original,
+tandis que le pointeur ( *) expose explicitement le niveau d'indirection. Le choix
+entre référence et pointeur dépend du contexte : les références sont préférées
+pour les paramètresout/inoutsimples (plus lisibles, impossibilité de nullité
+accidentelle), tandis que les pointeurs sont nécessaires pour les allocations
+dynamiques ( new) ou lorsque la nullité fait partie de la sémantique (ex. :
+paramètre optionnel).
+Bonnes pratiques
+Pour les paramètres d'entrée simples (petits types comme int,float ), la
+transmission par valeur est naturelle et sécurisée. Pour les grands objets en
+lecture seule, préférez const Type& pour éviter la copie tout en garantissant
+l'immuabilité. Pour les paramètres de sortie ou d'entrée-sortie, utilisez Type&
+(référence non-const) lorsque la modification est intentionnelle et attendue.
+Réservez les pointeurs aux cas nécessitant une gestion explicite de la
+mémoire ( new/delete ) ou une sémantique de nullité. Dans tous les cas,
+documentez clairement l'intention du paramètre (entrée, sortie, ou les deux)
+pour éviter les surprises lors de la maintenance du code.
+Paramètres const
+●Déclarer un paramètre comme const empêche toute
+modiﬁcation accidentelle à l'intérieur de la fonction, ce
+qui en fait un paramètre d'entrée uniquement.
+●Fonctionne avec les paramètres par valeur, par
+référence et par pointeur - bien que les eﬀets diﬀèrent:
+○Pour les paramètres by value, const est
+optionnel et souvent redondant, car les
+paramètres par valeur sont par déﬁnition en
+entrée uniquement.
+○Pour les paramètres par référence/pointer,
+const est crucial pour imposer des
+paramètres en entrée uniquement.
+●Toute tentative de modiﬁcation d'un paramètre const
+provoque une erreur à la compilation.
+●Bonne pratique : utiliser const pour tous les paramètres
+par référence/pointeur qui ne doivent pas changer -
+c'est un élément de conception C++ propre et
+défensive.
+129void printValue( const int x) {
+x = 10;
+// Erreur: impossible de modifier le constant
+std::cout << "Value: " << x << "\n" ;
+}
+void printString( const std::string &s) {
+s[0] = 'X';
+// Erreur: impossible de modifier const string
+std::cout << "String: " << s << "\n" ;
+}
+void printArray( const double* arr, size_t n) {
+arr[ 0] = 99.0 ;
+// Erreur: impossible de modifier via const pointer
+for (int i = 0; i < n; ++i)
+std::cout << arr[i] << " ";
+std::cout << "\n" ;
+}La déclaration d'un paramètre avec le qualificateur const établit un contrat de
+non-modification: la fonction s'engage à ne pas altérer la donnée reçue, ce
+qui en fait un paramètre strictement d'entrée (input-only). L'exemple de code
+illustre concrètement ce principe et les erreurs de compilation qui surviennent
+lorsqu'on tente de violer ce contrat.
+Bien que redondant (un paramètre par valeur est déjà une copie protégée),
+const int x interdit explicitement toute modification de la copie locale. La
+tentative x = 10 échoue à la compilation car xest déclaré constant. Même si
+cette utilisation est rare en pratique, elle renforce l'intention du développeur :
+“cette valeur ne doit pas être modifiée, même localement”
+void printString (const std:: string &s) {
+s[0]='X';// Erreur de compilation
+…
+}
+Ici,const estcritique. Sans lui, std::string& s permettrait de modifier
+directement la string originale de l'appelant. Avec const std::string& s ,
+la référence devient une fenêtre enlecture seulesur l'objet d'origine. La
+tentative s[0] = 'X' viole cette garantie : le compilateur refuse car sest
+une référence constante - impossible de modifier l'objet pointé, même via
+l'opérateur [].
+void printArray (const double* arr, size_t n) {
+arr[0]=99.0 ;// Erreur de compilation
+…
+}
+const double* arr signifie “pointeur vers un double constant” : on peut
+lire les valeurs via arr[i] , mais pas les modifier. La tentative arr[0] =
+99.0 tente d'écrire dans une zone mémoire protégée par const , ce que le
+compilateur interdit formellement.
+Pourquoi cette discipline ?
+●Sécurité: empêche les modifications accidentelles de données
+critiques.
+●Clarté: le lecteur du code sait immédiatement que la fonction ne
+modifiera pas l'argument.
+●Optimisation: le compilateur peut appliquer des optimisations
+supplémentaires sur les données constantes.
+Fonction const
+Les fonctions membres d'une classe peuvent être déclarées commeconst, ce qui signiﬁe qu'elles ne
+modiﬁent pas l'état de l'objet. Cela permet d'appeler des objets constants en toute sécurité et
+améliore la clarté et la sécurité du code.
+96class MyClass {
+public:
+int getValue() const ;// const après la liste des paramètres
+void setValue( int v); // non-const. Elle peut modifier l'état de la classe
+};
+Passage d’array aux fonctions
+●Rappel : une variable array est un pointeur vers
+le premier élément du array.
+●Le passage d'un array se fait par référence par
+défaut - aucune copie des données n'est
+eﬀectuée.
+●Une fonction recevant un array peut être
+déclarée avec deux syntaxes équivalentes:
+○double avg(double arr[], size_t n)
+○double avg(double* arr, size_t n)
+●La taille doit être transmise séparément: la
+fonction ne peut pas déterminer seule la taille
+de l'array. L'appelant doit fournir le nombre
+d'éléments (par exemple via sizeof).
+●Il n'existe pas de pass-by-value pour un array
+complet.
+132#include <iostream>
+double average( double v[], size_t count){
+double sum= 0;
+for(int i=0; i<count; ++i)
+sum+= v[i];
+return sum/count;
+}
+int main()
+{
+double values[] { 1.0,2.0,3.0,4.0,5.0,6.0,
+7.0,8.0,9.0,10.0 };
+std::cout << "Average = " << average(values,
+(sizeof values)/(sizeof values[ 0]));
+}
+Lorsqu'un array est passé à une fonction en C++, aucune copie des données
+n'est effectuée - le mécanisme est intrinsèquementpar référence. Cela
+découle d'une règle fondamentale du langage : le nom d'un array se comporte
+comme unpointeur constant vers son premier élément. Ainsi, dans l'appel
+average(values, ...) , l'identifiant values se convertit automatiquement
+endouble* pointant vers values[0] . La fonction reçoit donc l'adresse de
+départ du bloc mémoire, pas une copie des dix éléments - ce qui évite un coût
+de copie linéaire en la taille de l'array.
+Cette conversion implicite explique pourquoi les deux déclarations suivantes
+sont strictement équivalentes pour le compilateur :
+○double avg(double arr[], size_t n)
+○double avg(double* arr, size_t n)
+Dans les deux cas, le paramètre arrest traité comme un pointeur ( double* ).
+La notation avec crochets vides []est simplement du sucre syntaxique pour
+indiquer à l'humain que la fonction attend un array - mais le compilateur ne
+conserve aucune information sur la taille réelle du tableau.
+C'est pourquoila taille doit être transmise explicitementen second
+paramètre. Un array ne porte pas sa propre taille : à l'intérieur de average() ,
+l'expression sizeof v retournerait la taille d'un pointeur (8 bytes sur une
+machine 64 bits), pas la taille d’array original. L'appelant doit donc calculer la
+taille via (sizeof values) / (sizeof values[0]) et la transmettre à
+la fonction. Sans ce paramètre count , la fonction ne pourrait pas déterminer
+où s'arrête, risquant un dépassement de mémoire.
+L'exemple illustre également l'impossibilité du passage par valeur pour un
+array complet. En C++, il n'existe pas de syntaxe permettant de déclarer un
+paramètre qui recevrait une copie intégrale d'un array de taille arbitraire.
+Default Arguments
+●Les arguments par défaut permettent à un
+paramètre de fonction de prendre une
+valeur prédéﬁnie si aucune autre valeur n'est
+fournie par l'appelant.
+●Spéciﬁés uniquement dans la déclaration de
+la fonction (prototype).
+●Tous les paramètres par défaut doivent
+ﬁgurer à laﬁn de la liste des paramètres.
+●L'appelant ne peut pas omettre un argument
+au milieu; par exemple:
+f(a, , c)est invalide.
+●Tous les arguments après le premier
+argument omis doivent également être omis.
+134
+#include <iostream>
+#include <string>
+using namespace std;
+enum class LogLevel { DEBUG ,INFO ,WARNING ,ERROR };
+// Les valeurs par défaut ne sont spécifiées que dans le //
+prototype, et non dans la définition.
+void log_message( const string &message,
+LogLevel level = LogLevel:: INFO ,// La plupart logs sont INFO
+ostream &out = cout); // Console par défaut
+void log_message( const std::string &message, // Définition
+LogLevel level, ostream &out) {
+// Log level prefix
+const char * prefix =
+(level == LogLevel:: DEBUG ) ? "[DEBUG] " :
+(level == LogLevel:: WARNING ) ? "[WARNING] " :
+(level == LogLevel:: ERROR ) ? "[ERROR] " :"[INFO] " ;
+out << prefix << message << "\n" ;
+}
+int main() {
+log_message( "Application started" );
+//[INFO] Application started
+log_message( "User login failed" , LogLevel:: WARNING );
+//[WARNING] User login failed
+log_message( "Critical failure!" , LogLevel:: ERROR , cerr);
+//[ERROR] Critical failure!
+return 0;}Paramètres par défaut en C++
+Les paramètres par défaut permettent de simplifier l'appel des fonctions en
+fournissant des valeurs automatiques pour les arguments non spécifiés. Cette
+fonctionnalité s'active uniquement dans leprototype(ou déclaration) de la
+fonction, jamais dans sa définition. Dans l'exemple log_message , le
+prototype déclare deux valeurs par défaut : LogLevel::INFO pour le niveau
+de log et cout pour le flux de sortie. La définition qui suit omet délibérément
+ces valeurs - le compilateur les associe automatiquement lors des appels
+incomplets. Cette séparation garantit que les valeurs par défaut sont définies
+une seule fois, au point où l'appelant les découvre, évitant toute ambiguïté.
+Une règle stricte gouverne l'ordre des paramètres :tous les paramètres avec
+valeur par défaut doivent se situer à la fin de la liste. Cela permet au
+compilateur de résoudre sans ambiguïté les appels où des arguments sont
+omis. Dans log_message(const string& message, LogLevel level
+= ..., ostream& out = ...) ,message (sans défaut) précède les deux
+paramètres optionnels. Ainsi, log_message("App started") utilise les
+deux valeurs par défaut, log_message("Login failed",
+LogLevel::WARNING) remplace uniquement le niveau, et
+log_message("Critical!", LogLevel::ERROR, cerr) spécifie tous
+les arguments. Tenter d'omettre un argument intermédiaire (ex. : sauter level
+mais fournir out) provoquerait une erreur de compilation - le langage
+n'autorise que l'omissioncontiguëdes arguments finaux.
+L'exemple illustre l'élégance de ce mécanisme pour les APIs fréquemment
+utilisées. La majorité des logs étant de niveau INFO et destinés à la console,
+l'appel minimal log_message("App started") reste lisible et concis.
+Seuls les cas spéciaux (alertes, erreurs critiques) nécessitent de préciser
+explicitement le niveau ou le flux ( cerr pour les erreurs). Sans paramètres
+par défaut, chaque appel devrait répéter LogLevel::INFO, cout ,
+alourdissant inutilement le code. Notez également que les paramètres par
+référence ( const string& ,ostream& ) acceptent les valeurs par défaut
+exactement comme les types simples - ici, cout est une référence constante
+vers un objet global existant.
+Distinction entre cout etcerr
+Dans l'exemple, les messages ordinaires utilisent cout (flux standard de
+sortie,stdout) tandis que les erreurs critiques utilisent cerr (flux standard
+d'erreur,stderr). Bien que les deux s'affichent par défaut dans la console, ils
+représentent des canaux logiques distincts au niveau du système
+d'exploitation. Cette séparation permet derediriger indépendammentles
+deux flux lors de l'exécution du programme :
+Sur l'invite de commandes Windows (CMD), la syntaxe de redirection est
+my_program.exe > output.txt 2> errors.log
+Ici,>redirigestdout( cout ) vers output.txt , tandis que 2>redirigestderr
+(cerr ) vers errors.log . Cette capacité est cruciale en production : les logs
+normaux et les erreurs critiques peuvent ainsi être archivés, analysés ou
+surveillés séparément sans modification du code source. L'utilisation
+judicieuse de cerr pour les erreurs (plutôt que cout ) transforme donc une
+simple convention de codage en fonctionnalité opérationnelle exploitable par
+les administrateurs système.
+Retour de Fonction
+●Le retour par valeur est simple et sûr : une copie est renvoyée.
+●Le retour par référence ou par pointeur peut entraîner des erreurs.
+○The GOLDEN rule: ne jamais retourner une variable locale automatique
+par référence ou par un pointer. La variable est détruite lorsque la
+fonction se termine.
+99
+
+Fonction inline
+●L'appel d'une fonction entraîne un surcoût : sauvegarde de l'état de l'appelant, passage des
+arguments, saut vers la fonction, initialisation en mémoire, exécution, retour et restauration de l'état
+de l'appelant.
+●Souvent, la fonction est assez simple et ce surcoût peut dépasser le coût réel de l'exécution de la
+fonction elle-même.
+●Les fonctions inline suggèrent au compiler de remplacer l'appel de fonction par le corps de la fonction
+directement à l'endroit de l'appel, réduisant ainsi le surcoût pour les fonctions petites et
+fréquemment utilisées.
+●Cela permet un code modulaire (vous écrivez toujours la fonction et l'appelez dans votre code) et un
+binaire optimisé (l'optimiseur peut choisir ou non de copier le corps de la fonction localement).
+Note : inline est une suggestion, pas une obligation - le compilateur décideﬁnalement s'il eﬀectue l'inlining
+ou non.
+100
+inline int square( int x) {
+return x * x; // Une fonction simple, idéale pour inline
+}void calc() {
+square (7); // Code copié ici
+}
+Lifetime & Scope
+●La portée (scope) déﬁnit où dans le code le nom d'une variable est accessible. Elle est
+indépendante de la durée de vie (lifetime). Une variable peut encore exister en mémoire
+même en dehors de sa portée.
+●Durée de vie≠Portée. La durée de vie indique combien de temps une variable existe en
+mémoire pendant l'exécution, tandis que la portée indique où son nom peut être utilisé
+dans le code source. Plusieurs combinaisons:
+○Les variables déclarées à l'intérieur d'un bloc, par exemple une boucle while, n'existent
+que depuis leur déclaration jusqu'à laﬁn du bloc et ont une portée/scope locale (de bloc).
+○Les variables déclarées avec le mot-clé static sont initialisées une seule fois et persistent
+pendant toute la durée du programme, même si elles sont déﬁnies à l'intérieur d'un bloc.
+○La mémoire allouée à l'exécution (avec new) existe jusqu'à sa libération explicite, et sa
+durée de vie est contrôlée manuellement par le programmeur.
+101
+
+Scope
+102
+Beginning C++, Ivor Horteon
+Variables global, static, et local
+Type de variable Portée Durée de vie
+Variable locale/
+automatiqueBloc Entrée→sortie du bloc
+Pointeur local Bloc Entrée→sortie du bloc
+Objet alloué avec new Aucune (accès via pointeur) new →delete
+Variable globale Fichier (+ autres via extern ) Début→fin du programme
+Variable static locale Bloc Début→fin du programme
+Variable static globale Fichier uniquement Début→fin du programme
+Local Static Variables
+●Une variable static déﬁnie à l'intérieur d'un bloc
+(comme une fonction ou une boucle) a une portée
+de bloc, ce qui signiﬁe qu'elle n'est accessible qu'à
+l'intérieur de ce bloc.
+●Mais elle a aussi une durée de stockage statique, ce
+qui signiﬁe qu'elle n'est initialisée qu'une seule fois
+et conserve sa valeur entre les appels de fonction
+pendant toute la durée de vie du programme.
+●Contrairement aux variables automatiques
+(locales), qui sont créées et détruites à chaque
+entrée et sortie du bloc, une variable static persiste.
+●On peut la voir comme un moyen de partager des
+informations entre diﬀérents appels de fonction.
+141
+#include <iostream>
+void counter() {
+static int count = 0;//Initialisé une seule fois
+count++;
+std::cout << "Called " << count << " time(s).\n" ;
+}
+int main() {
+counter(); // Output: Called 1 time(s).
+counter(); // Output: Called 2 time(s).
+counter(); // Output: Called 3 time(s).
+return 0;
+}Called 1 time(s).
+Called 2 time(s).
+Called 3 time(s).
+Portée et durée de vie des variables en C++
+En C++, deux concepts fondamentaux régissent l'existence des variables : la
+portée(scope) et ladurée de vie(lifetime). Bien qu'étroitement liés dans
+l'esprit du programmeur, ils sont indépendants et répondent à des questions
+distinctes. Laportéedéfinitoù dans le code sourcele nom d'une variable est
+accessible - c'est une notion lexicale, déterminée à la compilation. Ladurée
+de vieindiquecombien de tempsl'objet existe effectivement en mémoire
+pendant l'exécution - c'est une notion dynamique, déterminée à l'exécution.
+Une variable peut ainsi persister en mémoire après la fin de sa portée (ex. : un
+pointeur vers un objet alloué dynamiquement).
+Types de portée
+La portée dépend du contexte de déclaration :
+●Portée de bloc(block scope) : pour les variables déclarées à l'intérieur
+d'un bloc délimité par des accolades {}(fonction, boucle while ,
+condition if). Le nom est accessible depuis sa déclaration jusqu'à la fin
+du bloc.
+●Portée de classe(class scope) : pour les membres déclarés dans une
+classe ; accessible via l'opérateur .ou->
+●Portée globale: pour les variables déclarées en dehors de tout bloc,
+classe ou namespace ; accessible depuis leur déclaration jusqu'à la fin
+du fichier source, et potentiellement dans d'autres fichiers via extern .
+●Portée d'instruction(statement scope) : pour les variables déclarées
+dans l'en-tête d'une boucle forou d'un if; limitée à l'instruction
+concernée.
+Durées de stockage
+La durée de vie dépend du mécanisme d'allocation :
+●Automatique(automatic) : variables locales non-statiques. Créées à
+l'entrée dans leur bloc, détruites à la sortie. Stockées sur lastack.
+Exemple : int x = 5; dans une fonction.
+●Statique(static) : variables globales, statiques de classe, ou locales
+déclarées avec static . Initialisées une seule fois au démarrage du
+programme, détruites à sa terminaison. Exemple : static int
+count = 0; dans une fonction.
+●Dynamique(new-delete) : objets alloués avec new. Durée de vie
+contrôlée manuellement jusqu'à delete . Stockés sur leheap. Leur
+portée n'existe pas en tant que telle - on y accède via des pointeurs ou
+références.
+Cas critique : la variable statique locale
+L'exemple de la fonction counter() illustre parfaitement la dissociation entre
+portée et durée de vie. Ici, count a uneportée de bloc(accessible
+uniquement à l'intérieur de counter() ) mais unedurée de vie statique
+(persiste entre les appels). Au premier appel, count est initialisé à 0 puis
+incrémenté à 1. Aux appels suivants, l'initialisation estignorée- count
+conserve sa valeur précédente (2, puis 3, etc.). Contrairement à une variable
+automatique qui serait recréée à 0 à chaque appel, count agit comme une
+mémoire persistante encapsulée dans la fonction, sans polluer l'espace global.
+C'est un mécanisme élégant pour partager un état entre appels tout en
+préservant l'encapsulation.
+Rapport De Notes - Algorithm
+étudiants = array vide
+WHILE il reste des lignes dans le fichier :
+Lire une ligne // contient le nom et les notes d'un étudiant
+Parser la ligne et créer un objet étudiant
+IF array étudiants est plein:
+Augmenter la taille d’array
+Ajouter l'étudiant à la fin d’array
+Afficher le rapport :
+Calculer et afficher la moyenne de la classe
+Calculer et afficher la meilleure note
+Calculer et afficher la plus mauvaise note
+Calculer et afficher le nombre de distinctions (mentions)Pour réaliser ce projet, nous utilisons :
+Nouveaux concepts :
+●Paramètres de fonction
+●Passage par valeur
+●Passage par référence
+●Passage par pointer
+●Retour d'array et de pointers
+●Prototypes de fonctions
+●const
+●Portée et durée de vie des
+variables
+Concepts déjà vus :
+●I/O de fichiers
+●Parse de texte
+●Pointers - allocation dynamique
+●Références
+●Manipulateurs de stream
+●class
+●enum

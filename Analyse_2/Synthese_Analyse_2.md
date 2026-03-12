@@ -62,45 +62,55 @@ Et la phase se retrouve par $\tan\varphi = a/b$ (en tenant compte du quadrant).
 
 **Conclusion :** Taylor est utile localement, Fourier est utile pour comprendre le comportement **global** d'une fonction sur un domaine entier.
 
-### 2. Le Produit Scalaire et la Norme $L^2$
+### 2. L'Espace $L^2$ et le Produit Scalaire
 
-#### 2.1. L'espace $L^2$ : Un nouvel univers vectoriel
+#### 2.1. Définition de la classe $L^2$
 
-Avant de parler de Fourier, il faut un cadre mathématique rigoureux. On va traiter les fonctions comme des **vecteurs** dans un espace de dimension infinie.
-
-**Définition :** L'espace $L^2([a,b], \mathbb{K})$ est l'ensemble des fonctions $f$ définies sur $]a,b[$ telles que leur carré est intégrable :
+**Définition (Espace $L^2$) :** Une fonction $f$ (réelle ou complexe) définie sur $]a,b[$ est dite **de carré intégrable** (ou carré sommable) sur $[a,b]$ si :
 $$
-\int_a^b |f(x)|^2 \, dx < +\infty
+\int_a^b |f(t)|^2 dt < +\infty
 $$
-On dit que $f$ est **de carré sommable** (ou de carré intégrable).
+On note $\mathcal{L}^2([a,b], \mathbb{K})$ l'ensemble de ces fonctions.
 
-#### 2.2. Le produit scalaire dans $L^2$
+> [!IMPORTANT]
+> **Nuance de régularité :** En toute généralité, l'intégrabilité de $f$ est indépendante de celle de $f^2$.
+> - $f$ intégrable $\nRightarrow f^2$ intégrable : $f(x) = \frac{1}{\sqrt{x}}$ sur $]0,1]$ est intégrable ($\int \frac{1}{\sqrt{x}} = 2$), mais son carré $1/x$ ne l'est pas ($\int 1/x = \ln x \to \infty$).
+> - $f^2$ intégrable $\nRightarrow f$ intégrable : Une fonction valant $1$ sur les rationnels et $-1$ sur les irrationnels n'est pas Riemann-intégrable, mais son carré ($=1$) l'est.
+> 
+> Cependant, si $f$ est **localement intégrable sauf en un nombre fini de pôles**, l'intégrabilité de $f^2$ entraîne celle de $f$ (car $|f| \leq \frac{1}{2}(1 + f^2)$).
 
-Pour comparer deux fonctions $f$ et $g$ dans $L^2([a,b], \mathbb{K})$, on définit le **produit scalaire** :
+#### 2.2. Le Produit Scalaire et l'Identification "Presque Partout"
+
+On définit le produit scalaire standard (hermitien) sur $L^2$ par :
 $$
 \boxed{\langle f, g \rangle = \int_a^b f(x) \overline{g(x)} \, dx}
 $$
-Où $\overline{g}$ est le conjugué complexe de $g$ (si $g$ est réelle, $\overline{g} = g$).
 
-Ce produit scalaire vérifie les mêmes propriétés que le produit scalaire classique de $\mathbb{R}^n$ :
-1. **Linéarité à gauche :** $\langle \alpha f + \beta h, g \rangle = \alpha \langle f, g \rangle + \beta \langle h, g \rangle$
-2. **Symétrie hermitienne :** $\langle f, g \rangle = \overline{\langle g, f \rangle}$
-3. **Positivité :** $\langle f, f \rangle \geq 0$
-4. **Définité :** $\langle f, f \rangle = 0 \implies f = 0$ presque partout
+**Propriétés et Identification :**
+Pour faire de $L^2$ un espace préhilbertien au sens strict, on doit traiter le cas $\langle f, f \rangle = 0$.
+- **Théorème :** $\langle f, f \rangle = \int |f|^2 = 0 \iff f = 0$ **presque partout** (p.p.).
+- **Identification :** On regroupe les fonctions en classes d'équivalence : $f \equiv g \iff \|f-g\|_2 = 0$. Dans la suite, deux fonctions égales p.p. sont considérées comme identiques.
 
-#### 2.3. La norme $L^2$ (norme en moyenne quadratique)
+**Lemme (Existence du produit scalaire) :** Si $f, g \in L^2$, alors $\langle f, g \rangle$ est bien défini (l'intégrale converge).
+**Démonstration :** On utilise l'inégalité élémentaire $|f(x)g(x)| \leq \frac{1}{2}(|f(x)|^2 + |g(x)|^2)$. Comme $f, g \in L^2$, les intégrales de $|f|^2$ et $|g|^2$ convergent, donc celle de $|f||g|$ converge aussi par comparaison.
 
-La **norme** $L^2$ mesure la « taille » d'une fonction :
+#### 2.3. Généralisation : La fonction "poids" $p$
+
+**Définition :** On peut définir un produit scalaire relativement à une fonction **poids** $p(x)$ continue et positive sur $[a,b]$ :
 $$
-\boxed{\|f\|_2 = \sqrt{\langle f, f \rangle} = \left( \int_a^b |f(x)|^2 \, dx \right)^{1/2}}
+\langle f, g \rangle_p = \int_a^b p(x) f(x) \overline{g(x)} \, dx
 $$
+Cela munit l'espace $L^2_p$ d'une structure préhilbertienne. Les poids classiques sont :
+- **Chebyshev :** $p(x) = \frac{1}{\sqrt{1-x^2}}$ sur $]-1, 1[$.
+- **Hermite :** $p(x) = e^{-x^2}$ sur $\mathbb{R}$.
 
-> 💡 **Analogie visuelle :** Si $f$ est un signal sonore, $\|f\|_2^2$ est proportionnel à l'**énergie totale** du signal. La norme $L^2$ mesure la puissance globale.
+#### 2.4. Norme et Inégalité de Cauchy-Schwarz
 
-**L'inégalité de Cauchy-Schwarz** reste valide dans cet espace :
+La norme associée est $\|f\|_2 = \sqrt{\langle f, f \rangle}$. Elle vérifie l'inégalité de Cauchy-Schwarz :
 $$
-|\langle f, g \rangle|^2 \leq \langle f, f \rangle \cdot \langle g, g \rangle = \|f\|_2^2 \cdot \|g\|_2^2
+\boxed{|\langle f, g \rangle|^2 \leq \|f\|_2^2 \cdot \|g\|_2^2}
 $$
+Cette inégalité est fondamentale : elle garantit que "l'angle" entre deux fonctions a un sens.
 
 #### 2.4. Systèmes orthogonaux et orthonormés
 
@@ -196,87 +206,80 @@ $$
 
 > ⚠️ **Remarque importante :** Le terme $a_0/2$ est la **valeur moyenne** de $f$ sur $[-L, L]$.
 
-#### 3.4. Théorème de la Meilleure Approximation en Moyenne Quadratique
+#### 3.4. Théorème de la Meilleure Approximation en moyenne quadratique (L2)
 
-**Théorème :** Parmi toutes les combinaisons linéaires $\sum_{k=0}^{n} \alpha_k \varphi_k$, celle qui **minimise** l'erreur en norme $L^2$ (c'est-à-dire la distance quadratique à $f$) est exactement la somme partielle de Fourier avec $\alpha_k = c_k$.
+**Théorème :** Soit $V_n = \text{vect}(\varphi_0, \dots, \varphi_n)$. Le vecteur de $V_n$ le plus proche de $f$ est la projection orthogonale de $f$ sur $V_n$. Les coefficients $\alpha_k$ réalisant le minimum de $\|f - \sum_{k=0}^n \alpha_k \varphi_k\|_2$ sont les coefficients de Fourier $c_k = \frac{\langle f, \varphi_k \rangle}{\|\varphi_k\|^2}$.
 
+**Démonstration (Rigueur matricielle) :**
+Soit $s_n = \sum_{k=0}^n \alpha_k \varphi_k$. Développons le carré de la norme de l'erreur :
 $$
-\text{Minimiser } \left\| f - \sum_{k=0}^{n} \alpha_k \varphi_k \right\|_2 \quad \Longrightarrow \quad \alpha_k = c_k \; \forall k
+\|f - s_n\|_2^2 = \langle f - s_n, f - s_n \rangle = \|f\|_2^2 - \langle f, s_n \rangle - \langle s_n, f \rangle + \|s_n\|_2^2
 $$
+En utilisant l'orthogonalité $\langle \varphi_j, \varphi_k \rangle = \|\varphi_k\|^2 \delta_{jk}$ :
+$$
+= \|f\|_2^2 - \sum_{k=0}^n (\bar{\alpha}_k c_k \|\varphi_k\|^2 + \alpha_k \bar{c}_k \|\varphi_k\|^2 - |\alpha_k|^2 \|\varphi_k\|^2)
+$$
+En complétant le carré pour chaque $k$ :
+$$
+= \|f\|_2^2 + \sum_{k=0}^n |c_k - \alpha_k|^2 \|\varphi_k\|^2 - \sum_{k=0}^n |c_k|^2 \|\varphi_k\|^2
+$$
+Le minimum est atteint ssi le terme $\sum |c_k - \alpha_k|^2 \|\varphi_k\|^2$ est nul, soit **$\alpha_k = c_k$** pour tout $k$.
 
-**Démonstration complète :**
-En développant la norme au carré, on utilise l'orthonormalité du système :
-$$
-\left\| f - \sum_{k=0}^{n} \alpha_k \varphi_k \right\|_2^2 = \langle f, f \rangle - \sum_{k=0}^{n} (\bar{\alpha}_k c_k + \alpha_k \bar{c}_k - |\alpha_k|^2)
-$$
-En complétant le carré (identique à la technique du $(\alpha_k - c_k)(\bar{\alpha}_k - \bar{c}_k)$) :
-$$
-= \|f\|_2^2 + \sum_{k=0}^{n} |c_k - \alpha_k|^2 \|\varphi_k\|_2^2 - \sum_{k=0}^{n} |c_k|^2 \|\varphi_k\|_2^2
-$$
-Le premier et le dernier terme sont **fixes** (ne dépendent pas du choix de $\alpha_k$). Le terme du milieu $\sum |c_k - \alpha_k|^2 \geq 0$ est minimisé (valeur $= 0$) si et seulement si $\alpha_k = c_k$ pour tout $k$.
+---
 
-> 💡 **Interprétation géométrique :** Les coefficients de Fourier réalisent la **projection orthogonale** de $f$ sur le sous-espace engendré par $\{\varphi_0, \dots, \varphi_n\}$. C'est le point le plus proche de $f$ dans ce sous-espace, exactement comme en géométrie euclidienne classique.
+### 4. Bessel, Parseval et Convergence $L^2$
 
-### 4. Les Théorèmes de Convergence : Bessel, Parseval, Complétude
+#### 4.1. Le Théorème de Pythagore et le reste $R_n$
 
-#### 4.1. Le Théorème de Pythagore (version $L^2$)
-
-**Théorème (Pythagore dans $L^2$) :** Comme $f - \text{proj}_{E_n} f$ est orthogonal à $\text{proj}_{E_n} f$ :
+**Théorème (Pythagore local) :** Pour tout $f \in L^2$ et son développement de Fourier tronqué $s_n = \sum_{k=0}^n c_k \varphi_k$ :
 $$
-\boxed{\|f\|_2^2 = \left\| \sum_{k=0}^{n} c_k \varphi_k \right\|_2^2 + \left\| f - \sum_{k=0}^{n} c_k \varphi_k \right\|_2^2}
+\boxed{\|f\|_2^2 = \sum_{k=0}^n |c_k|^2 \|\varphi_k\|_2^2 + R_n^2}
 $$
-C'est-à-dire :
-$$
-\|f\|_2^2 = \sum_{k=0}^{n} |c_k|^2 \|\varphi_k\|_2^2 + R_n^2
-$$
-Où $R_n = \|f - \sum_{k} c_k \varphi_k\|_2$ est le **reste** (erreur résiduelle d'approximation).
+Où $R_n = \|f - s_n\|_2$ est la norme $L^2$ du **reste**.
 
-Comme $R_n^2 \geq 0$, on en déduit immédiatement :
+> [!NOTE]
+> **Propriétés de $R_n$ :**
+> - $R_n \geq 0$ (propriété de la norme).
+> - $R_n$ est une suite **décroissante** de $n$ (ajouter des harmoniques réduit toujours l'erreur).
 
-#### 4.2. L'Inégalité de Bessel
+#### 4.2. Inégalité de Bessel
 
+**Corollaire (Inégalité de Bessel) :** Pour tout $f \in L^2$ :
 $$
 \boxed{\sum_{k=0}^{\infty} |c_k|^2 \|\varphi_k\|_2^2 \leq \|f\|_2^2}
 $$
+**Démonstration :** Elle découle immédiatement de Pythagore en observant que $R_n^2 \geq 0$, donc $\sum^n |c_k|^2 \|\varphi_k\|^2 \leq \|f\|^2$ pour tout $n$. Le passage à la limite préserve l'inégalité.
+*Conséquence :* Si le système est orthonormé et les $\|\varphi_k\|$ minorées par $\epsilon > 0$, alors $c_k \to 0$ quand $k \to \infty$.
 
-**Démonstration :** Il suffit de faire tendre $n \to \infty$ dans l'inégalité de Pythagore ($R_n^2 \geq 0 \implies \sum |c_k|^2 \|\varphi_k\|_2^2 \leq \|f\|_2^2$). La limite préserve les inégalités non strictes.
+#### 4.3. Convergence $L^2$ et Équivalence de Parseval
 
-**Conséquence immédiate :** Si le système $\mathcal{F}$ est orthonormé ($\|\varphi_k\|_2 = 1$), alors la série $\sum |c_k|^2$ **converge**, ce qui force les coefficients à tendre vers zéro : $c_k \to 0$ quand $k \to \infty$.
-
-#### 4.3. L'Égalité de Parseval et la Complétude
-
-**Définition :** Convergence en moyenne quadratique ($L^2$) :
+**Définition (Convergence $L^2$) :** La série converge en moyenne quadratique vers $f$ si la distance $L^2$ du reste tend vers 0 :
 $$
-\sum_{k=0}^{\infty} c_k \varphi_k \overset{L^2}{=} f \quad \Longleftrightarrow \quad \lim_{n \to \infty} \left\| f - \sum_{k=0}^{n} c_k \varphi_k \right\|_2 = 0
+\sum_{k=0}^{\infty} c_k \varphi_k \overset{L^2}{=} f \iff \lim_{n \to \infty} R_n = 0
 $$
 
-**Théorème (Parseval) :** La série de Fourier converge en $L^2$ vers $f$ **si et seulement si** l'Égalité de Parseval est vérifiée :
+**Proposition (Équivalence de Parseval) :** La convergence $L^2$ est équivalente à l'égalité des énergies :
 $$
 \boxed{\sum_{k=0}^{\infty} |c_k|^2 \|\varphi_k\|_2^2 = \|f\|_2^2}
 $$
 
-**Démonstration :** Cela découle directement de Pythagore. La convergence $L^2$ signifie $R_n \to 0$, donc $\sum |c_k|^2 \|\varphi_k\|_2^2 = \|f\|_2^2 - \lim R_n^2 = \|f\|_2^2$.
+**Démonstration :** Par Pythagore, $\|f\|^2 - \sum^n |c_k|^2 \|\varphi_k\|^2 = R_n^2$. Si $R_n \to 0$, alors la différence tend vers 0, ce qui prouve l'égalité à l'infini.
 
-**Définition (Système Complet) :** Un système orthogonal $\mathcal{F}$ est dit **complet** dans $L^2([a,b])$ si pour toute $f \in L^2([a,b])$, la série de Fourier de $f$ converge en $L^2$ vers $f$.
+**Définition (Système complet) :** Un système orthogonal $\mathcal{F}$ est dit **complet** dans $L^2$ si pour toute $f \in L^2$, l'égalité de Parseval est vérifiée (ou que $R_n \to 0$).
+*Note :* Les systèmes trigonométriques classiques ($\sin, \cos$) sont complets.
 
-> 🔑 **Fait fondamental:** Les trois systèmes trigonométriques classiques sont **complets** :
-> - $\{1, \cos(kx), \sin(kx)\}$ est complet dans $L^2([-\pi, \pi])$
-> - $\{\sin(kx)\}$ est complet dans $L^2([0, \pi])$
-> - $\{\cos(kx)\}$ est complet dans $L^2([0, \pi])$
+#### 4.4. Comparaison des types de convergence (Rappel Analyse)
 
-#### 4.4. Les trois types de convergence
+En Analyse 2, on distingue trois types de convergence pour une série de fonctions $s_n \to f$ :
 
-| Type | Notation | Signification |
+| Type | Définition Formelle | Notation |
 | :--- | :--- | :--- |
-| **Convergence simple** | $\overset{C.S.}{=}$ | $\forall x$, $\|s_n(x) - f(x)\| \to 0$ |
-| **Convergence uniforme** | $\overset{C.U.}{=}$ | $\sup_x \|s_n(x) - f(x)\| \to 0$ |
-| **Convergence $L^2$** | $\overset{L^2}{=}$ | $\int |s_n - f|^2 \to 0$ |
+| **Simple** | $\forall x, |s_n(x) - f(x)| \to 0$ | $s_n \overset{C.S.}{\to} f$ |
+| **Uniforme** | $\sup_x |s_n(x) - f(x)| \to 0$ | $s_n \overset{C.U.}{\to} f$ |
+| **Quadratique** | $\int_a^b |s_n(x) - f(x)|^2 dx \to 0$ | $s_n \overset{L^2}{\to} f$ |
 
-Relations entre elles :
-$$
-\text{C.U.} \Rightarrow \text{C.S.} \quad \text{et} \quad \text{C.U.} \Rightarrow \text{C.}L^2
-$$
-Mais attention : $\text{C.S.} \not\Rightarrow \text{C.U.}$, $\text{C.S.} \not\Rightarrow \text{C.}L^2$, et $\text{C.}L^2 \not\Rightarrow \text{C.S.}$.
+> [!WARNING]
+> **Liens :** $\text{C.U.} \implies \text{C.S.}$ et $\text{C.U.} \implies C.L^2$. Cependant, la convergence simple **n'implique pas** la convergence $L^2$ (ex: fonctions "pics" de plus en plus fins et hauts).
 
 ### 5. Les Séries de Fourier Classiques : Formules Pratiques
 
@@ -325,61 +328,62 @@ Avec $\omega_0 = 2\pi / T$.
 
 **Propriétés pour les fonctions réelles :** Si $f$ est réelle, alors $c_{-k} = \overline{c_k}$ (les coefficients négatifs sont les conjugués des positifs). L'amplitude de la $k$-ième harmonique est $A_k = 2|c_k|$.
 
-### 6. Fonctions Régularisées et Convergence Simple
+### 6. Fonctions Régularisées et Théorème de Dirichlet
 
-#### 6.1. Fonctions continues par morceaux
+#### 6.1. La Fonction Régularisée $\tilde{f}$
 
-**Définition :** Une fonction $f$ est **continue par morceaux** sur $[a,b]$ s'il existe une subdivision $a = x_0 < x_1 < \dots < x_n = b$ telle que :
-- $f$ est continue sur chaque sous-intervalle ouvert $]x_{i-1}, x_i[$
-- Les limites à droite $f(x_i^+)$ et à gauche $f(x_i^-)$ existent et sont finies en chaque point de subdivision.
+**Définition (Point régulier) :** Soit $f \in C^0_{\text{morc}}([a,b])$.
+- Pour $x \in ]a,b[$, $x$ est un point régulier si $f(x) = \frac{f(x^-) + f(x^+)}{2}$.
+- Aux bornes $x=a$ ou $x=b$, $x$ est régulier si $f(x) = \frac{f(a^+) + f(b^-)}{2}$.
 
-#### 6.2. Fonction régularisée
+**Définition (Régularisée $\tilde{f}$) :** La fonction $\tilde{f}$ est celle qui coïncide avec $f$ partout où $f$ est continue, et prend les valeurs moyennes aux sauts.
+*Note :* La série de Fourier converge toujours vers $\tilde{f}$, quel que soit le choix arbitraire de la valeur de $f$ aux points de discontinuité.
 
-**Définition :** La **fonction régularisée** $\tilde{f}$ de $f$ est celle qui, à chaque point de discontinuité, prend la **moyenne** des limites à droite et à gauche :
+#### 6.2. Limites de dérivées et Dérivées Généralisées
+
+**Corollaire 14.20 (Lien limite de dérivée / dérivée à droite) :** Si $f$ est continue sur $[x, x+\epsilon]$ et dérivable sur $]x, x+\epsilon[$, et si la limite $\lim_{h \to 0^+} f'(x+h) = \ell$ existe, alors la dérivée à droite en $x$ existe et vaut $\ell$.
+
+**Démonstration (via Théorème des Accroissements Finis) :**
+Par le TAF sur $[x, x+h]$ : $\frac{f(x+h) - f(x)}{h} = f'(c_h)$ avec $c_h \in ]x, x+h[$.
+Lorsque $h \to 0^+$, alors $c_h \to x^+$. Par hypothèse $\lim_{c_h \to x^+} f'(c_h) = \ell$. Donc le taux d'accroissement converge vers $\ell$. $\square$
+
+**Définition (Dérivée Généralisée) :** Pour une fonction $f$, on définit :
+- **DDG** (Dérivée à Droite Généralisée) : $f'_g(x^+) = \lim_{h \to 0^+} \frac{f(x+h) - f(x^+)}{h}$
+- **DGG** (Dérivée à Gauche Généralisée) : $f'_g(x^-) = \lim_{h \to 0^+} \frac{f(x-h) - f(x^-)}{h}$
+*Note :* On dit que $f \in C^1_{\text{morc}}$ si $f$ et sa dérivée classique $f'$ (définie p.p.) sont continues par morceaux.
+
+#### 6.3. Démonstration du Théorème de Dirichlet (Convergence Simple)
+
+**Théorème (Dirichlet) :** Soit $f \in C^1_{\text{morc}}([-L, L])$. Alors la série de Fourier de $f$ converge simplement vers sa régularisée $\tilde{f}$ pour tout $x \in [-L, L]$.
+
+**Démonstration intégrale (en 4 étapes) :**
+
+**Étape 1 : Le Noyau de Dirichlet $K_n(\theta)$**
+La somme partielle $s_n(x)$ peut s'écrire par convolution : $s_n(x) = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(x+\theta) K_n(\theta) d\theta$.
+Le noyau est défini par : $K_n(\theta) = \sum_{k=-n}^n e^{ik\theta}$.
+*Formule fermée :* Par somme géométrique $e^{-in\theta} \frac{e^{i(2n+1)\theta} - 1}{e^{i\theta} - 1}$ et astuce d'Euler :
 $$
-\boxed{\tilde{f}(x) = \frac{f(x^-) + f(x^+)}{2}}
+\boxed{K_n(\theta) = \frac{\sin((n + 1/2)\theta)}{\sin(\theta/2)}}
 $$
-Aux extrémités de l'intervalle $[a,b]$ (en pensant au prolongement périodique) :
+Propriété vitale : $\frac{1}{2\pi} \int_{-\pi}^\pi K_n(\theta) d\theta = 1$.
+
+**Étape 2 : Expression de l'erreur**
+On étudie la différence entre la somme partielle et la valeur régularisée :
 $$
-\tilde{f}(a) = \tilde{f}(b) = \frac{f(a^+) + f(b^-)}{2}
+s_n(x) - \tilde{f}(x) = \frac{1}{2\pi} \int_{-\pi}^{\pi} [f(x+\theta) - \tilde{f}(x)] K_n(\theta) d\theta
 $$
-
-> 💡 Aux points de **continuité**, $f(x^-) = f(x^+) = f(x)$, donc $\tilde{f}(x) = f(x)$. La régularisation ne change rien aux points où $f$ se comporte bien !
-
-#### 6.3. Dérivées généralisées et écriture simplifiée $C^1_{\text{morc}}$
-
-**Motivation :** Pour le théorème de Dirichlet, on a besoin d'une notion de dérivée adaptée aux fonctions discontinues. On ne peut pas utiliser la dérivée classique en un point de discontinuité.
-
-**Définition (Dérivée généralisée droite/gauche) :** Soit $f \in C^0_{\text{morc}}([a,b])$ et $x \in ]a,b[$. On définit :
+En séparant l'intégrale en deux ($]0, \pi]$ et $[-\pi, 0[$) :
 $$
-\text{DDG}(f)|_x := \lim_{h \to 0^+} \frac{f(x+h) - f(x^+)}{h} \qquad \text{(dérivée à droite généralisée)}
-$$
-$$
-\text{DGG}(f)|_x := \lim_{h \to 0^+} \frac{f(x-h) - f(x^-)}{h} \qquad \text{(dérivée à gauche généralisée)}
-$$
-
-> ⚠️ **Remarque cruciale :** La valeur de $f(x)$ elle-même **n'intervient pas** dans le calcul de la dérivée généralisée ! Seules les limites latérales $f(x^+)$ et $f(x^-)$ comptent.
-
-**Proposition :** Si $f \in C^0_{\text{morc}}([a,b])$, que $f$ est dérivable sur $[a,b]$ sauf en un nombre fini de points $c_1, \ldots, c_n$, et que $f'(c_i^+)$ et $f'(c_i^-)$ existent et sont finies en chacun de ces points, alors $f$ admet une dérivée généralisée droite et gauche en tout point de $[a,b]$.
-
-**Convention — Classe $C^1_{\text{morc}}$ :** On écrira $f \in C^1_{\text{morc}}([a,b], \mathbb{R})$ s'il existe une subdivision $a = x_0 < x_1 < \cdots < x_n = b$ telle que :
-- $f \in C^1(]x_{i-1}, x_i[, \mathbb{R})$ pour tout $i$,
-- Les limites $f(x_i^+)$, $f'(x_i^+)$ et $f(x_i^-)$, $f'(x_i^-)$ existent et sont finies.
-
-> 💡 **Pratiquement :** L'hypothèse du théorème de Dirichlet est que $f \in C^1_{\text{morc}}([-L, L])$, c'est-à-dire que $f$ **et** sa dérivée $f'$ sont toutes deux continues par morceaux. On n'exige **pas** que $f$ soit définie aux points de discontinuité, ni que $f$ soit dérivable en ces points.
-
-#### 6.3. Le Théorème de Dirichlet (Convergence Simple)
-
-C'est **LE** grand théorème de convergence des séries de Fourier :
-
-**Théorème (Dirichlet) :** Soit $f$ une fonction continue par morceaux et $C^1$ par morceaux sur $[-L, L]$ (c'est-à-dire que $f$ ET sa dérivée $f'$ sont continues par morceaux). Alors la série de Fourier de $f$ converge **simplement** (point par point) vers la **fonction régularisée** $\tilde{f}$ :
-$$
-\boxed{\frac{a_0}{2} + \sum_{k=1}^{\infty} \left[ a_k \cos\left(\frac{k\pi x}{L}\right) + b_k \sin\left(\frac{k\pi x}{L}\right) \right] = \tilde{f}(x) = \frac{f(x^-) + f(x^+)}{2}}
+= \frac{1}{2\pi} \int_0^{\pi} \underbrace{\frac{f(x+\theta) - f(x^+)}{\sin(\theta/2)}}_{g(\theta)} \sin((n+1/2)\theta) d\theta + \text{terme gauche}
 $$
 
-En particulier :
-- **Aux points de continuité** : la série converge vers $f(x)$.
-- **Aux points de discontinuité** : la série converge vers la moyenne des limites latérales.
+**Étape 3 : Finitude de la norme $L^2$ de $g$**
+Comme $f \in C^1_{\text{morc}}$, la limite $\lim_{\theta \to 0^+} g(\theta) = 2 f'_g(x^+)$ existe et est finie. Donc $g$ est continue par morceaux sur $[0, \pi]$ et donc $g \in L^2$.
+
+**Étape 4 : Application de l'inégalité de Bessel**
+Soit $\varphi_n(\theta) = \sin((n+1/2)\theta)$. Le terme intégral est proportionnel au produit scalaire $\langle g, \varphi_n \rangle$.
+Puisque le système des $\{\varphi_n\}$ est orthogonal et que $g \in L^2$, l'inégalité de Bessel impose que $\sum |\langle g, \varphi_n \rangle|^2 < \infty$.
+Le terme général doit donc tendre vers zéro : **$\lim_{n \to \infty} (s_n(x) - \tilde{f}(x)) = 0$**. $\square$
 
 #### 6.4. Le Phénomène de Gibbs
 
@@ -435,24 +439,25 @@ Le phénomène de Gibbs est particulièrement visible sur cet exemple : les somm
 
 #### 7.1. Coefficients de Fourier de la dérivée
 
-**Théorème :** Si $f$ est $C^1$ par morceaux et continue sur $[-L, L]$ (avec $f(-L) = f(L)$), alors les coefficients de Fourier de $f'$ s'obtiennent par simple multiplication :
+**Cas de la continuité du prolongement :** Si $f$ est $C^1$ par morceaux et continue sur $[-L, L]$ (avec $f(-L) = f(L)$), alors :
+- Série complexe : $c_k(f') = i k \omega_0 c_k(f)$.
+- Série réelle : $a_k(f') = k \omega_0 b_k(f)$ et $b_k(f') = -k \omega_0 a_k(f)$.
 
-Pour la série complexe : si $c_k$ sont les coefficients de $f$, alors les coefficients de $f'$ sont $ik\omega_0 c_k$.
-
-**Démonstration (par intégration par parties) :**
+**Cas général (avec saut de discontinuité) :**
+Si $f$ présente un saut $\delta = f(L^-) - f(-L^+)$ au raccord périodique, la formule d'intégration par parties devient :
 $$
-c_k(f') = \frac{1}{T}\int_{-T/2}^{T/2} f'(t) e^{-ik\omega_0 t} dt = \frac{1}{T}\left[ f(t)e^{-ik\omega_0 t} \right]_{-T/2}^{T/2} + \frac{ik\omega_0}{T}\int_{-T/2}^{T/2} f(t) e^{-ik\omega_0 t} dt
+a_k(f') = \frac{1}{L} \int_{-L}^L f'(t) \cos(k\omega_0 t) dt = \frac{1}{L} \left[ f(t) \cos(k\omega_0 t) \right]_{-L}^L + \frac{k\omega_0}{L} \int_{-L}^L f(t) \sin(k\omega_0 t) dt
 $$
-Le terme entre crochets s'annule si $f$ est périodique ($f(-T/2) = f(T/2)$). Il reste :
+Comme $\cos(k\omega_0 L) = \cos(k\pi) = (-1)^k$, le crochet vaut :
 $$
-c_k(f') = ik\omega_0 \cdot c_k(f)
+\frac{1}{L} [(-1)^k f(L^-) - (-1)^k f(-L^+)] = \frac{(-1)^k}{L} \delta
 $$
-
-**Cas général (sans hypothèse de continuité du prolongement) :** Si $f \in C^1_{\text{morc}}([-\pi, \pi])$ mais $f(-\pi) \neq f(\pi)$, notons $\delta := f(\pi) - f(-\pi)$ le **saut de discontinuité** du prolongement périodique. Alors :
+D'où les formules générales :
 $$
-\boxed{a_k(f') = k b_k(f) + \frac{(-1)^k}{\pi} \delta, \qquad b_k(f') = -k a_k(f)}
+\boxed{a_k(f') = k \omega_0 b_k(f) + \frac{(-1)^k}{L} \delta, \qquad b_k(f') = -k \omega_0 a_k(f)}
 $$
-Le terme correctif $\frac{(-1)^k \delta}{\pi}$ **ne tend pas vers zéro** : si $f(-\pi) \neq f(\pi)$, la formule de dérivation naïve est **fausse** !
+> [!WARNING]
+> Si $\delta \neq 0$, les coefficients $a_k(f')$ ne tendent pas vers zéro assez vite (terme constant $\frac{(-1)^k \delta}{L}$), ce qui confirme que la série de Fourier de la dérivée ne converge pas vers la dérivée de la série de Fourier.
 
 > 💡 **Conséquence pratique :** Si $f$ est très dérivable (« lisse »), ses coefficients de Fourier $c_k$ décroissent **très vite** (comme $1/k^p$ si $f$ est $C^{p-1}$). Plus la fonction est régulière, plus sa série de Fourier converge rapidement.
 
@@ -641,46 +646,50 @@ Comme $f(x_0^+) = 0.5$ (pour un saut unitaire normalisé), le dépassement est $
 
 > ⚠️ Ce dépassement est **irréductible** : il ne diminue pas avec le nombre d'harmoniques. Il se comprime spatialement, mais l'amplitude reste constante. C'est une limitation fondamentale de la reconstruction de Fourier pour les signaux discontinus.
 
-### 12. Prolongements Périodiques et Symétries
+#### 12.1. Les 5 types de symétries de frises (Fedorov)
 
-#### 12.1. Types de prolongements
+Le cristallographe Fedorov a prouvé qu'il n'existe que **7 types de frises** (cristaux 1D). Pour les graphes de fonctions périodiques de période $T$, on en retient 5 types principaux :
 
-Étant donnée une fonction $f$ définie sur $[0, L]$, on peut la prolonger de différentes manières sur $\mathbb{R}$ :
+| Symétrie | Propriété Formelle | Effet sur les Coefs |
+| :--- | :--- | :--- |
+| **Paire** | $f(-x) = f(x)$ | $b_k = 0$ (Série Cosinus) |
+| **Impaire** | $f(-x) = -f(x)$ | $a_k = 0$ (Série Sinus) |
+| **Alternative** | $f(x + T/2) = -f(x)$ | $a_{2k} = b_{2k} = 0$ (Harmoniques impaires seules) |
+| **Paire Alternative** | Paire + Alternative | $b_k = 0$ et $a_{2k} = 0$ |
+| **Impaire Alternative**| Impaire + Alternative | $a_k = 0$ et $b_{2k} = 0$ |
 
-| Prolongement | Symétrie | Série résultante | Formule |
-| :--- | :--- | :--- | :--- |
-| **Pair** ($f_{\text{pair}}$) | $f(-x) = f(x)$ | Série **cosinus** | $f_{\text{pair}}(-x + 2nL) = f(x)$ |
-| **Impair** ($f_{\text{imp}}$) | $f(-x) = -f(x)$ | Série **sinus** | $f_{\text{imp}}(-x + 2nL) = -f(x)$ |
-| **Alternatif** | $f(x + L) = -f(x)$ | Série harmoniques **impaires** | Seuls les $a_{2k+1}, b_{2k+1}$ restent |
+> [!TIP]
+> **Propriété des fonctions alternatives :** Le produit de deux fonctions alternatives de demi-période $L$ est une fonction périodique de période $L$. La valeur moyenne d'une fonction alternative est toujours nulle ($a_0 = 0$).
 
-#### 12.2. Conséquence sur les coefficients
+#### 12.2. Prolongements sur $[0, L]$
 
-- Si $f$ est **paire** : $b_k = 0$ pour tout $k$ (la partie sinus disparaît).
-- Si $f$ est **impaire** : $a_k = 0$ pour tout $k$ (la partie cosinus disparaît).
-- Si $f$ est **alternative** (demi-période $L$) : $a_{2k} = b_{2k} = 0$ (les harmoniques paires s'annulent).
+Pour une fonction définie sur $[0, L]$, on peut forcer une symétrie par prolongement :
+- **Prolongement Pair :** Série de cosinus sur $[0, L]$ avec $a_k = \frac{2}{L} \int_0^L f(t) \cos(\frac{k\pi t}{L}) dt$.
+- **Prolongement Impair :** Série de sinus sur $[0, L]$ avec $b_k = \frac{2}{L} \int_0^L f(t) \sin(\frac{k\pi t}{L}) dt$.
 
-> 💡 **Astuce examen :** Avant de calculer quoi que ce soit, **vérifier d'abord la parité** de $f$. Si $f$ est paire ou impaire, la moitié des coefficients est automatiquement nulle, ce qui divise le travail de calcul par deux !
+---
 
-### 13. Démonstration de la Convergence Uniforme
+### 13. Convergence Uniforme : La Rigueur de Cauchy-Schwarz
 
-#### 13.1. L'astuce de Cauchy-Schwarz pour la convergence absolue des coefficients
+#### 13.1. Théorème de Convergence Uniforme
 
-**Théorème :** Si $f$ est continue, $f'$ est $C^0_{\text{morc}}$, et $f(-\pi) = f(\pi)$ (continuité du prolongement périodique), alors les séries $\sum |a_k|$ et $\sum |b_k|$ convergent **absolument**.
+**Théorème :** Si $f$ est continue, $2L$-périodique et $C^1_{\text{morc}}$, alors sa série de Fourier converge **uniformément** vers $f$ sur $\mathbb{R}$.
 
-**Démonstration :**
-On sait (par les coefficients de la dérivée) que $|b_k(f)| = \frac{|a_k(f')|}{k}$.
-
-Par Bessel, $\sum_{k=1}^{\infty} (a_k(f'))^2 \leq \|f'\|_2^2 < +\infty$ (car $f' \in L^2$).
-
-L'astuce est d'utiliser **l'inégalité de Cauchy-Schwarz discrète** :
+**Démonstration (L'astuce de Cauchy-Schwarz) :**
+Pour prouver la convergence uniforme, il suffit (selon Weierstrass) de prouver la convergence absolue de la série des coefficients $\sum (|a_k| + |b_k|)$.
+On sait que $a_k(f') = k \omega_0 b_k(f)$. Donc $|b_k(f)| = \frac{|a_k(f')|}{k \omega_0}$.
+Appliquons l'inégalité de Cauchy-Schwarz discrète sur la somme partielle :
 $$
-\left(\sum_{k=1}^{n} |b_k(f)|\right)^2 = \left(\sum_{k=1}^{n} \frac{|a_k(f')|}{k}\right)^2 \leq \underbrace{\left(\sum_{k=1}^{n} (a_k(f'))^2\right)}_{\leq \|f'\|_2^2} \cdot \underbrace{\left(\sum_{k=1}^{n} \frac{1}{k^2}\right)}_{\leq \pi^2/6}
+\sum_{k=1}^n |b_k(f)| = \frac{1}{\omega_0} \sum_{k=1}^n \frac{1}{k} |a_k(f')| \leq \frac{1}{\omega_0} \sqrt{\sum_{k=1}^n \frac{1}{k^2}} \cdot \sqrt{\sum_{k=1}^n |a_k(f')|^2}
 $$
-Le produit est borné indépendamment de $n$, donc $\sum |b_k|$ converge.
+- La première somme $\sum \frac{1}{k^2}$ converge vers $\frac{\pi^2}{6}$.
+- La deuxième somme $\sum |a_k(f')|^2$ est bornée par $\|f'\|_2^2$ par l'inégalité de Bessel (car $f' \in L^2$).
+La somme $\sum |b_k(f)|$ est donc majorée par une constante indépendante de $n$, elle converge. $\square$
 
-#### 13.2. De la convergence absolue à la convergence uniforme (critère de Weierstrass)
+#### 13.2. Unicité de la représentation
 
-Comme $|a_k \cos(kx)| \leq |a_k|$ et $|b_k \sin(kx)| \leq |b_k|$, et que $\sum |a_k| + \sum |b_k| < +\infty$, le **critère de Weierstrass** (test $M$) garantit la **convergence uniforme** de la série de Fourier.
+**Proposition :** Si une série trigonométrique $\frac{\alpha_0}{2} + \sum (\alpha_k \cos + \beta_k \sin)$ converge **uniformément** vers une fonction $f$, alors ses coefficients sont **nécessairement** les coefficients de Fourier de $f$.
+*Preuve :* On multiplie par $\cos(mx)$ et on intègre. La convergence uniforme autorise l'interversion $\int \sum = \sum \int$. Par orthogonalité, tous les termes s'annulent sauf un.
 
 ### 14. Intégration terme à terme : Démonstration
 

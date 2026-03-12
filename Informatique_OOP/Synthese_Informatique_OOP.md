@@ -4,2027 +4,1510 @@
 
 ##  Cours 1 : De Python à C++
 
-> 📚 **Objectif du cours :** Apprendre la syntaxe de base du C++ pour les étudiants venant de Python. Comprendre la compilation, les types, les structures de contrôle, et réaliser un premier mini-projet (BMD Regression Tree).
+### 1.1 Pourquoi C++ ?
 
----
+**Définition** : C++ est un langage de programmation **compilé, statiquement typé, et bas niveau**, créé par Bjarne Stroustrup dans les années 1980 comme extension orientée objet du langage C.
 
-### Table des matières
+**Intuition** : Python te permet d'aller vite en prototypage mais il est lent à l'exécution. C++ t'oblige à être précis (gestion manuelle de la mémoire, types déclarés), mais en échange tu obtiens des performances proches du matériel. En ingénierie, cette maîtrise fine est souvent indispensable (systèmes embarqués, jeux vidéo, IA côté entraînement, systèmes d'exploitation).
 
-1. [Pourquoi C++ ?](#1-pourquoi-c-)
-
-2. [Compilation : du code source à l'exécutable](#2-compilation--du-code-source-à-lexécutable)
-
-3. [Hello World — Anatomie d'un programme C++](#3-hello-world--anatomie-dun-programme-c)
-
-4. [Types de données](#4-types-de-données)
-
-5. [Caractères de contrôle](#5-caractères-de-contrôle)
-
-6. [Structures de contrôle](#6-structures-de-contrôle)
-
-7. [Les instructions (Statements)](#7-les-instructions-statements)
-
-8. [Mini-projet : BMD Regression Tree](#8-mini-projet--bmd-regression-tree)
-
----
-
-### 1. Pourquoi C++ ?
-
-#### 1.1 Performance et efficacité
-
-> 💡 **Idée clé :** C++ est un langage **compilé** et **bas niveau** — il vous donne le contrôle total sur la mémoire et les performances, ce qui le rend beaucoup plus rapide que Python.
+**Tableau comparatif** :
 
 | Critère | C++ | Python |
-
 |---|---|---|
-
 | **Type** | Compilé | Interprété |
-
 | **Niveau** | Bas (proche machine) | Haut (abstrait) |
-
-| **Vitesse** | Très rapide ⚡ | Plus lent 🐌 |
-
+| **Vitesse** | Très rapide ⚡ (×10 à ×100) | Plus lent 🐌 |
 | **Mémoire** | Gestion manuelle | Automatique (GC) |
+| **Typage** | Statique (à la compilation) | Dynamique (à l'exécution) |
+| **Utilisation** | Systèmes, jeux, IA libs, embarqué | Prototypage, data science |
 
-| **Typage** | Statique (compilation) | Dynamique (exécution) |
+**Exemples d'applications C++** : Chrome, Windows, macOS, PyTorch/TensorFlow (backend), Unreal Engine.
 
-| **Utilisation** | Systèmes, jeux, IA (libs), embarqué | Prototypage, data science, scripting |
-
-**Logiciels développés en C++ :** systèmes d'exploitation, navigateurs web (Chrome), moteurs de jeux (Unreal Engine), bibliothèques d'IA (TensorFlow, PyTorch en backend).
-
-#### 1.2 Informatique verte 🌱
-
-> 🎯 **Point important :** Moins de temps de calcul = moins d'électricité = moins de CO₂. Pour un même programme, C++ est **beaucoup plus rapide** que Python, ce qui réduit l'empreinte carbone.
-
-#### 1.3 Culture d'ingénieur
-
-> 🧠 **Philosophie :** En C++, vous êtes obligé de **penser comme une machine** : gérer la mémoire, concevoir des structures efficaces, anticiper les erreurs. C'est cette profondeur de compréhension qui vous distinguera.
+**⚠️ Piège classique** : Croire que « C++ = Python mais plus rapide ». C++ est fondamentalement **différent** : types obligatoires, gestion de la mémoire manuelle, compilation. Ce n'est pas un simple changement de syntaxe.
 
 ---
 
-### 2. Compilation : du code source à l'exécutable
+### 1.2 Compilation : du code source à l'exécutable
 
-#### 2.1 Compilé vs Interprété
+**Définition** : La **compilation** est le processus qui traduit tout le code source en code machine **avant** l'exécution, produisant un fichier exécutable autonome.
+
+**Intuition** : Imagine un traducteur qui traduit intégralement un roman du français vers l'anglais **une fois pour toutes** (compilateur), versus un interprète qui traduit phrase par phrase en temps réel à voix haute (interpréteur). Le traducteur est plus lent au départ mais le roman traduit peut être lu à toute vitesse.
+
+**Développement — Les deux modes de traduction** :
 
 ```
-
 COMPILÉ (C, C++, Rust, Go) :
+   Code source (.cpp) → [Compilateur g++] → Code machine/Objet (.o) → [Linker] → Exécutable
+                                                                          ↑
+                                                              Librairies standard
 
-   Code source → [Compilateur] → Code machine/Objet → Exécution directe
-
-INTERPRÉTÉ (Python, JavaScript, PHP) :
-
+INTERPRÉTÉ (Python, JavaScript) :
    Code source → [Interpréteur] → Exécution instruction par instruction
-
 ```
 
-| Aspect | Compilateur | Interpréteur |
+**Les 3 étapes de la compilation C++ :**
+1. **Préprocesseur** : traite les `#include`, `#define` (avant compilation)
+2. **Compilation** : traduit chaque fichier `.cpp` en fichier objet `.o` (code machine)
+3. **Linkage** : combine tous les `.o` + librairies en un seul exécutable
 
-|---|---|---|
-
-| **Traduction** | Tout le programme d'un coup | Instruction par instruction |
-
-| **Résultat** | Fichier exécutable autonome | Pas de fichier exécutable |
-
-| **Optimisation** | Optimisations globales possibles | Optimisations limitées |
-
-| **Vitesse exécution** | Rapide | Plus lent |
-
-| **Débogage** | Erreurs détectées à la compilation | Erreurs à l'exécution |
-
-> 🧠 **Hybrides modernes :** La compilation JIT (Just-In-Time), utilisée par la JVM, .NET CLR ou V8 (JavaScript), compile dynamiquement du bytecode en code natif au moment de l'exécution.
-
-#### 2.2 Les étapes de la compilation C++
-
-```
-
-┌──────────│    ┌──────────────│    ┌──────────────│
-
-│ fichier1 │───→│  Compilateur │───→│ Fichier objet│──│
-
-│  .cpp    │    │     g++      │    │    .o        │  │    ┌────────│    ┌────────────│
-
-│”──────────┘    │”──────────────┘    │”──────────────┘  ├───→│ Linker │───→│ Exécutable │
-
-┌──────────│    ┌──────────────│    ┌──────────────│  │    │”───┬────┘    │”────────────┘
-
-│ fichier2 │───→│  Compilateur │───→│ Fichier objet│──┘        │
-
-│  .cpp    │    │     g++      │    │    .o        │     ┌─────┴──────│
-
-│”──────────┘    │”──────────────┘    │”──────────────┘     │ Librairies │
-
-                                                         │ standard   │
-
-                                                         │”────────────┘
-
-```
-
-**Les deux étapes :**
-
-1. **Compilation :** Chaque fichier `.cpp` est traduit en un **fichier objet** (code machine).
-
-2. **Linkage (édition de liens) :** Le linker combine tous les fichiers objets + les bibliothèques standards en un **exécutable** unique.
-
-> ⚠️ **Processus itératif :** Erreurs de compilation → correction → recompilation. Même après la compilation, des erreurs logiques peuvent subsister (le programme ne fait pas ce qu'on veut).
-
-#### 2.3 Commande de compilation
-
+**Exemple concret — compiler et exécuter** :
 ```bash
+#Compiler le fichier hello.cpp et créer l'exécutable 'hello'
+$ g++ hello.cpp -o hello
 
-$ g++ hello.cpp -o hello    # Compile hello.cpp en exécutable "hello"
-
-$ ./hello                   # Lance le programme
-
+#Lancer l'exécutable
+$ ./hello
 Hello World !
-
 ```
 
-> 🎯 **`g++`** est le compilateur C++ de GNU. Il traduit le code source en programme exécutable.
+**⚠️ Piège classique** : Il existe **deux types d'erreurs** :
+- **Erreur de compilation** : le compilateur refuse de produire l'exécutable (syntaxe incorrecte, type incompatible). Détectée tôt.
+- **Erreur logique** : le programme compile et tourne, mais produit un résultat faux. La plus difficile à trouver.
 
 ---
 
-### 3. Hello World — Anatomie d'un programme C++
+### 1.3 Hello World — Anatomie d'un programme C++
 
-#### 3.1 Le code complet
+**Définition** : `main()` est la fonction obligatoire qui constitue le **point d'entrée** de tout programme C++ exécutable. Le système d'exploitation y démarre l'exécution.
+
+**Exemple complet commenté** :
 
 ```cpp
+#include <iostream>   // Directive préprocesseur : importe la librairie d'entrées/sorties
+                      // Équivalent de 'import sys' en Python
 
-#include <iostream>         // ← Directive de préprocesseur : inclut les outils d'entrée/sortie (Input/Output Stream)
+using namespace std;  // Évite d'écrire 'std::' devant chaque fonction standard
+                      // (optionnel mais pratique pour débuter)
 
-int main() {                // ← Point d'entrée obligatoire de tout programme C++
-
-    std::cout << "Hello World !" << std::endl;   // ← Affiche "Hello World !" puis un retour à la ligne
-
-    return 0;               // ← Retourne 0 au système d'exploitation (= pas d'erreur)
-
+int main() {          // OBLIGATOIRE. Retourne int (code de sortie) au système d'exploitation.
+    cout << "Hello World !" << endl;
+    //  ↑          ↑              ↑
+    //  flux stdout  message   retour à la ligne + flush du buffer
+    return 0;         // 0 = succès. Tout autre valeur = erreur signalée à l'OS.
 }
-
 ```
 
-#### 3.2 Décortiquons chaque élément
+**Détail des éléments clés** :
+- `#include <iostream>` : ajoute le contenu de la librairie iostream (Input/Output Stream) qui contient `cout`, `cin`, etc.
+- `std::` : préfixe indiquant que les symboles appartiennent au **namespace** standard
+- `<<` : opérateur d'insertion dans le flux de sortie (envoie des données vers `cout`)
+- `>>` : opérateur d'extraction (lit depuis `cin`)
+- `endl` : insère `\n` **et** vide le buffer. `'\n'` seul est plus rapide si le flush n'est pas nécessaire.
+- `return 0;` : retourne le code 0 (succès) au système d'exploitation
 
-| Élément | Rôle | Équivalent Python |
-
-|---|---|---|
-
-| `#include <iostream>` | Importe la bibliothèque I/O | `import sys` |
-
-| `int main()` | Fonction principale (obligatoire) | Code au niveau du module |
-
-| `{ }` | Délimitent un bloc d'instructions | Indentation |
-
-| `std::cout` | Sortie console (*console output*) | `print()` |
-
-| `<<` | Opérateur d'insertion (envoie vers cout) | `,` dans `print()` |
-
-| `std::endl` | Retour à la ligne + vidage du tampon | `\n` |
-
-| `;` | Fin d'instruction (obligatoire !) | Retour à la ligne |
-
-| `return 0;` | Signal au système : « tout s'est bien passé » | `sys.exit(0)` |
-
-| `std::` | Préfixe pour l'espace de noms standard | — |
-
-#### 3.3 Commentaires
-
+**Commentaires** :
 ```cpp
+// Commentaire sur une ligne
 
-// Ceci est un commentaire sur une seule ligne
-
-/* Ceci est un
-
-   commentaire sur
-
-   plusieurs lignes */
-
+/* Commentaire
+   sur plusieurs
+   lignes */
 ```
 
-> 🧠 **Bonne pratique :** Un bon code est lu plus souvent qu'il n'est écrit. Commentez pour expliquer le **pourquoi**, pas le **quoi**.
-
-#### 3.4 `using namespace std;`
-
-Pour éviter d'écrire `std::` à chaque fois :
-
-```cpp
-
-#include <iostream>
-
-using namespace std;         // ← Rend tous les éléments de std accessibles directement
-
-int main() {
-
-    cout << "Hello World !" << endl;   // Plus besoin de std::
-
-    return 0;
-
-}
-
-```
+**⚠️ Piège classique** : Oublier le point-virgule `;` à la fin d'une instruction. En Python, les fins de ligne suffisent. En C++, chaque instruction **doit** se terminer par `;`.
 
 ---
 
-### 4. Types de données
+### 1.4 Types de données
 
-#### 4.1 Les types de base
+**Définition** : En C++, toute variable doit avoir un **type déclaré avant utilisation**. Ce type est vérifié à la compilation (typage statique).
 
-> 💡 **Différence fondamentale avec Python :** En C++, chaque variable a un type **fixé à la compilation**. On ne peut pas changer le type d'une variable après sa déclaration.
+**Intuition** : Déclarer un type, c'est réserver exactement la bonne case mémoire. Déclarer `int x` réserve 4 bytes. Le compilateur sait alors comment interpréter ces bytes.
 
-```cpp
+**Types fondamentaux** :
 
-int myNum = 5;               // Entier
-
-float myFloatNum = 5.99;     // Flottant simple précision (4 bytes)
-
-double myDoubleNum = 9.98;   // Flottant double précision (8 bytes)
-
-char myLetter = 'D';         // Un seul caractère
-
-bool myBoolean = true;       // Booléen (true/false)
-
-string myText = "Hello";     // Chaîne de caractères (nécessite <string>)
-
-```
-
-| Type | Taille | Description | Plage approximative |
-
+| Type | Taille | Plage approximative | Exemple |
 |---|---|---|---|
+| `bool` | 1 byte | `true` / `false` | `bool actif = true;` |
+| `char` | 1 byte | `-128` à `127` (ou caractère ASCII) | `char c = 'A';` |
+| `int` | 4 bytes | `−2 147 483 648` à `+2 147 483 647` | `int n = 42;` |
+| `float` | 4 bytes | ~6-7 décimales de précision | `float f = 3.14f;` |
+| `double` | 8 bytes | ~15-16 décimales de précision | `double d = 3.14159265;` |
 
-| `bool` | 1 byte | `true` ou `false` | 0 ou 1 |
-
-| `char` | 1 byte | Un caractère / code ASCII | -128 à 127 |
-
-| `int` | 2 ou 4 bytes | Entier | ±2 milliards (4 bytes) |
-
-| `float` | 4 bytes | Flottant, ~6-7 chiffres significatifs | ±3.4 à— 10³⁸ |
-
-| `double` | 8 bytes | Flottant, ~15 chiffres significatifs | ±1.8 à— 10³⁰⁸ |
-
-#### 4.2 Qualificateurs de type
-
-On peut modifier les types entiers :
-
-| Qualificateur | Effet | Exemple |
-
-|---|---|---|
-
-| `short` | Entier court (≤ `int`) | `short int x;` ou `short x;` |
-
-| `long` | Entier long (≥ `int`) | `long int x;` ou `long x;` |
-
-| `signed` | Positif ou négatif (défaut pour `int`) | `signed int x;` |
-
-| `unsigned` | ≥ 0 seulement, plage plus grande | `unsigned int x;` |
-
-#### 4.3 Langage typé vs non typé
-
+**Qualificateurs de type** :
 ```cpp
-
-// C++ — Erreur détectée à la COMPILATION
-
-int a = 5;
-
-std::string b = "hello";
-
-// a + b;    // âŒ Erreur : impossible d'ajouter int et string
-
+short int s = 100;          // Entier court (≤ 2 bytes)
+long int  l = 1000000;      // Entier long (≥ 4 bytes)
+unsigned int u = 65000;     // Entier non signé (valeurs ≥ 0 uniquement, double la plage positive)
+unsigned char uc = 255;     // 0 à 255
 ```
+
+**Exemple complet avec comparaison Python vs C++** :
 
 ```python
+## Annexes : Python vs C++
 
-# Python — Erreur détectée à l'EXÉCUTION
-
-a = 5
-
+**Python — typage dynamique**
+a = 5       # 'a' peut changer de type
 b = "hello"
-
-print(a + b)  # âŒ TypeError (mais seulement quand on exécute cette ligne)
-
+print(a + b)  # Erreur à l'EXÉCUTION : TypeError
 ```
 
-> 🎯 **Avantage du typage statique :** Les erreurs sont détectées **avant** d'exécuter le programme. Plus sûr et plus rapide.
+```cpp
+// C++ — typage statique
+int a = 5;
+string b = "hello";
+// a + b;  // ERREUR À LA COMPILATION — le compilateur refuse avant même d'exécuter
+return 0;
+```
+
+**⚠️ Piège classique** : En C++, `5 / 2` vaut `2` (division entière !), pas `2.5`. Pour obtenir `2.5`, il faut écrire `5.0 / 2` ou `(double)5 / 2`.
 
 ---
 
-### 5. Caractères de contrôle
+### 1.5 Caractères de contrôle (Escape sequences)
 
-Les **séquences d'échappement** commencent par `\` et représentent des caractères spéciaux :
+**Définition** : Séquences spéciales dans les chaînes de caractères, préfixées par `\`, qui représentent des caractères non imprimables ou des caractères spéciaux.
 
-| Code | Signification | Exemple |
+**Tableau** :
 
+| Code | Signification | Exemple d'utilisation |
 |---|---|---|
+| `\n` | Nouvelle ligne | `cout << "Ligne 1\nLigne 2";` |
+| `\t` | Tabulation horizontale | `cout << "Col1\tCol2";` |
+| `\\` | Backslash littéral | `cout << "C:\\Users\\";` |
+| `\"` | Guillemet double littéral | `cout << "Elle dit \"Bonjour\"";` |
+| `\0` | Caractère nul (fin de C-string) | Utilisé implicitement dans les tableaux de char |
 
-| `\n` | **Nouvelle ligne** | `cout << "A\nB";` → A puis B en dessous |
-
-| `\t` | **Tabulation horizontale** | `cout << "A\tB";` → A     B |
-
-| `\\` | Antislash littéral | `cout << "C:\\Users";` → C:\Users |
-
-| `\"` | Guillemet double | `cout << "Il a dit : \"Salut !\"";` |
-
-| `\'` | Guillemet simple | `cout << '\'';` |
-
-| `\0` | **Caractère nul** (fin de C-string) | Marque la fin d'une chaîne C |
-
-| `\a` | Alerte (bip sonore) | `cout << "Bip !\a";` |
-
-| `\b` | Retour arrière (backspace) | |
-
-| `\r` | Retour chariot | |
-
-#### Exemple complet commenté
-
+**Exemple complet** :
 ```cpp
-
 #include <iostream>
-
 #include <cstring>
-
 using namespace std;
 
 int main() {
+    cout << "Hello\n\tWorld\n";
+    // Affiche :
+    // Hello
+    //     World
 
-    cout << "Hello\n\tWorld\n";            // Hello
+    cout << "Elle a dit : \"Salut !\"\n";
+    // Affiche : Elle a dit : "Salut !"
 
-                                           //     World
-
-    cout << "Elle a dit : \"Salut !\"\n";  // Elle a dit : "Salut !"
-
-    cout << "Bip !\a\n";                   // Bip ! (+ son système éventuel)
-
-    // ⚠️ Caractère nul dans une chaîne : les fonctions C s'arrêtent à \0
-
-    const char* s = "Jens\0Munk";
-
-    cout << "strlen(s) = " << strlen(s) << "\n";  // strlen(s) = 4 (s'arrête à \0)
-
-    cout << "s = " << s << "\n";                   // s = Jens (pas Munk !)
-
+    const char* s = "Jens\0Munk";  // Chaîne avec un \0 au milieu
+    cout << strlen(s) << "\n";      // Affiche : 4   (s'arrête au premier \0)
+    cout << s << "\n";              // Affiche : Jens (idem)
     return 0;
-
 }
-
 ```
 
-> 🧠 **Point subtil :** `\0` est **invisible** mais crucial. C'est lui qui dit aux fonctions C « la chaîne s'arrête ici ». Tout ce qui est après `\0` est ignoré par `strlen`, `cout`, etc.
+**⚠️ Piège classique** : Le caractère nul `\0` **termine** toute C-string. Insérer un `\0` au milieu d'une chaîne coupe la chaîne à cet endroit pour toutes les fonctions standard comme `strlen()`, `cout <<`.
 
 ---
 
-### 6. Structures de contrôle
+### 1.6 Structures de contrôle
 
-#### 6.1 `if` / `else`
+**Définition** : Les structures de contrôle dirigent le **flux d'exécution** du programme (branchements, erreurs, répétitions).
+
+#### if / else
 
 ```cpp
-
 int i = 10;
-
-if (i == 10)                // ⚠️ == pour tester l'égalité (pas = qui est l'affectation !)
-
+if (i == 10) {
     cout << "test passed";
-
-else
-
+} else {
     cout << "test failed";
-
+}
 // Affiche : test passed
-
 ```
 
-**Pièges classiques :**
-
+**Attention — piège d'affectation dans le if** :
 ```cpp
+if (i = 5)   // PIÈGE : ce n'est PAS un test d'égalité, c'est une AFFECTATION !
+             // i vaut maintenant 5, et comme 5 != 0, la condition est vraie
+    cout << "test passed";  // Sera toujours affiché !
 
-// âŒ PIàˆGE : = au lieu de == (c'est une AFFECTATION, pas un test !)
-
-if (i = 5)              // i prend la valeur 5, qui est non-nulle → true !
-
-    cout << "test passed";  // Affiche TOUJOURS "test passed" !
-
-// ✅ Valeurs de vérité en C++ :
-
-if (5)   → true   // Tout entier ≠ 0 est "true"
-
-if (0)   → false  // Seul 0 est "false"
-
-// ⚠️ PIàˆGE : sans accolades, seule la PREMIàˆRE instruction après if est conditionnelle
-
-if (true)
-
+if (i == 5)  // CORRECT : double == pour la comparaison
     cout << "test passed";
-
-cout << "test failed";     // ← Cette ligne s'exécute TOUJOURS (pas dans le if) !
-
 ```
 
-> 🧠 **Astuce mnémotechnique :** « `==` pour comparer, `=` pour copier. Deux yeux pour voir si c'est **é**gal ! »
-
-#### 6.2 `switch` / `case`
+#### switch / case
 
 ```cpp
-
+// Utile quand on teste plusieurs valeurs entières ou de type char
 int day = 4;
-
 switch (day) {
-
-    case 1: cout << "Monday";    break;  // ← break est OBLIGATOIRE
-
-    case 2: cout << "Tuesday";   break;  //    sinon on "tombe" dans le case suivant
-
+    case 1: cout << "Monday";    break;  // break OBLIGATOIRE pour éviter le 'fall-through'
+    case 2: cout << "Tuesday";   break;
     case 3: cout << "Wednesday"; break;
-
-    case 4: cout << "Thursday";  break;  // ← Celui-ci s'exécute
-
+    case 4: cout << "Thursday";  break;  // Exécuté ici
     case 5: cout << "Friday";    break;
-
-    case 6: cout << "Saturday";  break;
-
-    case 7: cout << "Sunday";    break;
-
+    default: cout << "Weekend";  break;
 }
-
 // Affiche : Thursday
-
 ```
 
-> ⚠️ **Sans `break`**, l'exécution continue dans les `case` suivants (on appelle cela le *fall-through*).
-
-#### 6.3 Boucle `for`
-
+**⚠️ Piège classique — fall-through** :
 ```cpp
-
-// Syntaxe : for (initialisation; condition; incrémentation)
-
-for (int i = 5; i < 10; i++)           // i va de 5 à 9
-
-    cout << i << "\t" << i*i << "\n";  // Affiche i et i²
-
+switch (day) {
+    case 3: cout << "Wednesday";  // Si pas de break, continue vers case 4 !
+    case 4: cout << "Thursday";   // Les deux sont affichés si day == 3
+    break;
+}
 ```
 
-**Variantes :**
+#### Boucles for, while, do-while
 
 ```cpp
-
-for (int i = 5; i <= 10; i++)    // i va de 5 à 10 (inclus grâce à <=)
-
-for (int i = 5; i < 10; i += 2) // i va de 5 à 9 avec un pas de 2 : 5, 7, 9
-
-for (int i = 5; i < 5; i++)     // Jamais exécuté (condition fausse dès le départ)
-
-for (int i = 5; ; )             // ⚠️ Boucle INFINIE (pas de condition d'arrêt)
-
-for (;;)                         // ⚠️ Boucle INFINIE (tout est omis)
-
-```
-
-> 🧠 **Comparaison Python :** `for i in range(5, 10)` ↔ `for (int i = 5; i < 10; i++)`
-
-#### 6.4 Boucle `while`
-
-```cpp
-
-int i = 0;
-
-while (i < 5) {        // Tant que i < 5
-
-    cout << i << ",\t";
-
-    i++;                // Ne pas oublier l'incrémentation !
-
+// FOR : quand le nombre d'itérations est connu
+for (int i = 5; i < 10; i++) {         // init ; condition ; incrément
+    cout << i << "\t" << i*i << "\n";  // Affiche 5 25, 6 36, ..., 9 81
 }
 
-// Affiche : 0,  1,  2,  3,  4,
+// Variantes for moins courantes mais importantes :
+for (int i = 5; i <= 10; i += 2)       // Pas de 2 : 5, 7, 9
+for (int i = 5; ; )                    // Boucle infinie (condition toujours vraie si vide)
+for (;;)                               // Boucle infinie classique
 
-```
-
-#### 6.5 Boucle `do...while`
-
-```cpp
-
+// WHILE : quand la condition est testée AVANT l'itération
 int i = 0;
-
-do {
-
-    cout << i << ",\t";
-
+while (i < 5) {
+    cout << i << ", ";   // 0, 1, 2, 3, 4,
     i++;
-
-} while (i < 5);       // La condition est testée APRàˆS chaque itération
-
-// Affiche : 0,  1,  2,  3,  4,
-
-```
-
-> 🎯 **Différence clé :** `do...while` **exécute toujours au moins une fois** le corps de la boucle, même si la condition est fausse au départ. `while` peut ne jamais s'exécuter.
-
----
-
-### 7. Les instructions (Statements)
-
-> 💡 **Règle fondamentale :** En C++, une instruction se termine par `;` (point-virgule), pas par un retour à la ligne comme en Python. L'indentation et les espaces blancs **n'ont aucun rôle syntaxique** — ils servent uniquement à la lisibilité.
-
-#### Types d'instructions
-
-| Type | Exemples | Description |
-
-|---|---|---|
-
-| **Expression** | `x = 5;` `i++;` `cout << "Hi";` | La ligne de code la plus courante |
-
-| **Composée (bloc)** | `{ instructions... }` | Groupe plusieurs instructions en une seule unité |
-
-| **Sélection** | `if`, `switch` | Choisir un chemin d'exécution |
-
-| **Boucle** | `for`, `while`, `do-while` | Répéter des instructions |
-
-| **Saut** | `return`, `break`, `continue`, `goto` | Modifier le flux normal |
-
-| **Déclaration** | `int x;` `double y = 3.14;` | Déclarer une variable (aussi une instruction en C++) |
-
-> 🧠 **Portée (scope) :** Chaque bloc `{ }` crée une **portée**. Les variables déclarées dans un bloc sont **détruites** à la fin de ce bloc.
-
-```cpp
-
-{
-
-    int x = 42;    // x existe ici
-
-    cout << x;     // OK
-
 }
 
-// x n'existe plus ici ! → Erreur de compilation si on essaie de l'utiliser
-
+// DO-WHILE : la boucle s'exécute AU MOINS UNE FOIS (condition testée APRÈS)
+int i = 0;
+do {
+    cout << i << ", ";   // 0, 1, 2, 3, 4,
+    i++;
+} while (i < 5);
 ```
+
+**⚠️ Piège classique** : `do-while` s'exécute **toujours au moins une fois**, même si la condition est fausse dès le départ. À utiliser intentionnellement (ex: interface utilisateur demandant au moins une saisie).
 
 ---
 
-### 8. Mini-projet : BMD Regression Tree
+### 1.7 Instructions (Statements)
 
-#### 8.1 Contexte
+**Définition** : Une **instruction** (statement) est une unité d'exécution de base en C++, terminée généralement par un `;`.
 
-> 💡 **Qu'est-ce qu'un Regression Tree ?** Un modèle de machine learning qui prend des données en entrée et prédit une valeur. Le modèle a la forme d'un **arbre de décision** : à chaque nœud, on teste une condition et on descend à gauche ou à droite.
+**Les 7 types d'instructions en C++** :
 
-**Application :** Estimer la densité minérale osseuse (BMD — Bone Mineral Density) d'un patient à partir de son âge, poids, taille et temps d'attente.
+1. **Instruction-expression** : `x = 5;`, `i++;`, `cout << "Bonjour";`
+2. **Instruction composée (bloc)** : `{ instr1; instr2; }` — regroupe plusieurs instructions et crée une portée (scope)
+3. **Instruction de sélection** : `if`, `switch`
+4. **Instruction de boucle** : `for`, `while`, `do-while`
+5. **Instructions de saut** : `return`, `break`, `continue`, `goto`
+6. **Déclaration de variable** : `int x = 5;` — valide à n'importe quel endroit en C++
+7. **Blocs try/catch** : gestion des exceptions (avancé)
 
-#### 8.2 Version 0.1 — Test simple
+**Portée (scope)** :
+```cpp
+{
+    int x = 10;     // x existe seulement dans ce bloc
+    cout << x;      // OK : 10
+}
+// cout << x;       // ERREUR : x n'existe plus (détruit à la fermeture du bloc)
+```
+
+**Différence Python vs C++ sur l'indentation** : en Python, l'indentation **définit** les blocs. En C++, l'indentation est **décorative** — ce sont les accolades `{}` qui définissent les blocs.
+
+---
+
+### 1.8 Mini-projet : BMD Regression Tree v0.1 et v1.0
+
+**Contexte** : Le projet fil rouge du cours est un estimateur de la Densité Minérale Osseuse (BMD) basé sur un **arbre de décision** (modèle de Machine Learning). On part de la phase d'inférence : utiliser un modèle déjà entraîné.
+
+**BMD v0.1 — test d'un cas codé en dur** :
 
 ```cpp
-
 #include <iostream>
-
 using namespace std;
 
-// Fonction qui implémente l'arbre de décision
-
+// L'arbre de décision est codé directement dans la fonction estimate()
 float estimate(float age, float weight_kg, float height_cm, float waiting_time) {
-
-    // ... (arbre de décision codé en if-else imbriqués)
-
+    if (weight_kg <= 65.5) {
+        if (age <= 68.63) {
+            if (weight_kg <= 52.5) {
+                return 0.68;
+            } else {
+                if (height_cm <= 155.75) return 0.83;
+                else                     return 0.75;
+            }
+        } else {
+            if (waiting_time <= 19.5) return 0.64;
+            else                      return 0.56;
+        }
+    }
+    // ... (autres branches)
+    return 0.0;
 }
 
 int main() {
-
-    float bmd = estimate(60, 70, 165, 30);                   // Appel avec des données test
-
-    std::cout << "Predicted BMD: " << bmd << std::endl;       // Devrait afficher 0.87
-
+    // Test avec un patient fixe
+    float bmd = estimate(60, 70, 165, 30);
+    cout << "Predicted BMD: " << bmd << endl;  // Devrait afficher 0.87
     return 0;
-
 }
-
 ```
 
-#### 8.3 Version 1.0 — Programme interactif complet
+**BMD v1.0 — interface utilisateur interactive** :
 
 ```cpp
-
 int main() {
-
-    char choice;                    // Pour stocker la réponse y/n
-
+    char choice;
     float age, weight_kg, height_cm, waiting_time;
 
-    cout << "=== BMD Estimator (Based on Trained Regression Tree) ===\n\n";
-
     do {
-
-        // Demander les données du patient
-
         cout << "Enter patient details:\n";
-
-        cout << "Age (years): ";     cin >> age;
-
-        cout << "Weight (kg): ";     cin >> weight_kg;
-
-        cout << "Height (cm): ";     cin >> height_cm;
-
-        cout << "Waiting time (days): ";  cin >> waiting_time;
-
-        // Calculer et afficher la prédiction
+        cout << "Age (years): ";      cin >> age;
+        cout << "Weight (kg): ";      cin >> weight_kg;
+        cout << "Height (cm): ";      cin >> height_cm;
+        cout << "Waiting time (days): "; cin >> waiting_time;
 
         float bmd = estimate(age, weight_kg, height_cm, waiting_time);
-
         cout << "\n--> Predicted BMD: " << bmd << "\n\n";
 
-        // Continuer ?
-
         cout << "Estimate another patient? (y/n): ";
-
         cin >> choice;
-
-        cout << "\n";
-
-    } while (choice == 'y' || choice == 'Y');   // Boucle tant que l'utilisateur dit "oui"
-
-    cout << "Thank you for using the BMD estimator!\n";
+    } while (choice == 'y' || choice == 'Y');  // do-while car on veut au moins une saisie
 
     return 0;
-
 }
-
 ```
 
-#### 8.4 L'arbre de décision (fonction `estimate`)
-
-```cpp
-
-float estimate(float age, float weight_kg, float height_cm, float waiting_time) {
-
-    if (weight_kg <= 65.5) {                  // Premier test : poids ≤ 65.5 ?
-
-        if (age <= 68.63) {                   // Deuxième test : âge ≤ 68.63 ?
-
-            if (weight_kg <= 52.5) {
-
-                return 0.68;                  // Feuille : BMD estimée = 0.68
-
-            } else {
-
-                if (height_cm <= 155.75) {
-
-                    return 0.83;
-
-                } else {
-
-                    return 0.75;
-
-                }
-
-            }
-
-        } else {                              // âge > 68.63
-
-            if (waiting_time <= 19.5) {
-
-                return 0.64;
-
-            } else {
-
-                return 0.56;
-
-            }
-
-        }
-
-    } else {                                  // poids > 65.5
-
-        if (height_cm <= 164.25) {
-
-            // ... (suite de l'arbre)
-
-        }
-
-    }
-
-}
-
-```
-
-> 🎯 **Ce qu'il faut retenir :** Cette version est **statique** — l'arbre est « codé en dur » dans le code. Si l'arbre change (nouveau modèle), il faut modifier le code et recompiler. La version 2.0 (cours suivant) résout ce problème en lisant l'arbre depuis un fichier.
-
-#### 8.5 Concepts illustrés par ce mini-projet
-
-| Concept | Utilisation dans le projet |
-
-|---|---|
-
-| `#include` | Importer `<iostream>` |
-
-| Types (`float`, `char`) | Variables pour les données et le choix y/n |
-
-| `cin` / `cout` | Interaction avec l'utilisateur |
-
-| `if` / `else` | Arbre de décision |
-
-| `do...while` | Boucle interactive « encore un patient ? » |
-
-| Fonctions | `estimate()` séparée de `main()` |
-
-| `return` | Valeur prédite ou code de sortie |
+**⚠️ Limitation de v1.0** : L'arbre est **codé en dur**. Si on entraîne un nouveau modèle (arbre différent), il faut modifier le code source C++ et recompiler. Ce n'est pas scalable → sera résolu en v2.0.
 
 ---
 
 ##  Cours 2 : File I/O, Strings, Structs & Fonctions
 
-> 📚 **Objectif du cours :** Maîtriser la lecture/écriture de fichiers en C++, les différents types de chaînes de caractères (C-strings vs C++ strings), les structures (`struct`), les conversions de types, et les fonctions. Application au projet BMD Regression v2.0 (arbre dynamique lu depuis un fichier).
+### 2.1 File I/O — Lire et écrire des fichiers
 
----
+**Définition** : Les classes `ifstream`, `ofstream` et `fstream` permettent de lire et écrire des fichiers en C++, de la même façon que `cin`/`cout` mais vers un fichier.
 
-### Table des matières
+**Intuition** : Un **stream** (flux) est une abstraction d'un canal de communication. Tout flux fonctionne avec les mêmes opérateurs (`<<` pour écrire, `>>` pour lire). Que ce soit vers l'écran, le clavier ou un fichier, la syntaxe est identique — seul le nom du flux change.
 
-1. [BMD Regression v2.0 — Architecture dynamique](#1-bmd-regression-v20--architecture-dynamique)
+**Les 3 classes de fichier** :
 
-2. [File I/O : Lecture et écriture de fichiers](#2-file-io--lecture-et-écriture-de-fichiers)
-
-3. [Streams : flux de données](#3-streams--flux-de-données)
-
-4. [Arrays (Tableaux)](#4-arrays-tableaux)
-
-5. [C-strings (`char[]`) vs C++ strings (`std::string`)](#5-c-strings-vs-c-strings)
-
-6. [String Parsing : `sscanf` et `istringstream`](#6-string-parsing--sscanf-et-istringstream)
-
-7. [Structures (`struct`)](#7-structures-struct)
-
-8. [Conversion de types (Casting)](#8-conversion-de-types-casting)
-
-9. [Fonctions](#9-fonctions)
-
----
-
-### 1. BMD Regression v2.0 — Architecture dynamique
-
-#### 1.1 Le problème de la v1.0
-
-> 💡 **Rappel :** En v1.0, l'arbre de décision était codé en dur avec des `if-else` imbriqués. Tout changement de modèle nécessitait de modifier le code source et de recompiler.
-
-**Problème :** Un outil de Machine Learning doit séparer :
-
-1. **L'entraînement** (apprentissage du modèle → génère un fichier)
-
-2. **L'inférence** (utilisation du modèle → lit le fichier)
-
-#### 1.2 La solution v2.0
-
-L'arbre est stocké dans un **fichier texte externe** (`bmd_tree_transitions.txt`) et lu dynamiquement à l'exécution.
-
-```
-
-Format du fichier : ID_nœud, ID_gauche, ID_droite, condition_ou_valeur
-
-Exemple:
-
-0,1,6,weight_kg <= 65.50
-
-1,2,5,age <= 68.63
-
-2,-1,-1,0.68             ← ID_gauche = ID_droite = -1 → feuille, valeur = 0.68
-
-```
-
-#### 1.3 Algorithme de parcours
-
-```
-
-1. nœudCourant = 1 (racine)
-
-2. Lire nœudCourant depuis le fichier
-
-3. Parser la ligne en <ID_nœud, ID_gauche, ID_droite, val_cond>
-
-4. Si nœud terminal (ID_gauche == ID_droite == -1) :
-
-      → Retourner val_cond (c'est la prédiction)
-
-5. Sinon (val_cond encode une condition) :
-
-      → Évaluer la condition
-
-      → Si vraie : descendre à gauche
-
-      → Sinon : descendre à droite
-
-6. Retourner à l'étape 2
-
-```
-
-#### 1.4 Fonction `estimate` — Code commenté
-
-```cpp
-
-const char* filename = "bmd_tree_transitions.txt";
-
-float estimate(float age, float weight_kg, float height_cm, float waiting_time) {
-
-    ifstream tree(filename);             // Ouvre le fichier en lecture
-
-    if (!tree.is_open())
-
-        return 0.0;                      // Erreur : fichier introuvable
-
-    int current = 1;                     // Commence à la racine (nœud ID = 1)
-
-    char line[256];                      // Buffer pour stocker chaque ligne lue
-
-    while (1) {                          // Boucle infinie (on sortira par return)
-
-        tree.seekg(0);                   // Remet le curseur au DÉBUT du fichier
-
-        while (!tree.eof()) {            // Parcourt toutes les lignes
-
-            tree.getline(line, 256);     // Lit une ligne entière
-
-            // Extrait l'ID du nœud (premier nombre avant la virgule)
-
-            int node_id;
-
-            sscanf(line, "%d,", &node_id);
-
-            if (node_id == current) {    // Trouvé le nœud qu'on cherche !
-
-                // Parse et évalue la ligne
-
-                struct ParseResult res = parse_eval_line(
-
-                    line, weight_kg, age, height_cm, waiting_time);
-
-                if (res.is_leaf) {       // Si c'est une feuille...
-
-                    tree.close();        // Ferme le fichier proprement
-
-                    return res.value;    // Retourne la prédiction !
-
-                } else
-
-                    current = res.next_node;  // Descend vers l'enfant
-
-            }
-
-        }
-
-    }
-
-}
-
-```
-
-> 🧠 **Points clés :**
-
-> - `seekg(0)` remet le curseur de lecture au début du fichier (nécessaire car on cherche un nœud différent à chaque itération)
-
-> - On utilise une `struct ParseResult` pour retourner plusieurs valeurs corrélées depuis `parse_eval_line`
-
----
-
-### 2. File I/O : Lecture et écriture de fichiers
-
-#### 2.1 Les trois classes principales
-
-```cpp
-
-#include <fstream>    // ← Nécessaire pour les opérations sur fichiers
-
-```
-
-| Classe | Rôle | Équivalent Python |
-
+| Classe | Direction | Équivalent console |
 |---|---|---|
+| `ifstream` | Lecture seule | `cin` |
+| `ofstream` | Écriture seule | `cout` |
+| `fstream` | Lecture + Écriture | `cin` + `cout` |
 
-| `ifstream` | **Lire** un fichier | `open("f", "r")` |
-
-| `ofstream` | **Écrire** dans un fichier | `open("f", "w")` |
-
-| `fstream` | **Lire et écrire** | `open("f", "r+")` |
-
-#### 2.2 Écriture dans un fichier
-
+**Exemple complet — Écriture dans un fichier** :
 ```cpp
-
 #include <iostream>
-
 #include <fstream>
-
 using namespace std;
 
 int main() {
+    ofstream myfile;           // Déclare le flux de sortie
+    myfile.open("example.txt"); // Ouvre (ou crée) le fichier en mode écriture
 
-    ofstream myfile;                      // Déclare un flux de sortie
+    if (!myfile) {             // Toujours vérifier si l'ouverture a réussi
+        cerr << "Erreur: impossible d'ouvrir le fichier\n";
+        return 1;
+    }
 
-    myfile.open("example.txt");           // Ouvre (ou crée) le fichier
-
-    myfile << "Writing this to a file.\n"; // Écrit avec << (comme cout)
-
-    myfile.close();                       // ⚠️ TOUJOURS fermer le fichier !
-
+    myfile << "Writing this to a file.\n";  // Même syntaxe que cout
+    myfile.close();  // INDISPENSABLE : vide le buffer et libère le fichier
     return 0;
-
 }
-
 ```
 
-#### 2.3 Lecture ligne par ligne
-
+**Exemple complet — Lecture ligne par ligne** :
 ```cpp
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
 
-string line;
+int main() {
+    string line;
+    ifstream myfile("example.txt");  // Ouvre directement dans le constructeur
 
-ifstream myfile("example.txt");           // Ouverture directe dans le constructeur
-
-if (myfile.is_open()) {                   // ⚠️ Toujours vérifier que l'ouverture a réussi
-
-    while (getline(myfile, line))          // Lit chaque ligne complète (y compris les espaces)
-
-        cout << line << '\n';             // Affiche la ligne
-
-    myfile.close();
-
-} else
-
-    cout << "Unable to open file";
-
+    if (myfile.is_open()) {
+        while (getline(myfile, line)) {    // Lit une ligne entière (y compris les espaces)
+            cout << line << '\n';          // Affiche la ligne
+        }
+        myfile.close();
+    } else {
+        cout << "Unable to open file\n";
+    }
+    return 0;
+}
 ```
 
-> 🎯 **`getline` vs `>>`** : `getline` lit toute la ligne (espaces compris). `>>` s'arrête au premier espace.
-
-#### 2.4 Modes d'ouverture
-
+**Modes d'ouverture** :
 ```cpp
-
-// Combinaison de modes avec | (ou logique)
-
-fstream inoutFile("someName", ios::in | ios::out);  // Lecture ET écriture
-
+// Combiner les modes avec | (OU logique)
+fstream f("data.txt", ios::in | ios::out);  // Lecture ET écriture
+ofstream f2("log.txt", ios::app);           // Mode append (ajout en fin de fichier)
+ifstream f3("data.bin", ios::binary);       // Mode binaire (bytes bruts)
 ```
 
-| Mode | Description |
+**Mode texte vs mode binaire** :
 
-|---|---|
+| | Mode texte | Mode binaire |
+|---|---|---|
+| Encodage | Caractères lisibles | Bytes bruts (comme en mémoire) |
+| Taille de 1000000 | 7 bytes (`'1','0','0','0','0','0','0'`) | 4 bytes (représentation int sur 32 bits) |
+| Conversion automatique | \n → \r\n (Windows) | Aucune |
+| Usage | Fichiers texte, CSV, logs | Images, audio, sérialisation |
 
-| `ios::in` | Lecture (défaut pour `ifstream`) |
-
-| `ios::out` | Écriture (défaut pour `ofstream`) |
-
-| `ios::app` | Écriture en fin de fichier (*append*) |
-
-| `ios::trunc` | Écrase le contenu existant |
-
-| `ios::binary` | Mode binaire (pas de conversion de caractères) |
-
-#### 2.5 Pourquoi fermer un fichier ?
-
-> ⚠️ **`close()` est essentiel :**
-
-> 1. **Vide les tampons mémoire** → les données sont effectivement écrites sur le disque
-
-> 2. **Libère le fichier** → d'autres programmes peuvent y accéder
-
-> 3. En environnement partagé, un fichier non fermé reste **verrouillé**
+**⚠️ Piège classique** : Oublier `myfile.close()`. Si le programme plante avant la fermeture, le contenu du buffer ne sera jamais écrit sur le disque. Toujours fermer explicitement, ou utiliser un pattern RAII (le fichier se ferme automatiquement quand l'objet sort de portée).
 
 ---
 
-### 3. Streams : flux de données
+### 2.2 Manipulateurs de stream
 
-#### 3.1 Qu'est-ce qu'un stream ?
+**Définition** : Les manipulateurs sont des objets spéciaux qu'on insère dans un flux `<<` pour modifier la façon dont les données sont formatées en sortie.
 
-> 💡 Un **stream** (flux) est un courant d'octets entre votre programme et un périphérique externe (fichier, clavier, écran...).
+**Intuition** : Pense à un « mode d'affichage » : une fois activé, il reste actif pour les affichages suivants (sauf exceptions comme `setw`). Utile pour aligner des colonnes, afficher des floats avec une précision fixe, etc.
 
-#### 3.2 Mode texte vs mode binaire
-
-| Aspect | Mode texte | Mode binaire |
-
-|---|---|---|
-
-| **Données** | Caractères, lignes (`\n`) | Octets bruts |
-
-| **Opérateurs** | `<<` et `>>` | `write()` et `read()` |
-
-| **Conversions** | Automatiques (ex: `\n` → `\r\n` sur Windows) | Aucune |
-
-| **Taille de `1000000`** | 7 bytes (caractères '1','0','0','0','0','0','0') | 4 bytes (représentation en mémoire) |
-
-| **Usage** | CSV, fichiers lisibles par l'homme | Images, données brutes |
-
-#### 3.3 Hiérarchie des classes de streams
-
-```
-
-          ios (état + formatage)
-
-         /                   \
-
-    istream                ostream
-
-    (lecture >>)           (écriture <<)
-
-     /    \                 /    \
-
-ifstream  iostream     ofstream  iostream
-
-           \               /
-
-            iostream → fstream
-
-```
-
-**Streams standards prédéfinis :**
-
-- `cin` → objet `istream` (lecture au clavier)
-
-- `cout` → objet `ostream` (écriture à l'écran)
-
-- `cerr`, `clog` → objets `ostream` (erreurs)
-
-> 🧠 **Grâce à l'héritage**, les mêmes opérateurs `<<` et `>>` fonctionnent partout : `cin >> x` et `fichier >> x` utilisent la même syntaxe !
-
-#### 3.4 Manipulateurs de flux
-
+**Exemple complet** :
 ```cpp
+#include <iostream>
+#include <iomanip>   // Nécessaire pour setprecision, setw, setfill
+using namespace std;
 
-#include <iomanip>    // Nécessaire pour les manipulateurs
+int main() {
+    double pi = 3.14159265;
 
-double pi = 3.14159;
+    // setprecision(n) : contrôle le nombre de chiffres significatifs
+    cout << setprecision(3) << pi << endl;        // Affiche : 3.14  (3 chiffres totaux)
 
-cout << setprecision(3) << pi << endl;                    // 3.14 (3 chiffres au total)
+    // fixed + setprecision(n) : n chiffres APRÈS la virgule
+    cout << fixed << setprecision(3) << pi << endl; // Affiche : 3.142
 
-cout << fixed << setprecision(3) << pi << endl;           // 3.142 (3 chiffres APRàˆS la virgule)
+    // setw(n) : largeur du prochain champ (appliqué UNE FOIS seulement)
+    // setfill(ch) : caractère de remplissage (par défaut : espace)
+    cout << setw(8) << setfill('0') << 42 << endl; // Affiche : 00000042
 
-cout << setw(5) << setfill('.') << 42 << endl;            // ...42 (largeur 5, remplissage '.')
+    // Alignement left/right dans le champ setw
+    cout << left  << setw(8) << setfill('.') << 100 << "end\n"; // Affiche : 100.....end
+    cout << right << setw(8) << setfill('.') << 100 << "end\n"; // Affiche : .....100end
 
-cout << left << setw(6) << setfill('.') << 100 << "end";  // 100...end
+    // scientific : notation scientifique
+    cout << scientific << setprecision(2) << 123.456 << endl;   // Affiche : 1.23e+02
 
-cout << right << setw(6) << setfill('.') << 100 << "end"; // ...100end
-
-cout << scientific << setprecision(2) << 123.456 << endl;  // 1.23e+02
-
+    // Bases d'affichage pour les entiers
+    cout << hex << 255 << endl;      // Affiche : ff (hexadécimal)
+    cout << oct << 255 << endl;      // Affiche : 377 (octal)
+    cout << dec << 255 << endl;      // Affiche : 255 (retour en décimal)
+    return 0;
+}
 ```
+
+**Récapitulatif des manipulateurs** :
 
 | Manipulateur | Effet | Persistant ? |
-
 |---|---|---|
-
-| `setprecision(n)` | Nombre de chiffres significatifs (ou après la virgule en mode `fixed`) | ✅ Oui |
-
-| `setw(n)` | Largeur du champ d'affichage | âŒ Prochain affichage seulement |
-
-| `setfill(ch)` | Caractère de remplissage | ✅ Oui |
-
+| `setprecision(n)` | Précision des floats | ✅ Oui |
 | `fixed` | Notation décimale fixe | ✅ Oui |
-
 | `scientific` | Notation scientifique | ✅ Oui |
+| `setw(n)` | Largeur du prochain affichage | ❌ Non (une fois) |
+| `setfill(ch)` | Caractère de remplissage | ✅ Oui |
+| `left`/`right` | Alignement | ✅ Oui |
+| `hex`/`oct`/`dec` | Base des entiers | ✅ Oui |
+| `endl` | `\n` + flush buffer | — |
+| `flush` | Flush buffer sans `\n` | — |
 
-| `left` / `right` | Alignement dans le champ | ✅ Oui |
-
-| `endl` | Retour à la ligne + vidage du tampon | — |
-
-| `flush` | Vidage du tampon sans retour à la ligne | — |
-
-| `hex` / `oct` / `dec` | Base d'affichage des entiers | ✅ Oui |
-
----
-
-### 4. Arrays (Tableaux)
-
-#### 4.1 Déclaration et initialisation
-
-```cpp
-
-float grades[5];                       // Tableau de 5 float (non initialisé ⚠️)
-
-int primes[5] = {1, 2, 3, 5, 7};      // Initialisé avec des valeurs
-
-int primes[] = {1, 2, 3, 5, 7};       // Taille déduite automatiquement (5)
-
-```
-
-> 💡 Un **array** en C++ est une collection de cellules mémoire **contiguës**, toutes du **même type**, accessibles par un **index** commençant à 0.
-
-#### 4.2 Accès aux éléments
-
-```cpp
-
-for (int i = 0; i < 5; i++)
-
-    cout << primes[i] << '\t';         // Affiche : 1   2   3   5   7
-
-```
-
-> ⚠️ **Pas de vérification de bornes !** Accéder à `primes[10]` ne génère PAS d'erreur de compilation, mais lit de la mémoire invalide → comportement indéfini.
+**⚠️ Piège classique** : `setw()` ne s'applique qu'à la **prochaine** valeur. Si tu veux aligner une colonne entière, il faut réappliquer `setw()` à chaque ligne.
 
 ---
 
-### 5. C-strings vs C++ strings
+### 2.3 Arrays
 
-#### 5.1 C-string (`char[]`) — L'ancienne méthode
+**Définition** : Un array est une collection d'éléments **du même type** stockés en mémoire de façon **contiguë**, accessibles via un index.
 
+**Intuition** : Imagine une rangée de cases mémoire numérotées de 0 à N-1. Toutes les cases ont la même taille (celle du type). Pour accéder à la case `i`, C++ calcule son adresse en faisant `adresse_base + i × sizeof(type)`.
+
+**Déclaration et initialisation** :
 ```cpp
-
-// Character array simple (PAS une string !)
-
-char vowels[5] = {'a', 'e', 'i', 'o', 'u'};  // Pas de \0 → DANGER avec cout/strlen
-
-// C-string valide (terminée par \0)
-
-char name[] = "Mae";      // 4 éléments : 'M', 'a', 'e', '\0'
-
-char msg[10] = "Hi";      // 'H', 'i', '\0', puis 7 zéros
-
-cout << name;             // Imprime "Mae" (s'arrête à \0)
-
-cout << strlen(name);     // Affiche 3 (ne compte pas \0)
-
+float grades[5];                         // Déclaré mais NON initialisé (valeurs indéfinies)
+int primes[] = {1, 2, 3, 5, 7};         // Initialisé — taille déduite automatiquement (5)
+int primes[5] = {1, 2, 3, 5, 7};        // Équivalent explicite
+int zeros[10] = {};                      // Tous les éléments initialisés à 0
 ```
 
-> ⚠️ **Règle critique :** Sans `\0`, les fonctions C (`strlen`, `strcpy`, `cout`) ne savent pas où la chaîne se termine → lecture de mémoire indéfinie, bugs, failles de sécurité.
-
-#### 5.2 C++ string (`std::string`) — La méthode moderne ✅
-
-```cpp
-
-#include <string>
-
-std::string name = "Mae West";     // Objet string complet
-
-std::cout << name;                 // Imprime "Mae West"
-
-std::cout << name.length();       // 8 (pas besoin de \0)
-
-std::cout << name[0];             // 'M' (accès par index)
-
-// Concaténation facile
-
-std::string greeting = "Hello " + name;   // "Hello Mae West"
-
-// Comparaison intuitive
-
-if (name == "Mae West") { ... }           // Fonctionne directement !
-
-if ("age" < "beauty") { ... }            // Comparaison lexicographique (ASCII)
-
-// Recherche
-
-size_t pos = name.find("West");           // pos = 4 (position de "West")
-
-if (pos == string::npos) { ... }          // npos = "pas trouvé"
-
-```
-
-#### 5.3 Comparaison résumée
-
-| Critère | C-string (`char[]`) | C++ string (`std::string`) |
-
-|---|---|---|
-
-| **Terminateur** | `\0` obligatoire | Pas nécessaire (longueur interne) |
-
-| **Mémoire** | Gestion manuelle | Automatique |
-
-| **Sécurité** | Risque de buffer overflow | Sûr |
-
-| **Concaténation** | `strcat()` (dangereux) | Opérateur `+` |
-
-| **Comparaison** | `strcmp()` | `==`, `<`, `>` |
-
-| **Longueur** | `strlen()` (O(n)) | `.length()` ou `.size()` (O(1)) |
-
-| **Usage recommandé** | API C, systèmes bas niveau | **Partout en C++** |
-
----
-
-### 6. String Parsing : `sscanf` et `istringstream`
-
-#### 6.1 `sscanf` — Parsing de style C
-
-```cpp
-
-#include <cstdio>
-
-char line[] = "0,1,6,weight_kg <= 65.50";
-
-int node_id, left_id, right_id;
-
-char cond_val[128];
-
-// Parse la ligne selon le format spécifié
-
-// %d = entier, %127[^\n] = tout jusqu'à fin de ligne (max 127 chars)
-
-sscanf(line, "%d,%d,%d,%127[^\n]", &node_id, &left_id, &right_id, cond_val);
-
-// node_id=0, left_id=1, right_id=6, cond_val="weight_kg <= 65.50"
-
-```
-
-> 🧠 **`sscanf` retourne** le nombre de champs lus avec succès. Toujours vérifier : `if (sscanf(...) != 4) { erreur; }`
-
-#### 6.2 `istringstream` — Parsing de style C++
-
-```cpp
-
-#include <sstream>
-
-std::string input = "100 3.14";
-
-std::istringstream inStr(input);      // Connecte le stream à la string
-
-long value;
-
-double data;
-
-inStr >> value >> data;               // Extrait comme avec cin !
-
-// value = 100, data = 3.14
-
-```
-
-#### 6.3 `ostringstream` — Construction de strings
-
-```cpp
-
-std::ostringstream outStr;
-
-double number = 2.5;
-
-outStr << "number = " << (number / 2.0);      // Écrit comme cout
-
-std::string result = outStr.str();             // Récupère la string
-
-// result == "number = 1.25"
-
-```
-
-#### 6.4 Application dans le projet BMD
-
-La fonction `eval_condition` parse des conditions comme `"weight_kg <= 65.50"` :
-
-```cpp
-
-int eval_condition(char* cond,
-
-    float weight_kg, float age, float height_cm, float waiting_time) {
-
-    istringstream iss(cond);         // Connecte le stream à la C-String
-
-    string feat, op;                 // feat = "weight_kg", op = "<="
-
-    float threshold;                 // threshold = 65.50
-
-    if (!(iss >> feat >> op >> threshold))   // Extraction des 3 composantes
-
-        return 0;                            // Échec du parsing
-
-    // Récupérer la valeur réelle de la caractéristique
-
-    float feat_val = 0.0;
-
-    if      (feat == "weight_kg")    feat_val = weight_kg;
-
-    else if (feat == "age")          feat_val = age;
-
-    else if (feat == "height_cm")    feat_val = height_cm;
-
-    else if (feat == "waiting_time") feat_val = waiting_time;
-
-    else return 0;                   // Caractéristique inconnue
-
-    // Évaluer l'opérateur
-
-    if      (op == "<=") return (feat_val <= threshold) ? 1 : 0;
-
-    else if (op == "<")  return (feat_val < threshold)  ? 1 : 0;
-
-    else if (op == "=")  return (feat_val == threshold) ? 1 : 0;
-
-    else if (op == ">=") return (feat_val >= threshold) ? 1 : 0;
-
-    else if (op == ">")  return (feat_val > threshold)  ? 1 : 0;
-
-    else return 0;
-
-}
-
-```
-
-> 🎯 **L'opérateur ternaire `? :`** est un raccourci pour `if-else` :
-
-> ```cpp
-
-> // Équivalent :
-
-> res.next_node = take_left ? left_id : right_id;
-
-> // ↔
-
-> if (take_left) { res.next_node = left_id; } else { res.next_node = right_id; }
-
-> ```
-
----
-
-### 7. Structures (`struct`)
-
-#### 7.1 Qu'est-ce qu'une struct ?
-
-> 💡 Une `struct` regroupe des variables de **types différents** dans une seule unité nommée. C'est l'ancêtre de la classe en C++.
-
-```cpp
-
-struct Car {                // Définition d'un nouveau type "Car"
-
-    std::string brand;      // Membre 1 : marque (string)
-
-    std::string model;      // Membre 2 : modèle (string)
-
-    int year;               // Membre 3 : année (int)
-
-};                          // ⚠️ Point-virgule obligatoire après la }
-
-// Utilisation
-
-Car car1, car2;                                     // Déclare deux variables de type Car
-
-car1.brand = "BMW";  car1.model = "X5";  car1.year = 1999;   // Accès via l'opérateur .
-
-car2.brand = "Ford"; car2.model = "Mustang"; car2.year = 1969;
-
-```
-
-#### 7.2 Application dans le projet BMD
-
-```cpp
-
-struct ParseResult {
-
-    int is_leaf;       // 1 = feuille (nœud terminal), 0 = nœud interne
-
-    double value;      // Si feuille : la valeur prédite
-
-    int next_node;     // Si interne : l'ID du prochain nœud
-
-};
-
-```
-
-> 🧠 **Pourquoi utiliser une struct ?** Pour retourner **plusieurs valeurs corrélées** depuis une fonction, au lieu d'utiliser des paramètres de sortie ou des variables globales. L'interface est plus propre et le code plus lisible.
-
-#### 7.3 Mémoire
-
-Les membres d'une struct sont stockés de façon **contiguë** en mémoire (dans l'ordre de déclaration).
-
----
-
-### 8. Conversion de types (Casting)
-
-#### 8.1 Conversion implicite
-
-```cpp
-
-double x = 5;     // int → double automatiquement (pas de perte de données)
-
-```
-
-#### 8.2 Cast style C (déconseillé ⚠️)
-
-```cpp
-
-int n = (int)3.14;        // Syntaxe 1 : n = 3 (perte de la partie décimale)
-
-int n = int(3.14);        // Syntaxe 2 : identique
-
-```
-
-> ⚠️ Le cast style C contourne les vérifications du compilateur → risque de masquer des erreurs.
-
-#### 8.3 `static_cast` (recommandé ✅)
-
-```cpp
-
-double d = 3.14;
-
-int n = static_cast<int>(d);   // Explicite, lisible, limité aux conversions compatibles
-
-```
-
-> 🎯 **Recommandation :** Toujours utiliser `static_cast` au lieu du cast style C. C'est plus explicite, facilement repérable dans le code, et offre une meilleure sécurité de typage.
-
----
-
-### 9. Fonctions
-
-#### 9.1 Structure d'une fonction
-
-```cpp
-
-// Prototype (déclaration) — avant main() ou dans un header
-
-int addition(int, int);
-
-// Définition — le corps de la fonction
-
-int addition(int a, int b) {
-
-    int r;
-
-    r = a + b;
-
-    return r;     // Retourne le résultat à l'appelant
-
-}
-
-// Appel
-
-int main() {
-
-    int z = addition(5, 3);               // z = 8
-
-    cout << "The result is " << z;        // Affiche : The result is 8
-
-}
-
-```
-
-#### 9.2 Concepts clés
-
-| Concept | Description |
-
-|---|---|
-
-| **Prototype** | `type nom(params);` — Déclare l'interface avant utilisation |
-
-| **Type de retour** | `int`, `double`, etc. — `void` si pas de valeur retournée |
-
-| **Passage par valeur** | Les paramètres sont **copiés** (la fonction travaille sur des copies) |
-
-| **`return`** | Transfère la valeur au contexte appelant et termine la fonction |
-
-#### 9.3 Modularité et encapsulation
-
-> 💡 Les fonctions réalisent l'**encapsulation logicielle** : elles exposent une interface minimaliste (prototype) tout en cachant leur implémentation interne.
-
-**Avantages :**
-
-- **Réutilisation** du code
-
-- **Réduction** de la complexité cognitive
-
-- **Isolation** des effets de bord
-
-- Facilite la **maintenance** et les **tests unitaires**
-
-> 🧠 **Bonne pratique :** Chaque fonction assume une **responsabilité unique** (*Single Responsibility Principle*).
-
-
-## Cours 3 : Hiérarchie mémoire, Arrays avancés et Introduction à la POO
-
-> 📚 **Objectif du cours :** Comprendre l'organisation de la mémoire (hiérarchie, tableaux explicites/pointeurs) et introduire la Programmation Orientée Objet (POO) en C++ avec les classes, l'encapsulation et les constructeurs, via la v3.0 du projet BMD.
-
----
-
-#### 1. La Hiérarchie Mémoire
-
-Pour optimiser un programme (comme l'arbre de régression BMD), il faut comprendre comment l'ordinateur stocke et accède aux données.
-
-| Type de mémoire | Capacité temporelle | Temps d'accès | Coût |
-|---|---|---|---|
-| **Registres CPU** | Extrêmement faible (~KB) | < 0.3 ns | Très élevé (intégré) |
-| **Cache L1/L2/L3** | Faible (KB à MB) | 1 à 20 ns | Très élevé (intégré) |
-| **RAM (DRAM)** | Moyenne (Go) | ~ 50 ns | Moyen |
-| **Storage (SSD/HDD)** | Énorme (To) | > 10 000 ns (µs/ms) | Faible |
-
-> 🎯 **Règle d'or de l'optimisation :** **Privilégier la RAM aux accès disque**. C'est le principe de BMD v3.0 : au lieu de lire le fichier à chaque nœud (v2.0), on le charge *une fois* en RAM dans un Array. L'accès en RAM est des milliers de fois plus rapide que l'accès disque !
-
----
-
-#### 2. Les Arrays (Tableaux) sous le capot
-
-Un *array* en C++ est fondamentalement différent d'une liste Python.
-
-##### 2.1 Adresse et contiguïté
+**Accès et itération** :
 ```cpp
 int primes[] = {1, 2, 3, 5, 7};
-// primes pointe sur l'adresse mémoire de la PREMIÈRE case : primes[0]
-```
-- Chaque case occupe une taille fixe (ex: 4 bytes pour un `int`).
-- Toutes les cases sont **contiguës** en mémoire.
-- `primes + i` décale l'adresse de `i * sizeof(int)` bytes. L'arithmétique se fait en **éléments**, pas en octets bruts.
 
-##### 2.2 Absence de contrôle des limites
-> ⚠️ **Danger C++ :** Le C++ ne vérifie **JAMAIS** si vous dépassez la taille du tableau.
+cout << primes[0] << "\n";   // Affiche : 1 (premier élément — index 0)
+cout << primes[4] << "\n";   // Affiche : 7 (cinquième élément — index 4)
 
-```cpp
-int x = primes[10];  // ❌ Hors limites, mais compile !
-```
-Conséquences d'un accès hors limites :
-1. **Segmentation Fault (Segfault) :** Le programme essaie d'accéder à une mémoire qui ne lui appartient pas → Crash immédiat.
-2. **Corruption silencieuse :** L'accès se fait dans la zone mémoire d'une autre variable de votre programme → Bugs imprévisibles, difficiles à traquer (la valeur d'une autre variable change "toute seule").
-
-##### 2.3 Calculer la taille d'un tableau
-Idiome classique (style C) :
-```cpp
+// Calculer la taille : idiome classique C++
 int arrsize = sizeof(primes) / sizeof(primes[0]);
-// Ex: (5 éléments * 4 bytes) / 4 bytes = 20 / 4 = 5
+// sizeof(primes) = 5 × 4 = 20 bytes
+// sizeof(primes[0]) = 4 bytes
+// arrsize = 20 / 4 = 5
+
+for (int i = 0; i < arrsize; i++) {
+    cout << primes[i] << "\t";  // Affiche : 1  2  3  5  7
+}
+```
+
+**⚠️ Piège classique — Out-of-Bounds** : C++ ne vérifie **jamais** si l'indice est dans les limites valides. Accéder à `primes[5]` (indice 5 sur un array de 5 éléments) est **indéfini** — soit plantage immédiat (segmentation fault), soit corruption silencieuse d'une variable voisine.
+
+```cpp
+int primes[5] = {1, 2, 3, 5, 7};
+cout << primes[10];  // COMPORTEMENT INDÉFINI — peut afficher n'importe quoi, planter, etc.
 ```
 
 ---
 
-#### 3. Introduction aux Classes et à la POO
+### 2.4 C-Strings vs std::string
 
-##### 3.1 POO vs Procédural
-- **Procédural (C) :** Centré sur les **fonctions**. Les données et les fonctions qui les manipulent sont séparées. Dur à maintenir sur de gros projets.
-- **Orienté Objet (POO - C++) :** Centré sur les **objets** métier. Les données (attributs) et les fonctions (méthodes) sont réunies au sein d'une même entité.
+#### C-Strings (char[] avec `\0`)
 
-##### 3.2 Classe vs Objet
-- Une **classe** (`class`) est un *nouveau type* de données défini par le programmeur. C'est le **patron** (blueprint).
-- Un **objet** est une *instance* concrète créée à partir de cette classe.
+**Définition** : Une C-string est un tableau de `char` terminé par le caractère nul `\0`. C'est la façon héritée du langage C de représenter des chaînes de caractères.
+
+**Exemple** :
+```cpp
+char name[] = "Mae";        // Stocke : 'M', 'a', 'e', '\0' — 4 éléments !
+char msg[10] = "Hi";        // Stocke : 'H', 'i', '\0', puis 7 zéros
+
+cout << name;               // Affiche : Mae (s'arrête au premier '\0')
+cout << strlen(name);       // Affiche : 3 (longueur sans le '\0')
+```
+
+**Danger** :
+```cpp
+char vowels[5] = {'a', 'e', 'i', 'o', 'u'};  // PAS de '\0' — ce n'est PAS une C-string !
+cout << vowels;     // DANGEREUX : continue à lire en mémoire jusqu'à trouver un '\0' par hasard
+strlen(vowels);     // DANGEREUX : valeur arbitraire ou crash
+```
+
+#### std::string (C++ moderne)
+
+**Définition** : `std::string` est une classe de la bibliothèque standard C++ qui encapsule une séquence de caractères avec gestion automatique de la mémoire.
+
+**Avantages sur les C-strings** :
+
+| | C-string (`char[]`) | `std::string` |
+|---|---|---|
+| `\0` requis | Oui, manuellement | Non (géré intern.) |
+| Longueur | `strlen()` (O(n)) | `.length()` (O(1)) |
+| Concaténation | `strcat()` (risqué) | `s1 + s2` (sûr) |
+| Comparaison | `strcmp()` | `==`, `<`, `>` |
+| Redimensionnement | Impossible | Automatique |
 
 ```cpp
-class Square {          // La classe (le patron)
-    // ...
-};                      // ⚠️ Point-virgule obligatoire
+#include <string>
+using namespace std;
+
+string name = "Mae West";
+cout << name.length();         // 8
+cout << name[0];               // 'M'
+string full = name + " !!!";   // Concaténation sûre
+cout << name.find("West");     // 4 (position de "West")
+cout << name.substr(0, 3);     // "Mae"
+
+// Comparaisons lexicographiques sensibles à la casse
+if (name == "Mae West") cout << "Même nom\n";    // true
+if ("age" < "beauty")   cout << "age < beauty\n"; // true (ordre ASCII)
+```
+
+**⚠️ Piège classique** : Mélanger C-string et `std::string`. Les fonctions C (`strlen`, `strcpy`) ne fonctionnent pas avec `std::string`. Pour convertir : `name.c_str()` retourne un `const char*`.
+
+---
+
+### 2.5 Stringstreams — parser des strings
+
+**Définition** : `<sstream>` fournit des flux en mémoire pour lire/écrire dans un objet `std::string` en utilisant les mêmes opérateurs `<<` et `>>` qu'avec `cin`/`cout`.
+
+**Intuition** : Un stringstream te permet de « faire semblant » qu'une chaîne de texte est une entrée clavier (`cin`), ou de construire une string complexe comme si tu écrivais dans `cout`.
+
+**Exemple complet — parsing d'une condition** :
+```cpp
+#include <sstream>
+#include <string>
+#include <iostream>
+using namespace std;
 
 int main() {
-    Square x;           // x est un OBJET de la classe Square
+    // Cas d'usage : parser la condition "weight_kg <= 65.50" extraite d'un fichier
+    string cond = "weight_kg <= 65.50";
+    istringstream iss(cond);  // Créer un flux de lecture à partir de la string
+
+    string feat, op;
+    float threshold;
+    iss >> feat >> op >> threshold;  // Extrait les tokens séparés par des espaces
+    // feat = "weight_kg", op = "<=", threshold = 65.50
+
+    cout << "Feature: " << feat << ", Op: " << op << ", Threshold: " << threshold << "\n";
+    // Affiche : Feature: weight_kg, Op: <=, Threshold: 65.5
+
+    // ostringstream : construire une string
+    ostringstream outStr;
+    double number = 2.5;
+    outStr << "number = " << (number / 2.0);
+    string result = outStr.str();  // Récupère la string construite
+    cout << result << "\n";        // Affiche : number = 1.25
+
+    return 0;
 }
 ```
 
+| Classe | Direction | Usage |
+|---|---|---|
+| `istringstream` | Lecture depuis string | Parser/découper une string |
+| `ostringstream` | Écriture vers string | Construire une string formatée |
+| `stringstream` | Lecture + Écriture | Les deux |
+
 ---
 
-#### 4. Encapsulation et Masquage des données
+### 2.6 Structs
 
-L'**encapsulation** consiste à grouper l'État (données privées) et le Comportement (méthodes publiques).
+**Définition** : Un `struct` (structure) est un type de données composite qui regroupe plusieurs variables de types différents sous un même nom.
 
-##### 4.1 Spécificateurs d'accès
-| Spécificateur | Visibilité |
-|---|---|
-| `private` | Uniquement accessible *depuis l'intérieur* de la classe (défaut). |
-| `public` | Accessible *de partout* (c'est l'interface de la classe). |
-| `protected` | Accessible à la classe et aux classes qui en héritent (vu plus tard). |
+**Intuition** : Là où un array stocke N valeurs du **même type**, un struct stocke plusieurs valeurs de **types différents** mais qui décrivent la même entité (ex: les informations d'une voiture).
 
-##### 4.2 Data Hiding
+**Exemple complet** :
 ```cpp
-class Square {
-private:
-    float side;         // Donnée cachée : l'utilisateur ne la manipule pas.
-public:
-    void setSide(float s) { side = s; }       // Setter (mutateur)
-    float getSide() { return side; }          // Getter (accesseur)
+struct Car {          // Définition d'un nouveau type de données
+    string brand;     // Membre
+    string model;     // Membre
+    int year;         // Membre
+};                    // Le ';' après la définition est OBLIGATOIRE
+
+Car car1, car2;       // Déclare deux variables du type Car
+
+// Accès aux membres via l'opérateur '.' (point)
+car1.brand = "BMW";
+car1.model = "X5";
+car1.year  = 1999;
+
+car2 = {"Ford", "Mustang", 1969};  // Initialisation directe
+
+cout << car1.brand << " " << car1.model << " " << car1.year << "\n";
+// Affiche : BMW X5 1999
+```
+
+**Cas d'usage dans le projet BMD — struct ParseResult** :
+
+```cpp
+// Problème : une fonction ne peut retourner qu'une seule valeur
+// Solution : regrouper les données à retourner dans un struct
+struct ParseResult {
+    int is_leaf;    // 1 = feuille, 0 = noeud interne
+    double value;   // Valeur estimée (si feuille)
+    int next_node;  // ID du noeud suivant (si interne)
 };
-```
-> 🧠 **Pourquoi cacher `side` ?**
-> 1. **Intégrité :** Dans `setSide`, on pourrait ajouter une vérification `if (s > 0)` pour refuser une longueur négative.
-> 2. **Indépendance :** On peut réécrire l'intérieur de la classe sans casser le code de l'utilisateur.
 
----
-
-#### 5. Séparation Interface / Implémentation
-
-En C++, on sépare le "Quoi" (interface) du "Comment" (implémentation) :
-
-##### 5.1 Fichier `.h` (Header - Interface)
-Contient la déclaration de la classe et les prototypes.
-```cpp
-// square.h
-class Square {
-private:
-    float side;
-public:
-    bool intersects(Square other);  // Prototype
-};
-```
-
-##### 5.2 Fichier `.cpp` (Source - Implémentation)
-Contient le code réel des fonctions longues.
-```cpp
-// square.cpp
-#include "square.h"
-
-// Le préfixe Square:: indique à quelle classe appartient la méthode
-bool Square::intersects(Square other) {
-    // Logique complexe...
+ParseResult parse_eval_line(char* line, ...) {
+    struct ParseResult res = {0};
+    // ... traitement ...
+    if (left_id == -1 && right_id == -1) {
+        res.is_leaf = 1;
+        res.value = atof(cond_val);
+    } else {
+        res.is_leaf = 0;
+        res.next_node = take_left ? left_id : right_id;
+    }
+    return res;  // Retourne le struct entier
 }
 ```
 
+**⚠️ Piège classique** : Oublier le `;` après la définition d'un struct. Le compilateur interprétera la ligne suivante comme une déclaration de variable du type struct — erreur cryptique garantie.
+
 ---
 
-#### 6. Les Constructeurs
+### 2.7 Conversion de types (Casts)
 
-Le **constructeur** est une méthode spéciale appelée *automatiquement* à la création de l'objet, pour l'initialiser dans un état propre.
-- Toujours le **même nom que la classe**.
-- **Pas de type de retour** (même pas `void`).
+**Définition** : La conversion de type (cast) transforme une valeur d'un type en un autre.
 
-##### 6.1 Initialisation : syntaxe recommandée
-Deux façons d'initialiser (utiliser la Liste d'Initialisation !) :
+**Intuition** : Les conversions implicites (automatiques) sont pratiques mais dangereuses (perte de données possible). Les conversions explicites expriment clairement l'intention du programmeur.
 
 ```cpp
-// ❌ Méthode 1 : Affectation dans le corps (Moins performant)
-Node::Node() {
-    is_leaf = false;
-    value = 0.0;
+// Conversion implicite (automatique) — C++ le fait seul
+double x = 5;       // int 5 → double 5.0 (pas de perte)
+int n = 3.7;        // double 3.7 → int 3 (TRONCATURE, perte de .7, pas d'arrondi !)
+
+// Cast style C — éviter, dangereux car contourne les vérifications
+int n1 = (int)3.7;       // Style C
+int n2 = int(3.7);       // Style C (notation fonctionnelle)
+
+// static_cast — à préférer en C++ moderne
+int n3 = static_cast<int>(3.7);  // RECOMMANDÉ : explicite, lisible, vérifié
+```
+
+**Exemple important — division entière** :
+```cpp
+int a = 5, b = 2;
+cout << a / b;                          // Affiche : 2 (division entière !)
+cout << (double)a / b;                  // Affiche : 2.5 (conversion d'un des opérandes)
+cout << static_cast<double>(a) / b;    // Affiche : 2.5 (recommandé)
+```
+
+---
+
+### 2.8 Fonctions
+
+**Définition** : Une fonction est un bloc de code nommé et réutilisable qui accomplit une tâche spécifique. Elle peut recevoir des paramètres et retourner une valeur.
+
+**Anatomy d'une fonction C++** :
+```cpp
+// Prototype (déclaration) : interf que le compilateur voit avant d'utiliser la fonction
+int addition(int a, int b);   // Suffisant pour que le compilateur valide les appels
+
+// Corps (définition) : l'implémentation réelle
+int addition(int a, int b) {
+    int r = a + b;
+    return r;
 }
 
-// ✅ Méthode 2 : Liste d'initialisation (Plus direct, obligatoire pour cont/références)
-Node::Node() 
-    : is_leaf(false), value(0.0), left_id(-1), right_id(-1) 
-{
-    // Le corps peut être vide
+int main() {
+    int z = addition(5, 3);  // Appel de la fonction
+    cout << "The result is " << z;  // Affiche : The result is 8
 }
 ```
 
-> ⚠️ Si vous créez un tableau d'objets (`Node tree[MAX_NODES]`), la classe **doit** avoir un constructeur vide (par défaut). Chaque case appellera ce constructeur.
+**Types de retour** :
 
----
+| Type de retour | Signification | Exemple |
+|---|---|---|
+| `int`, `double`, etc. | La fonction retourne une valeur | `int sum(int a, int b)` |
+| `void` | La fonction ne retourne rien | `void print(string s)` |
+| `bool` | La fonction retourne vrai/faux | `bool isEven(int n)` |
 
-#### 7. Énumérations (`enum`)
-
-Créer un type dont les valeurs possibles sont limitées et nommées (internement, ce sont des entiers). Améliore considérablement la lisibilité (plus de "nombres magiques").
-
+**Passage par valeur vs par référence** :
 ```cpp
-enum Operator { OP_LE, OP_LT, OP_EQ, OP_GE, OP_GT };
-// OP_LE vaut 0, OP_LT vaut 1, etc.
+// Par valeur : la fonction reçoit une COPIE (modifications n'affectent pas l'original)
+void doubleIt(int n) {
+    n = n * 2;    // Modifie uniquement la copie locale
+}
 
-enum Fruit { apple = 15, grape, orange }; 
-// grape vaut 16, orange 17.
+// Par référence : la fonction reçoit l'ORIGINAL (modifications affectent l'original)
+void doubleItRef(int &n) {
+    n = n * 2;    // Modifie la variable originale !
+}
 
-Operator op = OP_EQ;
-if (op == OP_EQ) { /* très lisible ! */ }
-```
-
-> ⚠️ On ne peut pas imprimer un enum directement avec `cout` : il affichera l'entier.
-
----
-
-#### 8. Opérateurs d'incrémentation/décrémentation
-
-- `++` ajoute 1, `--` soustrait 1.
-- **Préfixe** (`++y`) : Incrémente PUIS utilise la valeur.
-- **Suffixe** (`y++`) : Utilise la valeur PUIS incrémente.
-
-```cpp
-int x, y = 1;
-x = ++y;  // PRE: y devient 2, puis on assigne 2 à x. (x=2, y=2)
-
-int a, b = 1;
-a = b++;  // POST: on assigne 1 à a, puis b devient 2. (a=1, b=2)
+int x = 5;
+doubleIt(x);       // x vaut encore 5
+doubleItRef(x);    // x vaut maintenant 10
 ```
 
 ---
 
-#### 9. Mini-Projet : BMD Regression v3.0
+### 2.9 BMD Regression Tree v2.0
 
-Avec nos notions de tableaux et de POO, nous pouvons optimiser le BMD.
-L'idée : le fichier contient un ID de nœud pour chaque ligne. L'arbre est chargé dans un tableau : l'ID du nœud sert directement d'index dans le tableau `tree[MAX_NODES]`.
+**Problème de v1.0** : L'arbre était codé en dur. Changer le modèle = modifier + recompiler tout le programme.
+
+**Solution v2.0** : Lire dynamiquement la structure de l'arbre depuis un **fichier texte** au moment de l'inférence.
+
+**Format du fichier** (`bmd_tree_transitions.txt`) :
+```
+1,2,3,weight_kg <= 65.5      # ID, enfant_gauche, enfant_droite, condition
+2,4,5,age <= 68.63
+4,-1,-1,0.68                 # -1,-1 = feuille, valeur prédite = 0.68
+```
+
+**Algorithme de lecture** :
+```
+Initialiser nœudCourant = 1 (racine)
+Boucle :
+  Lire le fichier depuis le début (seekg(0))
+  Chercher la ligne dont l'ID correspond à nœudCourant
+  Si nœud terminal (gauche == droite == -1) :
+    Retourner la valeur de la feuille
+  Sinon :
+    Évaluer la condition booléenne
+    Si vrai → descendre à gauche ; Si faux → descendre à droite
+```
+
+**Opérateur ternaire** (concept introduit ici) :
+```cpp
+// Syntaxe : condition ? valeur_si_vrai : valeur_si_faux
+int next = take_left ? left_id : right_id;
+// Équivalent à :
+// if (take_left) next = left_id;
+// else           next = right_id;
+```
+
+**⚠️ Limitation de v2.0** : On relit le _fichier entier_ à chaque nœud visité → lent. Solution → v3.0 (charger dans un array mémoire).
+
+---
+
+##  Cours 3 : Hiérarchie Mémoire, Arrays & Introduction aux Classes
+
+### 3.1 Hiérarchie de la mémoire
+
+**Définition** : La hiérarchie mémoire est l'ensemble des niveaux de stockage d'un système informatique, classés par vitesse d'accès et coût.
+
+**Intuition** : Plus la mémoire est rapide, plus elle est chère et petite. Le processeur cherche d'abord dans les registres, puis le cache, puis la RAM, et enfin le disque. Un programme rapide maximise les accès aux niveaux supérieurs de la hiérarchie.
+
+**Tableau comparatif** :
+
+| Niveau | Taille typique | Vitesse | Coût |
+|---|---|---|---|
+| Registres CPU | ~0.5 KB | 0.1–0.3 ns | Très élevé (intégré CPU) |
+| Cache L1 | 32–64 KB | 0.3–1.2 ns | Très élevé (intégré CPU) |
+| Cache L2 | 0.5–2 MB | 2–5 ns | Élevé |
+| Cache L3 | 16–128 MB | 10–20 ns | Moyen |
+| RAM (DRAM) | 16–64 GB | 40–60 ns | ~15 $/GB |
+| SSD NVMe | 0.5–4 TB | 10–100 µs | ~0.08 $/GB |
+| HDD | 1–20 TB | 5–20 ms | ~0.02 $/GB |
+
+**Conséquence pour la programmation** : Les accès au disque sont 100 000× plus lents qu'à la RAM. C'est pour cela que la v3.0 du projet BMD charge l'arbre entier en mémoire RAM plutôt que de relire le fichier à chaque nœud.
+
+---
+
+### 3.2 Variables Array et arithmétique des pointeurs
+
+**Définition** : Le nom d'un array est une **adresse mémoire constante** pointant vers son premier élément. L'indexation `arr[i]` est strictement équivalente à l'arithmétique de pointeurs `*(arr + i)`.
+
+**Intuition** : Tous les éléments d'un array sont contigus en mémoire. Accéder à l'élément `i` revient à partir de l'adresse du premier élément et avancer de `i × sizeof(type)` bytes.
+
+**Exemple complet avec adresses mémoire** :
+```cpp
+int primes[] = {1, 2, 3, 5, 7};    // sizeof(int) = 4 bytes
+
+// Affichage des adresses mémoire
+for (int i = 0; i < 5; i++) {
+    cout << "Adresse : " << (primes + i)
+         << " Valeur : " << primes[i]
+         << "\n";
+}
+/* Résultat (adresses fictives) :
+   Adresse : 0x7ffd8000  Valeur : 1
+   Adresse : 0x7ffd8004  Valeur : 2   ← +4 bytes (1 int)
+   Adresse : 0x7ffd8008  Valeur : 3   ← +8 bytes
+   Adresse : 0x7ffd800c  Valeur : 5   ← +12 bytes
+   Adresse : 0x7ffd8010  Valeur : 7   ← +16 bytes
+*/
+
+// Équivalences fondamentales :
+cout << primes[2];          // 3
+cout << *(primes + 2);      // 3  — strictement équivalent
+cout << primes + 2;         // Adresse du 3ème élément
+cout << &primes[2];         // Même adresse, autre notation
+```
+
+**Opérations valides sur les pointeurs** :
+```cpp
+int* p = primes;  // p pointe vers primes[0]
+p + 3;            // Adresse de primes[3]  (p avance de 3×4 = 12 bytes)
+p - 1;            // Adresse précédente
+p++;              // p pointe maintenant vers primes[1]
+*(p - 1);         // Valeur de primes[0]
+```
+
+**Calculer la taille d'un array — idiome classique** :
+```cpp
+int arrsize = sizeof(primes) / sizeof(primes[0]);
+// = (5 × 4 bytes) / (4 bytes) = 5
+```
+
+**⚠️ Piège classique — Out-of-bounds silencieux** :
+```cpp
+int arr[5] = {1, 2, 3, 4, 5};
+arr[5] = 99;   // COMPORTEMENT INDÉFINI !
+// Deux cas possibles :
+// 1. Segmentation fault (crash immédiat)
+// 2. Corruption silencieuse (écrase une autre variable en mémoire)
+//    Le bug se manifeste bien plus tard, dans un endroit du code totalement différent.
+```
+
+---
+
+### 3.3 BMD Regression Tree v3.0 — Chargement dans un array
+
+**Amélioration v2.0 → v3.0** : Au lieu de relire le fichier entier pour chaque nœud, on charge l'arbre **une seule fois** dans un array en mémoire (accès O(1)).
+
+**Stratégie** : Stocker chaque nœud à l'**indice correspondant à son ID** dans l'array.
 
 ```cpp
-// INFÉRENCE v3.0 (Boucle principale)
+const int MAX_NODES = 32;
+Node tree[MAX_NODES];    // Array de 32 nœuds (type Node défini plus loin)
+
+// Chargement (une seule lecture du fichier)
+bool read_tree(char* filename) {
+    ifstream fp(filename);
+    while (fp.getline(line, sizeof(line))) {
+        sscanf(line, "%d,%d,%d,%127[^\n]", &node_id, &left_id, &right_id, cond_val);
+        tree[node_id].set_children(left_id, right_id);  // Stocke à l'indice node_id
+        // ...
+    }
+    return true;
+}
+
+// Inférence (accès direct, pas de recherche dans le fichier)
 float estimate(float features[FEATURE_COUNT]) {
-    int idx = 1; // La racine est à l'index 1
-    
+    int idx = 1;  // Commence à la racine
     while (idx < MAX_NODES) {
-        if (tree[idx].test_leaf())          // Utilisation de méthode getter
-            return tree[idx].get_value();
-            
+        if (tree[idx].test_leaf()) return tree[idx].get_value();  // O(1) !
         bool go_left = tree[idx].eval_condition(features);
-        // Descente vers l'enfant avec opérateur ternaire
         idx = go_left ? tree[idx].get_left() : tree[idx].get_right();
     }
     return 0.0;
 }
 ```
-L'accès direct par index `tree[idx]` se fait intégralement en RAM en quelques nanosecondes, contre de multiples lectures de fichier très lentes en v2.0.
-
 
 ---
 
-## Cours 4 : Systèmes de numération, Pointeurs, Allocation dynamique & Opérations bit à bit
+### 3.4 Introduction aux Classes
 
-> 📚 **Objectif du cours :** Comprendre les systèmes de numération (binaire, hexadécimal), maîtriser les pointeurs et l'arithmétique des pointeurs, apprendre l'allocation dynamique de mémoire (new/delete), distinguer la Stack du Heap, et manipuler les données au niveau binaire avec les opérations bit à bit. Le tout est mis en pratique dans une version v4.0 de l'arbre de régression BMD utilisant des structures récursives avec pointeurs.
+**Définition** : Une **classe** est un type de données défini par le programmeur qui regroupe des données (**attributs**) et des fonctions qui les manipulent (**méthodes**), formant une entité cohérente.
+
+**Intuition** : Un `struct` regroupe des données. Une classe fait la même chose mais lui ajoute des **comportements** (méthodes) et un **contrôle d'accès** (public/private). C'est le passage de la programmation procédurale à la Programmation Orientée Objet (POO).
+
+**Programmation procédurale vs POO** :
+
+| Approche | Procédurale | Orientée Objet |
+|---|---|---|
+| Centré sur | Les fonctions à exécuter | Les entités du domaine |
+| Organisation | Variables + fonctions séparées | Données + comportements réunis = objet |
+| Exemple | `longueur`, `largeur` + `calcul_surface()` | `Box box1;  box1.surface();` |
+| Maintenance | Difficile sur gros projets | Plus lisible et évolutif |
+
+**Syntaxe de base** :
+```cpp
+class Square {
+private:              // Accessible UNIQUEMENT depuis l'intérieur de la classe
+    float side;       // Attribut (membre de données)
+
+public:               // Accessible depuis n'importe où
+    void setSide(float s) { side = s; }   // Setter (mutateur)
+    float getSide()        { return side; } // Getter (accesseur)
+};
+
+int main() {
+    Square x;            // Création d'un objet ('instance') de la classe Square
+    // x.side = 5;      // ERREUR DE COMPILATION : 'side' est privé
+    x.setSide(5);        // OK : passe par l'interface publique
+    cout << x.getSide(); // Affiche : 5
+}
+```
 
 ---
 
-### 1. Systèmes de numération
+### 3.5 Encapsulation et Spécificateurs d'accès
 
-#### 🔑 Pourquoi comprendre les systèmes de numération ?
-Un ordinateur ne "pense" qu'en **binaire** (des 0 et des 1). Chaque donnée — un nombre, une lettre, une couleur — est au final stockée sous forme de bits. Comprendre comment convertir entre les bases numériques (décimal, binaire, octal, hexadécimal) est fondamental pour tout programmeur bas-niveau.
+**Définition** : L'**encapsulation** consiste à regrouper données et comportements au sein d'une classe, et à contrôler qui peut accéder à quoi via des spécificateurs d'accès.
 
-#### Les 4 systèmes principaux
+**Les 3 spécificateurs** :
 
-| Système | Base | Chiffres | Usage principal |
-|---|---|---|---|
-| **Décimal** | 10 | 0-9 | Maths humaines |
-| **Binaire** | 2 | 0, 1 | Mémoire machine |
-| **Octal** | 8 | 0-7 | Rarement utilisé |
-| **Hexadécimal** | 16 | 0-9, A-F | Affichage compact d'adresses mémoire |
+| Spécificateur | Accessible de | Usage typique |
+|---|---|---|
+| `public` | Partout (hors de la classe) | Interface externe, méthodes utilisateurs |
+| `private` | Seulement au sein de la classe | Données internes, implémentation |
+| `protected` | Classe + classes dérivées | Héritage (avancé) |
 
-#### Conversion Décimal → Binaire (méthode manuelle)
+**Pourquoi `private` pour les données ?**
 
-**Algorithme :** Divisions successives par 2, on note les restes de bas en haut.
+1. **Intégrité** : un setter peut valider l'entrée avant de modifier l'attribut :
+```cpp
+void setSide(float s) {
+    if (s <= 0) {
+        cerr << "Erreur : côté négatif !\n";
+        return;
+    }
+    side = s;  // Modification validée
+}
+```
 
-**Exemple concret : convertir 42 en binaire :**
+2. **Indépendance de l'implémentation** : changer la représentation interne (ex: stocker `side*side` au lieu de `side`) n'affecte pas le code utilisateur, car ce dernier ne dépend que de l'interface publique.
+
+3. **Lisibilité** : on programme en termes d'**objets** du domaine métier, pas de bits internes.
+
+**⚠️ Piège classique** : Déclarer tous les membres en `public` "pour simplifier". C'est le meilleur moyen de créer des objets dans des états incohérents (ex: `shape.side = -5`).
+
+---
+
+### 3.6 Séparation Interface / Implémentation (.h et .cpp)
+
+**Définition** : En C++, on sépare généralement la **déclaration** de la classe (le `.h`, ce que l'utilisateur voit) de son **implémentation** (le `.cpp`, comment c'est fait).
+
+**Intuition** : Comme un manuel d'utilisation (interface publique) vs les plans d'ingénierie internes (implémentation). L'utilisateur a seulement besoin du manuel.
+
+**Exemple — classe Square** :
+
+```cpp
+// ===== square.h (interface — ce que l'utilisateur voit) =====
+class Square {
+private:
+    float side;
+public:
+    void setSide(float s);      // Prototype seulement
+    float getSide();            // Prototype seulement
+    bool intersects(Square other);  // Prototype seulement
+};
+```
+
+```cpp
+// ===== square.cpp (implémentation — comment c'est fait) =====
+#include "square.h"
+
+void Square::setSide(float s) { side = s; }   // Square:: = opérateur de résolution de portée
+float Square::getSide()       { return side; } // Lie la définition à la classe Square
+
+bool Square::intersects(Square other) {
+    // ... Logique complexe d'intersection ici ...
+}
+```
+
+**Avantages** :
+- **Compiler séparément** : changer `square.cpp` → recompiler seulement `square.cpp`, pas le reste
+- **Distribuer une librairie** : donner uniquement `square.h` + `square.o` (compilé) → l'algorithme reste secret
+- **Encapsulation renforcée** : l'utilisateur ne voit que le `.h`, jamais l'implémentation
+
+**Méthodes inline** : toute méthode définie **dans** le bloc `{}` de la classe (dans le `.h`) est implicitement `inline`. Le compilateur copie directement son code à l'endroit de l'appel (économise un appel de fonction).
+
+---
+
+### 3.7 Constructeurs
+
+**Définition** : Un **constructeur** est une méthode spéciale appelée **automatiquement** à la création d'un objet. Il porte le même nom que la classe et n'a **aucun type de retour** (même pas `void`).
+
+**Intuition** : Sans constructeur, les attributs d'un objet contiennent des valeurs aléatoires (« garbage »). Le constructeur garantit un état initial propre et valide.
+
+**Exemple concret — Constructeur de Node** :
+```cpp
+// node.h — déclaration
+class Node {
+private:
+    bool is_leaf;
+    float value;
+    int left_id, right_id;
+public:
+    Node();  // Constructeur par défaut (sans paramètre)
+    // ...
+};
+
+// node.cpp — définition avec liste d'initialisation
+Node::Node()
+    : is_leaf(false), value(0.0), left_id(-1), right_id(-1)
+//  ↑ Liste d'initialisation : initialise les membres AVANT le corps du constructeur
+{}  // Corps vide — tout est déjà initialisé
+```
+
+**Liste d'initialisation vs affectation dans le corps** :
+
+| | Affectation dans le corps | Liste d'initialisation |
+|---|---|---|
+| Syntaxe | `Node::Node() { is_leaf = false; }` | `Node::Node() : is_leaf(false) {}` |
+| Mécanisme | Construction par défaut → puis copie | Construction directe avec valeur |
+| Performance | Moins efficace (2 opérations) | Plus efficace (1 opération) |
+| Nécessaire pour | Rien de particulier | Membres `const` et références |
+
+**Obligation du constructeur sans paramètre dans les arrays** :
+```cpp
+Node tree[MAX_NODES];  // Chaque case appelle le constructeur par défaut Node()
+                       // → OBLIGATOIRE d'avoir un constructeur sans paramètre
+```
+
+**Plusieurs constructeurs (surcharge)** :
+```cpp
+class Node {
+public:
+    Node();                            // Constructeur par défaut
+    Node(const char* cond, bool leaf); // Constructeur avec paramètres
+};
+
+Node n1;                       // Appelle Node()
+Node n2("weight_kg <= 65", false);  // Appelle le constructeur paramétré
+```
+
+**⚠️ Piège classique** : Dès qu'on définit **un seul** constructeur avec paramètres, le constructeur par défaut (sans paramètre) **disparaît** automatiquement. Si on veut garder les deux, il faut les déclarer tous les deux explicitement.
+
+---
+
+### 3.8 Destructeur
+
+**Définition** : Le **destructeur** est une méthode spéciale appelée automatiquement juste avant qu'un objet soit détruit (fin de portée ou `delete`). Syntaxe : `~NomClasse()`.
+
+**Intuition** : Le constructeur réserve des ressources. Le destructeur les libère. C'est lui qui évite les fuites mémoire pour les objets qui allouent dynamiquement.
+
+```cpp
+class Node {
+public:
+    ~Node() {
+        if (left  != nullptr) delete left;   // Libère le sous-arbre gauche
+        if (right != nullptr) delete right;  // Libère le sous-arbre droit
+        // Les destructeurs de left et right sont appelés récursivement !
+    }
+};
+```
+
+---
+
+### 3.9 Enums (Types énumérés)
+
+**Définition** : Un type énuméré (`enum`) définit un type dont les valeurs possibles sont un ensemble de **constantes entières nommées**.
+
+**Intuition** : Au lieu de mémoriser que `0 = lundi` et `6 = dimanche`, on définit des noms expressifs. Le code devient lisible et le compilateur vérifie qu'on n'utilise pas des valeurs invalides.
+
+**Exemple complet** :
+```cpp
+enum Days { Mon, Tue, Wed, Thu, Fri, Sat, Sun };
+// Par défaut : Mon=0, Tue=1, Wed=2, ...
+
+enum Fruit { apple = 15, grape, orange };
+// apple = 15, grape = 16 (15+1), orange = 17 (16+1)
+
+Days workDay = Wed;          // CORRECT — pas de guillemets
+if (workDay == Wed)
+    cout << "C'est mercredi\n";
+
+Fruit snack = orange;        // snack a la valeur 17
+cout << snack;               // Affiche : 17  (cout affiche la valeur entière)
+// cout >> snack;            // ERREUR : cin/cout ne savent pas lire un enum directement
+```
+
+**Enums dans le projet BMD** :
+```cpp
+enum Feature {
+    WEIGHT_KG = 0,   // Correspond à l'index dans le tableau features[]
+    AGE,
+    HEIGHT_CM,
+    WAITING_TIME,
+    FEATURE_COUNT = 4  // Utile pour déclarer : float features[FEATURE_COUNT]
+};
+
+enum Operator { OP_LE, OP_LT, OP_EQ, OP_GE, OP_GT };
+```
+
+**⚠️ Piège classique** : `cout` n'affiche pas le nom de l'énumérateur mais sa **valeur entière**. Il faut écrire soi-même une fonction de conversion si on veut « Wed » au lieu de `2`.
+
+---
+
+### 3.10 Opérateurs prefix/postfix (++ et --)
+
+**Définition** : Les opérateurs `++` et `--` incrémentent/décrémentent une variable de 1. Ils existent en deux formes : **préfixe** (agit puis retourne la nouvelle valeur) et **postfixe** (retourne l'ancienne valeur puis agit).
+
+```cpp
+int x = 1, y = 1;
+
+// Préfixe (++avant) : incrémente D'ABORD, retourne la NOUVELLE valeur
+x = ++y;   // y devient 2, puis x reçoit 2
+cout << x << " " << y;   // Affiche : 2 2
+
+// Postfixe (après++) : retourne l'ANCIENNE valeur, puis incrémente
+x = y++;   // x reçoit 2 (ancienne valeur), puis y devient 3
+cout << x << " " << y;   // Affiche : 2 3
+```
+
+**⚠️ Piège classique** :
+```cpp
+int arr[5] = {0, 1, 2, 3, 4};
+int i = 0;
+cout << arr[i++];  // Affiche arr[0] = 0, PUIS i devient 1
+cout << arr[++i];  // i devient 2, PUIS affiche arr[2] = 2
+```
+
+---
+
+##  Cours 4 : Systèmes de Numération, Pointeurs, Allocation Dynamique & Structures Récursives
+
+### 4.1 Systèmes de numération
+
+**Définition** : Un système de numération est une façon d'écrire des nombres en utilisant des chiffres et une base. La base détermine combien de chiffres différents on utilise.
+
+**Intuition** : Un ordinateur ne stocke que des 0 et des 1 (bits). Mais lire 111110100111000101101001 est difficile. Les notations hexadécimale et octale sont des abréviations pratiques du binaire.
+
+#### Binaire (base 2)
+
+**Conversion décimal → binaire (divisions successives par 2)** :
 
 ```
-42 ÷ 2 = 21  reste 0  ← bit le moins significatif (LSB)
+Exemple : convertir 42 en binaire
+42 ÷ 2 = 21  reste 0   ← bit le moins significatif (LSB, bit 0)
 21 ÷ 2 = 10  reste 1
 10 ÷ 2 = 5   reste 0
  5 ÷ 2 = 2   reste 1
  2 ÷ 2 = 1   reste 0
- 1 ÷ 2 = 0   reste 1  ← bit le plus significatif (MSB)
+ 1 ÷ 2 = 0   reste 1   ← bit le plus significatif (MSB)
+
+Lire de bas en haut : 42₁₀ = 101010₂
 ```
 
-On lit les restes **de bas en haut** : `42₁₀ = 101010₂`
+**Vérification** : $1×2^5 + 0×2^4 + 1×2^3 + 0×2^2 + 1×2^1 + 0×2^0 = 32 + 8 + 2 = 42$ ✓
 
-**Vérification :** $1 \times 2^5 + 0 \times 2^4 + 1 \times 2^3 + 0 \times 2^2 + 1 \times 2^1 + 0 \times 2^0 = 32 + 8 + 2 = 42$ ✅
-
-#### Conversion Décimal → Hexadécimal
-
-Même algorithme, mais on divise par 16. Les restes de 10 à 15 deviennent les lettres A à F.
-
-**Exemple : 255₁₀ → Hexadécimal**
+**Conversion binaire → décimal** :
 ```
+1101₂ = 1×2³ + 1×2² + 0×2¹ + 1×2⁰
+      = 8    + 4    + 0    + 1
+      = 13₁₀
+```
+
+#### Hexadécimal (base 16)
+
+**Chiffres** : 0-9 puis A(10), B(11), C(12), D(13), E(14), F(15)
+
+**Conversion décimal → hexadécimal (divisions successives par 16)** :
+```
+Exemple : convertir 255 en hexadécimal
 255 ÷ 16 = 15  reste 15 → F
  15 ÷ 16 =  0  reste 15 → F
+
+Lire de bas en haut : 255₁₀ = FF₁₆
 ```
-Résultat : `255₁₀ = FF₁₆`
 
-#### Code C++ : conversion décimal → binaire
+**Astuce binaire ↔ hex** : 1 chiffre hex = 4 bits (un « nibble »).
+```
+1111 1111₂  = F F₁₆ = 255₁₀
+1010 0010₂  = A 2₁₆ = 162₁₀
+```
 
+**Code C++ — conversion décimal → binaire** :
 ```cpp
 #include <iostream>
 #include <string>
+using namespace std;
 
-std::string decimalToBinary(int n) {
+string decimalToBinary(int n) {
     if (n == 0) return "0";
-    
-    std::string binary = "";
+    string binary = "";
     while (n > 0) {
-        // Préfixe le bit courant (le reste de la division par 2)
-        // Si n est impair, le reste est 1, sinon 0
-        binary = ((n % 2) ? '1' : '0') + binary;
-        n /= 2;  // Division entière par 2
+        binary = ((n % 2) ? '1' : '0') + binary;  // Préfixe le bit (évite un reverse)
+        n /= 2;
     }
     return binary;
 }
 
 int main() {
-    int num = 42;
-    std::cout << num << " en binaire = " << decimalToBinary(num) << std::endl;
+    cout << 42 << " en binaire = " << decimalToBinary(42) << endl;
     // Affiche : 42 en binaire = 101010
-    return 0;
 }
 ```
 
-> 💡 **Astuce :** On préfixe chaque nouveau bit **à gauche** de la chaîne (`binary = ... + binary`), ce qui évite de devoir inverser la string à la fin, car les bits sont calculés du moins significatif au plus significatif.
-
-#### Code C++ : conversion décimal → hexadécimal
-
+**Code C++ — conversion décimal → hexadécimal** :
 ```cpp
-std::string decimalToHex(int n) {
+string decimalToHex(int n) {
     if (n == 0) return "0";
-
-    std::string hex = "";
+    string hex = "";
     while (n > 0) {
-        int remainder = n % 16;
+        int rem = n % 16;
         char digit;
-        if (remainder < 10)
-            digit = '0' + remainder;        // 0-9 : on ajoute au code ASCII de '0'
+        if (rem < 10)
+            digit = '0' + rem;           // Chiffres '0' à '9'
         else
-            digit = 'A' + (remainder - 10); // A-F : on décale à partir du code ASCII de 'A'
+            digit = 'A' + (rem - 10);    // Lettres 'A' à 'F' (via table ASCII)
         hex = digit + hex;
         n /= 16;
     }
     return hex;
 }
+// decimalToHex(255) → "FF"
+// decimalToHex(42)  → "2A"
+// decimalToHex(10)  → "A"
 ```
 
-> 💡 **Pourquoi `'0' + remainder` ?** En C++, les caractères sont des entiers (code ASCII). `'0'` vaut 48. Donc `'0' + 3` donne 51, qui est le code ASCII de `'3'`. C'est un raccourci universel pour convertir un chiffre entier en son caractère correspondant !
+**⚠️ Piège classique** : Confondre `10` en décimal (dix) et `10` en binaire (deux). Toujours préciser la base : `10₁₀` vs `10₂`. En C++, les littéraux binaires s'écrivent `0b1010`, hexadécimaux `0xFF`, octaux `0377`.
 
 ---
 
-### 2. L'opérateur d'adresse `&` et les variables pointeurs
+### 4.2 Opérateur d'adresse `&` et variables pointeur
 
-#### 🔑 Concept clé : tout a une adresse
+**Définition** : 
+- L'opérateur `&` (adresse) retourne l'adresse mémoire d'une variable.
+- Un **pointeur** est une variable dont la valeur est une adresse mémoire.
 
-Chaque variable dans un programme est stockée physiquement quelque part dans la RAM. Cette position physique est appelée son **adresse mémoire**. L'opérateur `&` permet d'obtenir cette adresse.
+**Intuition** : Toute variable est stockée à une adresse précise en mémoire (comme l'adresse d'une maison dans une rue). Un pointeur, c'est cette adresse. Au lieu de stocker directement une valeur, il stocke l'emplacement où se trouve cette valeur.
 
+**Exemple concret** :
 ```cpp
 int num = -23;
-cout << &num << '\t' << num;
-// Affiche : 0x7fffffffd8e4    -23
-//           ↑ adresse          ↑ valeur
+cout << num   << "\n";   // Affiche : -23          (la valeur)
+cout << &num  << "\n";   // Affiche : 0x7fffffffq8e4 (l'adresse mémoire)
+
+int* ptr = &num;         // ptr est un pointeur vers int, et contient l'adresse de num
+cout << ptr   << "\n";   // Affiche : 0x7fffffffq8e4  (l'adresse — même valeur que &num)
+cout << *ptr  << "\n";   // Affiche : -23             (déréférencement : accède à la valeur pointée)
+cout << &ptr  << "\n";   // Affiche : 0x7fffffffq8e0  (l'adresse du pointeur lui-même)
 ```
 
-> 💡 **Analogie :** Imaginez la RAM comme un immense casier de lycée. Chaque case a un numéro unique (l'adresse). La variable `num` est la valeur stockée dans la case. `&num` vous donne le numéro de la case.
+**Schéma mémoire** :
+```
+Variable num :
+  Adresse : 0x7ffd8e4   |  Valeur : -23
 
-#### 🔑 Les pointeurs : des variables qui stockent des adresses
+Variable ptr :
+  Adresse : 0x7ffd8e0   |  Valeur : 0x7ffd8e4   (= adresse de num)
+              ↑ adresse du pointeur    ↑ valeur du pointeur (=addresse de num)
+```
 
-Un **pointeur** est une variable spéciale dont le contenu n'est pas une donnée classique (int, float...), mais une **adresse mémoire**.
-
+**Syntaxe de déclaration** : les espaces sont insignifiants, mais l'`*` s'applique variable par variable :
 ```cpp
-int num = -23;        // num contient la valeur -23
-int *ptr = &num;      // ptr contient l'ADRESSE de num
+int* ptr;             // 'ptr' est un pointeur vers int
+int *ptr;             // Identique — style souvent préféré car *ptr est l'accès
+int * ptr;            // Identique
 
-cout << ptr;          // Affiche l'adresse : 0x7fffffffd8dc
-cout << *ptr;         // Affiche la VALEUR pointée : -23 (déréférencement)
-cout << &ptr;         // Affiche l'adresse de ptr lui-même : 0x7fffffffd8e0
+int *ptr1, x, *ptr2;  // ptr1 et ptr2 sont des pointeurs, x est un int ordinaire !
+                      // Piège : 'int* ptr1, ptr2' → ptr2 est un int, PAS un pointeur
 ```
 
-**Schéma mémoire :**
-```
-Variable   | Valeur              | Adresse
------------|---------------------|------------------
-num        | -23                 | 0x7fffffffd8dc
-ptr        | 0x7fffffffd8dc      | 0x7fffffffd8e0
-           | ↑ contient l'adresse de num
-```
-
-**Les 3 facettes d'un pointeur :**
-- `ptr` → affiche l'adresse stockée (vers où il pointe)
-- `*ptr` → affiche la valeur qui se trouve à l'adresse pointée (**déréférencement**)
-- `&ptr` → affiche l'adresse du pointeur lui-même (car `ptr` est aussi une variable !)
-
-#### Syntaxe de déclaration
-
-Les espaces autour de `*` sont indifférents : `int* ptr`, `int *ptr`, `int * ptr` sont identiques.
-
+**`nullptr`** : L'adresse spéciale « ne pointe vers rien ». Toujours initialiser les pointeurs.
 ```cpp
-int *ptr, x, *y = nullptr, z = 12;
-// ptr : pointeur vers int (non initialisé → dangereux !)
-// x   : int classique (pas un pointeur !)
-// y   : pointeur vers int, initialisé à nullptr (ne pointe vers rien)
-// z   : int classique valant 12
+int* ptr = nullptr;  // Pointeur nul — déréférencer causerait un crash immédiat (plutôt que comportement silencieux)
+if (ptr != nullptr) {
+    cout << *ptr;    // Sûr : on vérifie avant de déréférencer
+}
 ```
 
-> ⚠️ **Piège classique :** `int *ptr, x` → seul `ptr` est un pointeur ! `x` est un simple `int`. L'astérisque s'attache au nom de la variable, pas au type.
-
-> 💡 **`nullptr`** est une adresse spéciale signifiant "ne pointe vers rien". Toujours initialiser un pointeur à `nullptr` s'il ne pointe pas encore vers quelque chose (évite les dangling pointers).
+**⚠️ Piège classique — `*` a plusieurs significations** :
+```cpp
+int* ptr;         // '*' dans une déclaration : déclare un pointeur
+cout << *ptr;     // '*' dans une expression : déréférencement (accède à la valeur)
+int a = 3 * 4;    // '*' en expression arithmétique : multiplication
+```
 
 ---
 
-### 3. Arrays et Pointeurs : la relation fondamentale
+### 4.3 Arrays et pointeurs — relation fondamentale
 
-#### 🔑 Le nom d'un array EST un pointeur constant
-
-En C++, le nom d'un tableau se comporte comme un pointeur **constant** vers son premier élément.
-
+**Le nom d'un array EST une adresse** (pointeur constant vers son premier élément) :
 ```cpp
 int val[] = {4, 7, 11};
 
-// Ces deux expressions sont IDENTIQUES :
-cout << val;        // adresse du premier élément
-cout << &val[0];    // adresse du premier élément aussi !
+// Ces 4 lignes affichent toutes la même chose :
+cout << val;        // Adresse du premier élément = 0x7ffd...
+cout << &val[0];    // Idem
+cout << val + 0;    // Idem
+
+// val[i] est STRICTEMENT ÉQUIVALENT à *(val + i) :
+cout << val[0];     // 4
+cout << *val;       // 4  — identique
+
+cout << val[1];     // 7
+cout << *(val + 1); // 7  — identique : avance d'un int (4 bytes)
+
+cout << val[2];     // 11
+cout << *(val + 2); // 11 — identique : avance de deux ints (8 bytes)
 ```
 
-**Mais attention** : `val` est un pointeur **constant**. On ne peut PAS faire `val = autre_array;` (erreur de compilation). En revanche, on peut créer un pointeur modifiable :
+**Différence array vs pointeur modifiable** :
 ```cpp
-int* p = val;       // p pointe vers val[0]
-p = autre_array;    // OK, p est un vrai pointeur modifiable
+int tab[5] = {1, 2, 3, 4, 5};
+int* p = tab;       // p peut être réaffecté (p pointe vers tab[0])
+
+p++;                // OK : p avance vers tab[1]
+// tab++;           // ERREUR : tab est une adresse CONSTANTE, ne peut pas être modifiée
 ```
 
-#### 🔑 Arithmétique des pointeurs
-
-Quand on ajoute un entier `n` à un pointeur, l'adresse se déplace de `n × sizeof(type)` bytes, pas de `n` bytes bruts !
-
+**⚠️ Piège classique — priorité des opérateurs** :
 ```cpp
-int val[] = {4, 7, 11};
-// sizeof(int) = 4 bytes
-
-cout << val;       // 0x...dc  (adresse de val[0])
-cout << val + 1;   // 0x...e0  (adresse de val[1], +4 bytes)
-cout << val + 2;   // 0x...e4  (adresse de val[2], +8 bytes)
-
-// Déréférencement avec arithmétique :
-cout << *val;       // 4   (= val[0])
-cout << *(val + 1); // 7   (= val[1])
-cout << *(val + 2); // 11  (= val[2])
+int* p = val;
+*(p + 1)    // CORRECT : avance le pointeur d'un, puis déréférence → val[1] = 7
+*p + 1      // INCORRECT (si c'est ce qu'on voulait) : déréférence d'abord → *p = 4, puis + 1 = 5
 ```
-
-**Équivalence fondamentale :** `val[i]` ≡ `*(val + i)`
-
-> ⚠️ **Parenthèses obligatoires !** `*(ptr + 1)` et `*ptr + 1` sont très différents :
-> - `*(ptr + 1)` → déréférence l'adresse suivante (la valeur de `val[1]`)
-> - `*ptr + 1` → déréférence `ptr` d'abord, puis ajoute 1 à la valeur (= `val[0] + 1`)
-
-> ⚠️ **Règle de sécurité :** L'arithmétique des pointeurs n'est valide que dans l'intervalle `[&array[0], &array[taille]]`. Dépasser ces limites → comportement indéfini (plantage ou corruption silencieuse de la mémoire).
 
 ---
 
-### 4. Allocation dynamique de mémoire (new / delete)
+### 4.4 Allocation dynamique de mémoire — `new` et `delete`
 
-#### 🔑 Pourquoi l'allocation dynamique ?
+**Définition** : Les opérateurs `new` et `delete` permettent d'**allouer et libérer manuellement** de la mémoire sur le **heap** (tas) pendant l'exécution.
 
-Avec l'allocation **statique** (`int tab[100];`), la taille est fixée à la compilation. Problème :
-- Si les données réelles sont plus petites → **gaspillage de mémoire**
-- Si les données sont plus grandes → **dépassement de tableau** (crash)
+**Intuition** : Quand tu déclares `int x;`, la mémoire est réservée automatiquement dans le stack et libérée à la fin de la fonction. Avec `new`, tu réserves de la mémoire dans le heap à l'exécution (taille décidée à runtime), et tu es **entièrement responsable** de la libérer avec `delete`.
 
-L'allocation **dynamique** résout ce problème : on réserve de la mémoire **à l'exécution**, au moment précis où on en a besoin, et on peut choisir exactement la taille nécessaire.
-
-#### Syntaxe de base : `new` et `delete`
+#### Allocation d'un objet unique
 
 ```cpp
-// Allocation d'un SEUL objet :
-float *number = new float(-6);     // Alloue un float sur le Heap, initialisé à -6
-cout << *number;                   // -6
+float* number;                  // Déclare un pointeur (ne pointe encore nulle part)
+number = new float(-6);         // Alloue un float sur le HEAP, initialisé à -6
+                                // Retourne l'adresse du bloc alloué
 
-// Modification via déréférencement :
-*number = 3.14;
+cout << *number << "\n";        // Affiche : -6   (déréférencement)
+*number = 3.14;                 // Modifie la valeur via le pointeur
 
-// Libération de la mémoire :
-delete number;        // Rend la mémoire au système
-number = nullptr;     // Bonne pratique : éviter le dangling pointer
+delete number;                  // Libère le bloc mémoire (OBLIGATOIRE)
+number = nullptr;               // Bonne pratique : réinitialiser pour éviter le 'dangling pointer'
 ```
 
-#### Allocation d'arrays dynamiques : `new[]` et `delete[]`
+#### Allocation d'un array dynamique
 
 ```cpp
-int n = 5;                              // n peut être déterminé à l'exécution !
-double *decimals = new double[n];       // Alloue un array de 5 doubles sur le Heap
+int n;
+cout << "Combien d'éléments ? ";
+cin >> n;                            // n connu SEULEMENT À L'EXÉCUTION
 
-// Utilisation classique :
+double* arr = new double[n];         // Alloue n doubles contigus sur le heap
+                                     // La notation [] est OBLIGATOIRE pour un array
+
 for (int i = 0; i < n; i++) {
-    decimals[i] = i * 1.5;
+    arr[i] = i * 2.5;               // Accès identique à un array statique
 }
 
-// Libération avec CROCHETS (obligatoire pour les arrays !)
-delete[] decimals;    // ← les [] sont indispensables
-decimals = nullptr;
+delete[] arr;                        // OBLIGATOIRE — les [] indiquent que c'est un array
+arr = nullptr;                       // Bonne pratique
+
+// PIÈGE FATAL :
+// delete arr;    // Si on oublie les [] → comportement indéfini (libère peut-être 1 seul élément)
 ```
 
-> ⚠️ **Règle absolue :** `new` → `delete`. `new[]` → `delete[]`. Confondre les deux (utiliser `delete` au lieu de `delete[]` pour un array) provoque un **comportement indéfini** : seul le premier élément serait libéré, les autres resteraient en mémoire.
+#### Fuites mémoire (Memory leaks)
 
-#### Les dangers : Memory Leaks et Dangling Pointers
-
-**Memory Leak (Fuite de mémoire) :** Si on oublie `delete`, la mémoire reste réservée jusqu'à la fin du programme.
 ```cpp
-void mauvaise_fonction() {
-    int* p = new int(42);
-    // On oublie delete p → fuite mémoire !
-    // Quand la fonction se termine, le pointeur p est détruit (il était sur la Stack),
-    // mais le bloc mémoire sur le Heap reste alloué et INACCESSIBLE à jamais.
+void fuite() {
+    double* p = new double[1000];  // Alloue 8000 bytes
+    // ... traitement ...
+    // OUBLI de delete[] → la mémoire reste allouée même après la fin de la fonction !
 }
+
+// Si fuite() est appelée 1 000 000 fois → 8 GB gaspillés progressivement → crash
 ```
 
-**Dangling Pointer :** Après un `delete`, le pointeur conserve l'ancienne adresse (désormais invalide). Accéder à cette adresse → comportement indéfini.
+**Règle de base** : pour chaque `new`, il doit exister exactement un `delete`. Pour chaque `new[]`, exactement un `delete[]`.
+
+**⚠️ Piège classique — Dangling pointer** :
 ```cpp
 int* p = new int(42);
-delete p;       // Mémoire libérée, mais p contient encore l'ancienne adresse !
-cout << *p;     // DANGER : comportement indéfini !
-p = nullptr;    // Bonne pratique : réinitialiser immédiatement après delete
+delete p;          // La mémoire est libérée
+cout << *p;        // DANGEREUX : p pointe vers de la mémoire désallouée (comportement indéfini)
+p = nullptr;       // Bonne pratique : rend le pointeur invalide clairement
+// cout << *p;     // Maintenant : crash net et prévisible (plutôt que comportement silencieux)
 ```
 
 ---
 
-### 5. Structure de la mémoire : Stack vs Heap
+### 4.5 Structure de la mémoire : Stack vs Heap
 
-#### 🔑 Les 4 zones mémoire d'un programme
+**Définition** : La mémoire d'un programme est divisée en plusieurs régions. Les deux plus importantes pour le programmeur sont le **stack** (pile) et le **heap** (tas).
 
-Lors de l'exécution d'un programme C++, le système d'exploitation lui alloue un espace mémoire partitionné en 4 régions :
+**Intuition** : Le stack est comme une pile d'assiettes — on ne peut ajouter/retirer qu'au sommet, et c'est automatique et très rapide. Le heap est comme un entrepôt libre — tu peux réserver n'importe quel bloc et le libérer quand tu veux, mais c'est à toi de gérer.
 
-| Zone | Contenu | Gestion |
-|---|---|---|
-| **Text** | Instructions machine (code compilé) | Fixe |
-| **Global/Static** | Variables globales et `static` | Allouées au démarrage, libérées à la fin |
-| **Stack (Pile)** | Variables locales, paramètres de fonctions | **Automatique** (LIFO) |
-| **Heap (Tas)** | Objets alloués avec `new` | **Manuelle** (new/delete) |
+| Région | Contenu | Gestion | Vitesse | Taille |
+|---|---|---|---|---|
+| **Texte (code)** | Instructions machine (.exe) | — | — | Fixe |
+| **Globales/statiques** | Variables `global`, `static` | Automatique (programme entier) | Rapide | Limité |
+| **Stack** | Variables locales, paramètres | Automatique (LIFO) | Très rapide | ~1-8 MB |
+| **Heap** | `new`/`delete` | Manuel (programmeur) | Plus lent | Limité uniquement par la RAM |
 
-#### La Stack (Pile) en détail
-
-- Fonctionne en **LIFO** (Last-In, First-Out) : comme une pile d'assiettes.
-- Quand une fonction est appelée → ses variables locales sont "poussées" (push) sur la pile.
-- Quand la fonction retourne → ses variables sont "dépilées" (pop) et la mémoire est automatiquement restituée.
-- **Avantages :** Extrêmement rapide (un simple ajustement de pointeur de sommet).
-- **Limites :** Taille limitée (~1-8 Mo), durée de vie liée à la fonction.
-
-```cpp
-void exemple() {
-    int x = 42;       // x est sur la Stack
-    double y = 3.14;  // y est sur la Stack
-}   // Ici, x et y sont automatiquement détruits et leur mémoire libérée
+**Schéma** :
+```
+Adresses hautes
+   ┌─────────────┐
+   │   Stack     │  ← Grandit vers le bas à chaque appel de fonction
+   │   (Pile)    │    Variables locales, paramètres
+   ├─────────────┤
+   │     ↕       │  ← Espace libre entre les deux
+   ├─────────────┤
+   │   Heap      │  ← Grandit vers le haut avec new
+   │   (Tas)     │    Allocation dynamique
+   ├─────────────┤
+   │  Globales   │  Variables globales et statiques
+   ├─────────────┤
+   │   Texte     │  Instructions machine (code compilé)
+   └─────────────┘
+Adresses basses
 ```
 
-#### Le Heap (Tas) en détail
-
-- Permet d'allouer et libérer des blocs mémoire **dans n'importe quel ordre**.
-- La taille peut être déterminée **à l'exécution** (saisie utilisateur, taille d'un fichier...).
-- La durée de vie des objets **dépasse celle de la fonction** qui les a créés.
-- **Avantages :** Flexible, très grande capacité.
-- **Inconvénients :** Plus lent (recherche de blocs libres, fragmentation), et le programmeur DOIT libérer explicitement la mémoire.
-
+**Exemple illustratif** :
 ```cpp
-int* creerTableau(int taille) {
-    int* tab = new int[taille];  // Alloué sur le Heap
-    return tab;                  // Le tableau SURVIT à la fin de la fonction !
-}
+int g = 10;  // Variable GLOBALE — stockée dans la section globales, dure toute la durée du programme
 
-int main() {
-    int* monTab = creerTableau(100);
-    // monTab pointe vers le tableau sur le Heap
-    delete[] monTab;  // L'appelant est responsable de la libération
-}
+void foo() {
+    int x = 5;               // Variable LOCALE — stockée sur le STACK, détruite à la fin de foo()
+    double* p = new double;  // p est sur le Stack, mais *p est sur le HEAP
+    *p = 3.14;
+    // Si on oublie delete p → fuite mémoire (le heap ne se libère pas tout seul)
+    delete p;                // Libération explicite du bloc heap
+}                            // x est détruit automatiquement ici (stack)
 ```
 
 ---
 
-### 6. Pointeur vers une Classe (ou struct) : l'opérateur `->`
+### 4.6 Pointeur vers une classe — Opérateur `->`
 
-Lorsqu'un pointeur pointe vers un objet (instance d'une classe ou d'une struct), on utilise l'opérateur **flèche** `->` pour accéder aux membres.
+**Définition** : Lorsqu'un pointeur pointe vers un objet, on ne peut pas utiliser l'opérateur `.` directement. On utilise l'opérateur `->` (flèche), qui combine déréférencement et accès.
+
+**Intuition** : `->` est un raccourci syntaxique pour `(*ptr).membre`. Il "suit le pointeur" puis accède au membre.
 
 ```cpp
 class Box {
@@ -2034,260 +1517,354 @@ public:
 };
 
 int main() {
-    Box* pbox = new Box();      // pbox est un POINTEUR vers un objet Box sur le Heap
-    pbox->length = 5.0;         // Accès au membre via ->
-    double v = pbox->volume();  // Appel de méthode via ->
+    Box  box;               // Objet normal (sur le stack)
+    box.length = 5.0;       // Accès direct avec '.'
+    cout << box.volume();   // Accès direct avec '.'
 
-    // Équivalent plus verbeux (déréférencement explicite + point) :
-    (*pbox).length = 5.0;
-    double v2 = (*pbox).volume();
+    Box* pbox = new Box();  // Pointeur vers un objet (sur le heap)
+    pbox->length = 5.0;     // Accès via pointeur avec '->'     ← SYNTAXE POINTEUR
+    cout << pbox->volume(); // Accès via pointeur avec '->'
 
-    delete pbox;
+    // Équivalent (mais plus verbeux et moins lisible) :
+    (*pbox).length = 5.0;    // *(déréférence) puis . (accès)
+
+    delete pbox;             // Ne pas oublier !
     return 0;
 }
 ```
 
-**Règle simple :**
-- Objet direct (ex: `Box b;`) → utiliser le **point** : `b.length`
-- Pointeur vers objet (ex: `Box* p;`) → utiliser la **flèche** : `p->length`
+**⚠️ Piège classique** : Appeler `pbox.volume()` au lieu de `pbox->volume()`. Le compilateur donnera une erreur claire ("base operand of `->` has non-pointer type"), mais c'est une confusion fréquente.
 
 ---
 
-### 7. Structures de données récursives : l'arbre binaire (BMD v4.0)
+### 4.7 Structures de données récursives (Arbres)
 
-#### 🔑 L'astuce fondamentale : un type qui se contient lui-même (via pointeurs)
+**Définition** : Une structure de données récursive est un type dont les instances peuvent contenir des **pointeurs vers d'autres instances du même type**.
 
-Pour modéliser un arbre, il faut un **type de données récursif** : la classe `Node` contient des pointeurs vers d'autres `Node`.
+**Intuition** : Un arbre est naturellement défini récursivement : un arbre est soit vide, soit un nœud contenant un sous-arbre gauche et un sous-arbre droit. Pour modéliser cela en C++, on utilise des pointeurs.
 
+**Pourquoi on NE PEUT PAS écrire `Node left; Node right;` directement** :
 ```cpp
 class Node {
-private:
-    float value;          // Valeur de la feuille
-    float threshold;      // Seuil de décision (nœud interne)
-    Node* left;           // Pointeur vers le sous-arbre gauche
-    Node* right;          // Pointeur vers le sous-arbre droit
-public:
-    // Getters et Setters
-    void set_left(Node* l) { left = l; }
-    void set_right(Node* r) { right = r; }
-    Node* get_left() { return left; }
-    Node* get_right() { return right; }
-    bool test_leaf() { return (left == nullptr && right == nullptr); }
-    
-    // Constructeurs et Destructeur
-    Node();
-    Node(const char* cond_val, const bool is_leaf);
-    ~Node();
+    Node left;   // IMPOSSIBLE : un Node contiendrait un Node, qui contiendrait un Node...
+    Node right;  // → taille infinie, le compilateur refuse
 };
 ```
 
-> 💡 **Pourquoi des pointeurs (`Node*`) et pas des objets directs (`Node`) ?** Si on écrivait `Node left; Node right;`, chaque Node contiendrait deux Node complets, qui contiendraient eux-mêmes deux Node, etc. → **taille mémoire infinie !** Les pointeurs brisent cette récursion car un pointeur a toujours une taille fixe (8 bytes sur 64 bits), quelle que soit la taille de l'objet pointé.
-
-#### Constructeur par défaut et constructeur paramétré
-
+**Solution — pointeurs pour briser la récursion** :
 ```cpp
-// Constructeur par défaut : initialise un Node "vide" et sûr
-Node::Node()
-    : left(nullptr), right(nullptr), value(0), feature(WEIGHT_KG)
-{}
-// left et right à nullptr = pas d'enfants
-// value à 0 = valeur neutre
-// feature initialisé par défaut
+class Node {
+private:
+    float value;       // Valeur de la feuille
+    float threshold;   // Seuil de comparaison (nœud interne)
+    Node* left;        // Pointeur vers enfant gauche (taille fixe : 8 bytes sur 64-bit)
+    Node* right;       // Pointeur vers enfant droit  (8 bytes)
+    Feature feature;   // Quelle caractéristique tester
+    Operator op;       // Quel opérateur de comparaison
 
-// Constructeur paramétré : crée un Node depuis une chaîne parsée
-Node::Node(const char* cond_val, const bool is_leaf)
-    : left(nullptr), right(nullptr), feature(WEIGHT_KG) {
-    parse_condition(cond_val, is_leaf);
-    // Délègue le parsing à une méthode dédiée
-}
-```
+public:
+    bool test_leaf() { return (left == nullptr && right == nullptr); }
+    // ...
 
-#### 🔑 Le destructeur récursif : libérer tout l'arbre automatiquement
+    // Constructeur par défaut — nœud "vide"
+    Node() : left(nullptr), right(nullptr), value(0), feature(WEIGHT_KG) {}
 
-```cpp
-Node::~Node() {
-    if (left != nullptr) delete left;
-    if (right != nullptr) delete right;
-}
-```
-
-**Comment ça marche ?** Quand on fait `delete root;` sur la racine :
-1. Le destructeur de `root` est invoqué.
-2. Il fait `delete left;` → ce qui invoque le destructeur du nœud gauche.
-3. Ce destructeur fait lui-même `delete` sur SES enfants, etc.
-4. La récursion se propage jusqu'aux feuilles (dont `left` et `right` sont `nullptr`).
-5. Les tests `if (left != nullptr)` brisent la récursion aux feuilles.
-6. Résultat : **tout l'arbre est libéré proprement en un seul `delete root`**.
-
-> ⚠️ **Sans les gardes `if (left != nullptr)` :** supprimer un nœud feuille (dont les enfants sont `nullptr`) déclencherait une descente sans fin sur la stack, accumulant des appels récursifs jusqu'au **stack overflow** (dépassement de pile).
-
-#### La fonction `read_tree` : construire l'arbre depuis un fichier
-
-```cpp
-Node* read_tree(const char* filename) {
-    // Ouvrir le fichier...
-    Node* root = NULL;
-    while (fp.getline(line, sizeof(line))) {
-        // Parser chaque ligne...
-        if (root == nullptr) {
-            // Premier nœud → créer la racine
-            root = new Node(cond_val, is_leaf);
-        } else {
-            // Trouver le parent du nœud courant
-            Node* parent = find_parent(root, node_id);
-            if (node_id % 2 == 0)   // Enfant gauche (index pair)
-                parent->set_left(new Node(cond_val, is_leaf));
-            else                     // Enfant droit (index impair)
-                parent->set_right(new Node(cond_val, is_leaf));
-        }
+    // Constructeur paramétré
+    Node(const char* cond_val, const bool is_leaf)
+        : left(nullptr), right(nullptr), feature(WEIGHT_KG) {
+        parse_condition(cond_val, is_leaf);
     }
-    fp.close();
-    return root;  // L'appelant est désormais propriétaire de ce pointeur
-}
+
+    // Destructeur RÉCURSIF — libère tout le sous-arbre
+    ~Node() {
+        if (left  != nullptr) delete left;   // Déclenche ~Node() sur le fils gauche
+        if (right != nullptr) delete right;  // Déclenche ~Node() sur le fils droit
+    }
+};
 ```
 
-#### La fonction `estimate` : parcourir l'arbre pour prédire
+**Schéma d'un arbre BMD en mémoire** :
+```
+racine (Node*)
+    ↓
+  Node (weight_kg <= 65.5)
+  ├── left (Node*) → Node (age <= 68.63)
+  │   ├── left (Node*) → Node [feuille, value=0.68]
+  │   └── right (Node*) → Node [...] 
+  └── right (Node*) → Node [feuille, value=0.56]
+```
 
+**Traversée et inférence** :
 ```cpp
 float estimate(Node* root, float features[FEATURE_COUNT]) {
-    Node* cur = root;  // Commencer à la racine
+    Node* cur = root;
     while (cur != nullptr) {
         float res = cur->eval_condition(features);
-        if (res == -1)         // Aller à gauche
-            cur = cur->get_left();
-        else if (res == 0)     // Aller à droite
-            cur = cur->get_right();
-        else                   // Feuille : retourner le résultat
-            return res;
+        if      (res == -1) cur = cur->get_left();   // Condition vraie → aller à gauche
+        else if (res ==  0) cur = cur->get_right();  // Condition fausse → aller à droite
+        else                return res;              // Feuille → retourner la valeur
     }
-    return 0.0; // Fallback
+    return 0.0;  // Fallback
 }
 ```
 
-#### La fonction `print_tree` : parcours infixe récursif
-
-```cpp
-void Node::print_tree(Node* cur) {
-    if (cur->left != nullptr) print_tree(cur->left);   // Visiter gauche
-    cout << cur->value << ", " << cur->feature          // Afficher nœud
-         << ", " << cur->threshold << endl;
-    if (cur->right != nullptr) print_tree(cur->right);  // Visiter droite
-}
-```
-
-Ce parcours **infixe** (gauche → racine → droite) affiche les nœuds dans un ordre cohérent pour un arbre de décision.
+**⚠️ Piège classique — destructeur récursif** : Si on omet les vérifications `if (left != nullptr)`, le destructeur appelle `delete nullptr`. En C++, `delete nullptr` est défini et ne fait rien — mais si l'implémentation du destructeur elle-même accède à des membres sur `nullptr`, c'est un crash. Toujours tester avant de supprimer.
 
 ---
 
-### 8. Opérations bit à bit (Bitwise Operations)
+### 4.8 Opérations bit à bit (Bitwise operations)
 
-#### 🔑 Pourquoi manipuler les bits directement ?
+**Définition** : Les opérations bit à bit agissent directement sur la **représentation binaire** des entiers, bit par bit.
 
-Les opérations bit à bit permettent de manipuler la **représentation binaire** des entiers. Elles sont exécutées en un seul cycle processeur et sont donc extrêmement performantes. Elles sont utilisées pour :
-- Le calcul haute performance
-- La configuration de registres matériels
-- La gestion de permissions/drapeaux
-- La navigation dans les arbres binaires (comme `find_parent`)
+**Intuition** : Chaque bit d'un entier est une "case". Les opérations bit à bit permettent de lire, activer, désactiver ou basculer des cases individuelles. C'est l'outil de prédilection pour la configuration de registres matériels, les permissions, la compression.
 
-#### Décalage de bits : `<<` et `>>`
+**Les opérateurs** :
 
-**Décalage à gauche (`<<`) = Multiplication par une puissance de 2**
+| Opérateur | Nom | Description |
+|---|---|---|
+| `<<` | Décalage gauche | Multiplie par 2ⁿ |
+| `>>` | Décalage droit | Divise par 2ⁿ (entier) |
+| `&` | AND bit à bit | Garde uniquement les bits à 1 dans les DEUX opérandes |
+| `\|` | OR bit à bit | Activé si AU MOINS un des deux bits est à 1 |
+| `^` | XOR bit à bit | Activé si exactement UN des deux bits est à 1 |
+| `~` | NOT bit à bit | Inverse tous les bits |
 
-```cpp
-int x = 5;       // Binaire : 00000101
-int y;
-
-y = x << 1;      // 00001010 → valeur 10  (5 × 2¹)
-y = x << 2;      // 00010100 → valeur 20  (5 × 2²)
-```
-
-**Décalage à droite (`>>`) = Division entière par une puissance de 2**
+**Exemples complets et détaillés** :
 
 ```cpp
-y = 20;           // 00010100
-y >>= 1;          // 00001010 → valeur 10  (20 / 2¹)
-y >>= 2;          // 00000010 → valeur 2   (10 / 2²)
-```
+int x = 5;    // 00000101 en binaire
 
-#### AND bit à bit (`&`) : le masquage
+// 1. DÉCALAGE GAUCHE << : multiplie par 2ⁿ
+int y = x << 1;   // 00001010 = 10  (5 × 2¹)
+    y = x << 2;   // 00010100 = 20  (5 × 2²)
+    y = x << 3;   // 00101000 = 40  (5 × 2³)
 
-L'opérateur `&` compare chaque bit individuellement. Le résultat est `1` uniquement si les deux bits sont `1`.
+// 2. DÉCALAGE DROIT >> : divise par 2ⁿ (arrondi vers le bas)
+    y = 20;       // 00010100
+    y >>= 1;      // 00001010 = 10  (20 / 2)
+    y >>= 2;      // 00000010 = 2   (10 / 4, arrondi vers le bas)
 
-```cpp
-int flags = 0b11010110;  // 214 en décimal
-int mask  = 0b00001111;  // Masque : on ne garde que les 4 bits de poids faible
+// 3. AND & : masquage (extraire des bits spécifiques)
+int flags = 0b11010110;   // 214 en décimal
+int mask  = 0b00001111;   // Garde seulement les 4 bits du bas
+cout << (flags & mask);   // 0b00000110 = 6
 
-int result = flags & mask;
-// 11010110
-// 00001111
-// --------
-// 00000110 → 6
-```
+// 4. OR | : activer un bit
+int reg = 0b00000001;         // Bit 0 activé
+reg |= (1 << 3);              // 1<<3 = 0b00001000 → reg = 0b00001001 = 9
+// Bit 3 activé, bit 0 inchangé
 
-> 💡 **Utilité :** Extraire des champs spécifiques d'un registre. Par exemple, isoler les 4 bits de poids faible d'un octet de configuration.
+// 5. XOR ^ : basculer (toggle) un bit
+reg ^= (1 << 3);              // Bascule le bit 3 → reg = 0b00000001 = 1
+// Si bit 3 était 1, il devient 0
 
-#### OR bit à bit (`|`) : activer des bits
-
-L'opérateur `|` met un bit à `1` si au moins un des deux bits est `1`.
-
-```cpp
-int reg = 0b00000001;    // Valeur initiale : 1
-reg |= (1 << 3);         // (1 << 3) = 0b00001000 = masque avec bit 3 activé
-
-// 00000001
-// 00001000
-// --------
-// 00001001 → 9
-```
-
-> 💡 **Utilité :** Activer un drapeau spécifique sans toucher aux autres bits. Exemple : activer le bit 3 d'un registre de configuration matériel.
-
-#### Application pratique : `find_parent` dans l'arbre
-
-La fonction `find_parent` utilise le masquage binaire pour naviguer dans l'arbre :
-
-```cpp
-Node* find_parent(Node* root, int node_idx) {
-    int level = floor(log2(node_idx));
-    int mask = pow(2, level - 1);
-
-    Node* cur = root, *prev;
-    while (mask > 0) {
-        prev = cur;
-        if (node_idx & mask)          // Le bit courant est-il 1 ?
-            cur = cur->get_right();   // Oui → aller à droite
-        else
-            cur = cur->get_left();    // Non → aller à gauche
-        mask >>= 1;                   // Passer au bit suivant
-    }
-    return prev;
+// 6. Application : fonction find_parent dans BMD v4.0
+// Utilise les décalages bit à bit pour naviguer dans l'arbre binaire équilibré :
+int mask_bits = pow(2, level - 1);
+while (mask_bits > 0) {
+    if (node_idx & mask_bits) cur = cur->get_right();  // Bit à 1 = droite
+    else                      cur = cur->get_left();   // Bit à 0 = gauche
+    mask_bits >>= 1;           // Passe au bit suivant
 }
 ```
 
-> 💡 **Idée géniale :** Dans un arbre binaire complet, la représentation binaire de l'index d'un nœud encode son chemin depuis la racine ! Chaque bit (après le premier `1`) indique : `0` = gauche, `1` = droite.
+**Tableau de véritê AND, OR, XOR** :
+
+| A | B | A & B | A \| B | A ^ B |
+|---|---|---|---|---|
+| 0 | 0 | 0 | 0 | 0 |
+| 0 | 1 | 0 | 1 | 1 |
+| 1 | 0 | 0 | 1 | 1 |
+| 1 | 1 | 1 | 1 | 0 |
+
+**⚠️ Pièges classiques** :
+1. Confondre `&&` (AND logique, retourne bool) et `&` (AND bit à bit, agit sur chaque bit)
+2. `1 << 31` peut déborder pour des `int` 32-bit signés. Utiliser `1u << 31` (unsigned) ou `1LL << 31` (long long).
+3. Le décalage droit `>>` sur un entier **négatif signé** est défini par l'implémentation (peut propager le bit de signe ou non). Utiliser des entiers **non signés** (`unsigned int`) pour des décalages fiables.
 
 ---
 
-### 9. Le programme `main()` complet (BMD v4.0)
+## Cours 5 : Fonctions, Passage de Paramètres et Portée
 
+### 5.1 Fonctions et Pile d'Appels (Call Stack)
+
+**Définition** : Une fonction est un bloc de code autonome qui accomplit une tâche spécifique. Lors de l'exécution, les appels imbriqués sont gérés par la **pile d'appels** (call stack), qui mémorise d'où provient chaque appel pour y retourner à la fin.
+
+**Intuition** : Pense à la pile d'appels comme une pile d'assiettes. Quand `main()` appelle `estimate()`, on pose l'assiette `estimate` sur `main`. L'exécution se concentre toujours sur l'assiette du dessus. Quand `estimate()` se termine (via `return`), son assiette est retirée (les variables locales sont détruites) et on reprend l'exécution sur l'assiette en dessous (`main`).
+
+**Développement étape par étape (Prototypes et Définitions)** :
+- **Prototype (Déclaration)** : Informe le compilateur de l'existence de la fonction (`type_retour nom(parametres);`). Indispensable si la fonction est définie après son utilisation, ou dans un autre fichier.
+- **Définition** : Contient le code effectif entre `{ ... }`.
+- **Paramètres vs Arguments** : Les *paramètres* sont les variables déclarées dans l'en-tête de la fonction. Les *arguments* sont les valeurs réelles fournies lors de l'appel.
+
+**Exemple concret commenté** :
 ```cpp
+#include <iostream>
+using namespace std;
+
+// Prototype (Déclaration en haut de fichier)
+double power(double x, int n);
+
 int main() {
-    Node* root = read_tree("bmd_tree_transition.txt");  // Allocation dynamique
-    float age, weight_kg, height_cm, waiting_time;
-    char choice;
-
-    do {
-        // Lire les données du patient...
-        float features[FEATURE_COUNT] = {weight_kg, age, height_cm, waiting_time};
-        float bmd = estimate(root, features);
-        cout << "\n--> Predicted BMD: " << bmd << "\n\n";
-        cout << "Estimate another patient? (y/n): ";
-        cin >> choice;
-    } while (choice == 'y');
-
-    delete root;  // Désallocation propre : le destructeur récursif libère tout l'arbre
+    double result = power(2.0, 3); // '2.0' et '3' sont les arguments
+    cout << result << endl;
     return 0;
 }
+
+// Définition (Implémentation détaillée - peut être placée n'importe où)
+double power(double x, int n) { // 'x' et 'n' sont les paramètres
+    if (n < 0) return 0.0;      // Premier point de sortie
+    double res = 1.0;
+    for (int i = 0; i < n; ++i) res *= x;
+    return res;                 // Second point de sortie (la copie de 'res' est retournée)
+} // 'res', 'i', 'x', et 'n' sont détruits ici (retirés du Call Stack)
 ```
 
-> 💡 **Point clé :** Un seul `delete root` suffit pour libérer l'intégralité de l'arbre grâce au destructeur récursif défini dans la classe `Node`. Chaque nœud supprime ses enfants, qui suppriment les leurs, etc., jusqu'aux feuilles.
+**⚠️ Piège classique** : Oublier le prototype. Le compilateur lit le code de haut en bas. S'il rencontre l'appel `power(2.0, 3)` avant de l'avoir vu déclaré ou défini, il génèrera une erreur ("power was not declared in this scope"). Il faut toujours déclarer le prototype en amont !
+
+---
+
+### 5.2 Mécanismes de Passage de Paramètres
+
+**Définition** : Il existe trois façons de transmettre un argument à une fonction : par **valeur** (copie), par **référence** (alias utilisant `&`), ou par **pointeur** (adresse utilisant `*`).
+
+**Intuition** : 
+- **Par valeur** : Donner une photocopie d'un rapport à un collègue. Ses modifications n'affectent pas ton original. Sûr mais lent (si le rapport fait 1000 pages).
+- **Par référence** : Donner la clé de ton bureau partagé. Les modifications faites par le collègue *sont* tes modifications. Rapide (pas de copie) mais dangereux sans garanties (`const`).
+- **Par pointeur** : Donner l'adresse postale du bureau. Le collègue doit s'y rendre (déréférencement `*`) pour interagir avec. Peut être "aucune adresse" (`nullptr`).
+
+**Cas d'usage : in, out, inout** :
+- **Entrée (in)** : La donnée est lue, non modifiée. (Valeur ou `const` référence).
+- **Sortie / Modification (out / inout)** : La donnée existante est altérée pour l'appelant. (Référence ou pointeur).
+
+**Exemple concret commenté — L'indexation salariale** :
+```cpp
+void applyIndexByVal(float k) { k *= 1.375; }            // Copie locale, modif perdue
+void applyIndexByRef(float& k) { k *= 1.375; }           // Modifie DIRECTEMENT l'original (alias)
+void applyIndexByPtr(float* k) { (*k) *= 1.375; }        // Suit l'adresse, modifie l'original
+
+int main() {
+    float salary = 3500;
+    
+    applyIndexByVal(salary); 
+    cout << salary << "\n";      // Affiche 3500 (Original INTACT, la copie 'k' a été modifiée)
+    
+    applyIndexByRef(salary);     // Pas besoin de symbole spécial à l'appel
+    cout << salary << "\n";      // Affiche 4812.5 (Original MODIFIÉ)
+    
+    salary = 3500;
+    applyIndexByPtr(&salary);    // On passe l'adresse explicitement avec '&'
+    cout << salary << "\n";      // Affiche 4812.5 (Original MODIFIÉ)
+}
+```
+
+**Passage d'Arrays** : En C++, **un array est toujours passé par référence** implicitement (en fait, en tant que pointeur pointant sur son premier élément `&arr[0]`). C'est pourquoi un tableau altéré dans une fonction le sera dans `main()`. Par conséquent, on doit toujours fournir la taille de l'array séparément à la fonction (`void calc(int arr[], size_t n)`).
+
+**⚠️ Piège extrêmement mortel** : Retourner une référence (ou un pointeur) vers une variable locale !
+```cpp
+// PIÈGE CLASSIQUE : Segfault garanti ou Bug silicieux
+int& bad_function() {
+    int local_var = 42;
+    return local_var;   // DANGEREUX ! On retourne une référence...
+} // ... mais local_var est détruite à l'accolade fermante ! La réf pointe dans le vide.
+```
+
+---
+
+### 5.3 Les Paramètres Constants (`const`)
+
+**Définition** : `const` appliqué à un paramètre de fonction établit un **contrat de non-modification** garanti par la compilation. C'est l'essence du mécanisme défensif de type (const-correctness) en C++.
+
+**Intuition** : Le mot-clé `const` rassure le développeur utilisant ta fonction : "Je te passe mon gros array ou mon gros objet par référence (parce que copier est lent), mais je te promets que je ne le modifierai pas, c'est en lecture seule".
+
+**Exemple concret commenté** :
+```cpp
+void printString(const string& s) {
+    // s[0] = 'X';   // ERREUR DE COMPILATION ! Le compilateur interdit toute modification.
+    cout << s << endl; // Autorisé (lecture seule)
+}
+
+void printArray(const double* arr, size_t n) {
+    // arr[0] = 99.0; // ERREUR ! Pointeur constant, la donnée au bout est verrouillée.
+}
+
+class Rectangle {
+public:
+    int area() const { // <-- Placé à la fin : garantit qu'appeler .area() ne modifiera pas l'objet
+        return width * height;
+    }
+};
+```
+
+**⚠️ Piège classique** : Oublier le `const` pour du "passage par référence d'entrée" `void print(string& s)`. Non seulement ce n'est pas sécurisé, mais ça empêche de passer des "valeurs r-values" (littéraux constants), comme `print("Hello")`.  Le compilateur les rejettera, demandant un `const string&`.
+
+---
+
+### 5.4 Paramètres par Défaut
+
+**Définition** : Le C++ permet d'offrir une valeur par défaut à un paramètre (seulement depuis la déclaration/prototype), qui s'applique si l'appelant choisit de l'omettre.
+
+**Exemple concret commenté** :
+```cpp
+// Le prototype déclare le défaut (qui va TOUJOURS à droite)
+void log_message(string msg, string level = "INFO");
+
+int main() {
+    log_message("All good");               // Appelle avec msg="All good", level="INFO"
+    log_message("Disk full", "ERROR");     // Appelle avec msg="Disk full", level="ERROR"
+}
+
+// La définition OMET le défaut pour éviter des doubles définitions
+void log_message(string msg, string level) {
+    cout << "[" << level << "] " << msg << endl;
+}
+```
+
+**⚠️ Piège classique** : Les arguments manquants lors de l'appel sont assignés de gauche à droite. Par conséquent, il est **OBLIGATOIRE que tous les paramètres par défaut se trouvent à la fin (à droite) de la signature** (`f(int a, int b=0, int c=1)` est légal, `f(int a=0, int b)` est interdit).
+
+---
+
+### 5.5 Les fonctions `inline`
+
+**Définition** : `inline` est un mot-clé (une requête suggérée au compilateur) incitant le compilateur à remplacer la totalité de la fonction appelée par son "copier coller" au point de l'appel, plutôt que de suivre la routine classique de la pile d'appels.
+
+**Intuition** : Faire sauter l'exécution au bout de la mémoire a un "coup d'appel" en temps processeur (création du contexte, copie des paramètres, empilage/dépilage). Pour une fonction simple comme `square(x)`, cet *overhead* dépasse le coût réel de l'opération ($x \times x$). C'est ici que `inline` est magique : il optimise le temps, en prenant potentiellement un poil plus d'espace binaire.
+
+**Exemple discret** :
+```cpp
+inline int square(int x) { return x * x; }
+int main() {
+    int y = square(5);  // Le compilateur compile ce code en secret comme: int y = 5 * 5;
+}
+```
+
+---
+
+### 5.6 Portée (Scope) vs Durée de Vie (Lifetime)
+
+**Définition** : 
+- **La Portée (Lexicale)** détermine OÙ dans les lignes de code le nom de la variable est connu et utilisable (règle du compilateur).
+- **La Durée de vie** définit QUAND l'objet existe matériellement en RAM depuis sa création via constructeur jusqu'à sa destruction.
+
+**Les Types de Variables** :
+1. **Automatique / Locale** : Par défaut. Créée `{` → Détruite `}`. (Stack).
+2. **Dynamique (`new`/`delete`)** : Durée de vie infinie jusqu'à effacement manuel. N'a pas de "portée", le pointeur est son seul moyen d'accès. (Heap).
+3. **Globale** : Déclarée en-dehors. Dure toute l'application. Très mauvaise pratique d'encapsulation.
+4. **Statique Locale (`static int x = 0`)** : La variable n'a qu'une portée *locale* (accès impossible ailleurs), MAIS d'une durée de vie *globale* (elle se souviendra de son état d'un appel à l'autre).
+
+**Exemple concret commenté — Le compteur mémoire** :
+```cpp
+void hit_counter() {
+    static int count = 0;   // Ce '= 0' n'est exécuté qu'UNE SEULE fois dans tout le programme.
+    count++;                // Variable partagée secrètement au travers des appels successifs.
+    cout << "Vous êtes le visiteur n°" << count << "\n";
+}
+
+int main() {
+    hit_counter(); // Affiche 1
+    hit_counter(); // Affiche 2
+    // count++;    // ERREUR ! La portée (Scope) de 'count' ne sort pas de la fonction !
+} // OUF : Même si la durée de vie était infinie, l'encapsulation empêche de corrompre count de l'extérieur.
+```
+
+**⚠️ Piège classique** : Croire que `static` dans une méthode de classe ou fonction a le même sens qu'en Java. En C++, `static` a le privilège de déconnecter la durée de vie (globale) de sa portée réelle locale, générant un cache interne extrêmement lisible qui ne pollue pas l'espace global du projet.
